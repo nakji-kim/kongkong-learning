@@ -7,8 +7,8 @@ const _sfx = { ctx: null,
     o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02); } catch (e) { } },
-  ok() { this.tone(988, 1568, 0.09, 'sine', 0.35); },
-  bad() { this.tone(330, 300, 0.14, 'square', 0.14); } };
+  ok() { this.tone(988, 1568, 0.09, 'sine', 0.75); },
+  bad() { this.tone(330, 300, 0.14, 'square', 0.3); } };
 const _fmt = ms => (ms / 1000).toFixed(1) + '초';
 App.speedMenu = function () {
   Speech.stop();

@@ -61,7 +61,7 @@ App.fruitGame = function (level, good, bad) {
   };
   const spawn = t => {
     let isBad, x, ok = false;
-    for (let n = 0; n < 14 && !ok; n++) { isBad = bad.length > 0 && Math.random() < .5; x = sz / 2 + Math.random() * (W() - sz); ok = okPos(x, isBad, t); }
+    for (let n = 0; n < 14 && !ok; n++) { isBad = bad.length > 0 && Math.random() < .2; x = sz / 2 + Math.random() * (W() - sz); ok = okPos(x, isBad, t); }
     if (!ok) return;   // 알맞은 자리가 없으면 이번에는 건너뜀
     recent.push({ t, x, bad: isBad }); while (recent.length && t - recent[0].t > 1.5) recent.shift();
     const k = (isBad ? bad : good)[Math.floor(Math.random() * (isBad ? bad : good).length)];
