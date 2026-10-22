@@ -36,7 +36,7 @@ App.mathMenu = function (mode) {
   Speech.stop();
   const [e, m, h] = MCARD[mode], [de, dm, dh] = MDESC[mode];
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><h1>${MTITLE[mode]} 공부</h1>
+    <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 난이도로 할까요?</h1>
       <div class="cards">
         <button class="card am" data-k="easy" style="background:#8ddc9b"><b>${e}</b><span>쉬움</span><small class="amd">${de}</small></button>
         <button class="card am" data-k="mid" style="background:#ffd166"><b>${m}</b><span>보통</span><small class="amd">${dm}</small></button>

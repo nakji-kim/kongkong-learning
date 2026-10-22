@@ -9,7 +9,7 @@ App.fruitMenu = function () {
   Speech.stop();
   const fr = this.prof().fruit || {};
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="clr">🔄 기록 지우기</button></span></header>
-    <main class="home"><h1>과일 받기 · 난이도</h1><div class="cards">${[1, 2, 3].map(l => { const c = FR_LV[l]; return `<button class="card nm" data-l="${l}" style="background:${c.bg}"><b>${c.name}</b><span>${c.sub}</span><span>${fr[l] != null ? '🏆 ' + fr[l] + '개' : '기록 없음'}</span></button>`; }).join('')}</div></main>`;
+    <main class="home"><div class="crumb">🧩 놀이</div><h1>어떤 난이도로 할까요?</h1><div class="cards">${[1, 2, 3].map(l => { const c = FR_LV[l]; return `<button class="card nm" data-l="${l}" style="background:${c.bg}"><b>${c.name}</b><span>${c.sub}</span><span>${fr[l] != null ? '🏆 ' + fr[l] + '개' : '기록 없음'}</span></button>`; }).join('')}</div></main>`;
   this.root.querySelector('#back').onclick = () => this.playMenu();
   this.root.querySelector('#clr').onclick = () => {
     const p = this.prof(); if (!p.fruit || !Object.keys(p.fruit).length) return this.toast('지울 기록이 없어요');

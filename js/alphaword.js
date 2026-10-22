@@ -4,7 +4,7 @@ App.alphaWordMenu = function () {
   Speech.stop();
   const all = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><h1>단어 공부</h1>
+    <main class="home"><div class="crumb">🔤 알파벳</div><h1>어떤 공부를 할까요?</h1>
       <div class="cards">
         <button class="card nm awb" data-lv="1" style="background:#ffe3c2"><b>1단계</b><span>듣고 그림 찾기</span><small class="amd">단어를 듣고 알맞은 그림을 찾아요</small></button>
         <button class="card nm awb" data-lv="2" style="background:#d9ecff"><b>2단계</b><span>첫 글자 채우기</span><small class="amd">빠진 첫 글자를 찾아요</small></button>

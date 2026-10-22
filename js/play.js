@@ -6,10 +6,10 @@ const _line = k => [PLAY_LINES[k], k];
 const _chain = (lines, done) => lines.reduceRight((nxt, l) => () => Speech.play(l[0], nxt, l[1]), done || (() => { }))();
 
 /* ---------- 메뉴 ---------- */
-App.cardMenu = function (title, cards, back, scope) {
+App.cardMenu = function (title, cards, back, scope, crumb = '') {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><h1>${title}</h1><div class="cards">${cards.map((c, i) => `<button class="card al" data-i="${i}" style="background:${c.bg}"><b style="${c.bs || ''}">${c.b}</b><span>${c.t}</span></button>`).join('')}</div></main>`;
+    <main class="home">${crumb ? `<div class="crumb">${crumb}</div>` : ''}<h1>${title}</h1><div class="cards">${cards.map((c, i) => `<button class="card al" data-i="${i}" style="background:${c.bg}"><b style="${c.bs || ''}">${c.b}</b><span>${c.t}</span></button>`).join('')}</div></main>`;
   this.root.querySelector('#back').onclick = back;
   if (scope) this.addClr(scope);
   this.root.querySelectorAll('.al').forEach(b => b.onclick = () => cards[+b.dataset.i].go());
@@ -22,21 +22,21 @@ App.playMenu = function () {
     { b: '🧦👟', bs: 'font-size:2.2rem', t: '어울리는 그림', bg: '#b8e8b0', go: () => this.mateMenu() },
     { b: '🔎', t: '숨은 그림 찾기', bg: '#ffb3c1', go: () => this.hideMenu() },
     { b: '🧺🍎', bs: 'font-size:2rem', t: '과일 받기', bg: '#ffe0a3', go: () => this.fruitMenu() },
-  ], () => this.home(), 'play');
+  ], () => this.home(), 'play', '🧩 놀이');
 };
 App.matchMenu = function () {
-  this.cardMenu('짝 맞추기', [
+  this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🃏', t: '쉬움', bg: '#8ddc9b', go: () => this.pairGame(3) },
     { b: '🃏🃏', bs: 'font-size:2.4rem', t: '보통', bg: '#6ec6ff', go: () => this.pairGame(4) },
     { b: '🃏🃏🃏', bs: 'font-size:1.9rem', t: '어려움', bg: '#ff9aa8', go: () => this.pairGame(8) },
-  ], () => this.playMenu(), 'play');
+  ], () => this.playMenu(), 'play', '🧩 놀이');
 };
 App.patMenu = function () {
-  this.cardMenu('패턴 이어가기', [
+  this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🔴🔵🔴🔵', bs: 'font-size:1.7rem', t: '1단계 · 두 가지', bg: '#ffb3c1', go: () => this.patGame(1) },
     { b: '🔴🔴🔵🔴🔴', bs: 'font-size:1.5rem', t: '2단계 · 길게', bg: '#ffd166', go: () => this.patGame(2) },
     { b: '🔴🔵🟢🔴🔵', bs: 'font-size:1.6rem', t: '3단계 · 세 가지', bg: '#8ddc9b', go: () => this.patGame(3) },
-  ], () => this.playMenu());
+  ], () => this.playMenu(), undefined, '🧩 놀이');
 };
 /* ---------- 공통 문제 엔진 (보기 4개 · 10문제 · 별 결과) ---------- */
 // make(qn) → { stage, eq, choices:[{id, html, cls}], answer, q:[text,name], a:[[text,name],...], key, reveal(root) }

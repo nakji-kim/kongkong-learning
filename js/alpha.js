@@ -2,7 +2,7 @@
 App.alphaMenu = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><h1>어떤 공부를 할까요?</h1>
+    <main class="home"><div class="crumb">🔤 알파벳</div><h1>어떤 공부를 할까요?</h1>
       <div class="cards">
         <button class="card al" data-k="up" style="background:#8ddc9b"><b>A B C</b><span>대문자</span></button>
         <button class="card al" data-k="low" style="background:#ffd166"><b>a b c</b><span>소문자</span></button>
@@ -18,7 +18,7 @@ App.alphaUpper = function (lower = false) {   // 단계 + 묶음을 한 화면�
   const row = (lv, title, sub, color) => `<section class="lvrow" style="--c:${color}"><div class="lvt"><b>${title}</b><span>${sub}</span></div>
     <div class="lvc">${ALPHA_GROUPS.map(([n, l]) => `<button class="chip lvb" data-lv="${lv}" data-l="${l}">${n}</button>`).join('')}</div></section>`;
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home lvmain"><h1>${lower ? '소문자' : '대문자'} 공부</h1>
+    <main class="home lvmain"><div class="crumb">🔤 알파벳</div><h1>어떤 공부를 할까요?</h1>
       ${row(1, '1단계 · 보고 듣기', '그림을 보고 소리를 들어요', '#ffe3c2')}
       ${row(2, '2단계 · 듣고 맞히기', '소리만 듣고 찾아요', '#d9ecff')}</main>`;
   this.root.querySelector('#back').onclick = () => this.alphaMenu();

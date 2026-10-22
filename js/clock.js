@@ -3,7 +3,7 @@ const HOUR_C = '#ff4d6d', MIN_C = '#2f80ed';
 App.clockMenu = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><h1>어떤 공부를 할까요?</h1>
+    <main class="home"><div class="crumb">🕒 시계</div><h1>어떤 공부를 할까요?</h1>
       <div class="cards">
         <button class="card al" data-k="hour" style="background:#ffb3c1"><b>🕒</b><span>시</span></button>
         <button class="card al" data-k="min" style="background:#a8d0ff"><b>🕧</b><span>분</span></button>

@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v114</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v119</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -37,7 +37,7 @@ const App = {
     return { label: `${total}개 중 <b>${good}</b>개 맞았어요`, say: good === total ? ['모두 맞았어요! 최고예요!', 'al_res_all'] : good === 0 ? ['괜찮아요, 다시 한번 해 볼까요?', '_res_0'] : [`${KCNT[good]} 개 맞았어요!`, 'al_res_' + good] };
   },
   // 푼 기록 범위: all=모든 공부 / 나머지는 해당 공부만
-  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
+  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3', 'ra1', 'ra2', 'ra3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
   solvedCount(scope = 'all') {
     const p = this.prof(), d = p.done || {}; let n = 0;
     if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length + (p.solved3 || []).length;
@@ -76,13 +76,13 @@ const App = {
     this.root.querySelector('#who').onclick = () => this.profiles();
     this.root.querySelector('#clr').onclick = () => this.clearSolved();
     this.root.querySelectorAll('.card').forEach(b => b.onclick = () => {
-      if (b.dataset.k === 'rd') this.speakMenu(); else if (b.dataset.k === 'ko') this.hangulLevelMenu(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaMenu();
+      if (b.dataset.k === 'rd') this.speakHome(); else if (b.dataset.k === 'ko') this.hangulLevelMenu(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaMenu();
     });
   },
   numberMenu() {
     Speech.stop();
     this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-      <main class="home"><h1>어떤 공부를 할까요?</h1>
+      <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 공부를 할까요?</h1>
         <div class="cards">
           <button class="card nm" data-k="add" style="background:#ffb199"><b>＋</b><span>더하기</span></button>
           <button class="card nm" data-k="sub" style="background:#ffd166"><b>－</b><span>빼기</span></button>
@@ -114,7 +114,7 @@ const App = {
   hangulLevelMenu() {
     Speech.stop();
     this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-      <main class="home"><h1>어떤 난이도로 할까요?</h1>
+      <main class="home"><div class="crumb">📖 한글</div><h1>어떤 난이도로 할까요?</h1>
         <div class="cards">
           <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>글자 고르기</span></button>
           <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>자음·모음 누르기</span></button>
@@ -128,7 +128,7 @@ const App = {
     const tot = Words.list.length;
     const card = (k, big, sub, n, i) => `<button class="card vw${n ? '' : ' off'}" data-v="${k}" style="background:hsl(${i * 48 + 8} 85% 80%)"><b>${big}</b><span>${sub}${n ? ' · ' + n + '개' : ' · 비어있음'}</span></button>`;
     this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="clr">🔄 푼 기록 지우기</button></span></header>
-      <main class="home"><h1>어떤 모음을 배울까요?</h1>
+      <main class="home"><div class="crumb">📖 한글</div><h1>어떤 모음을 배울까요?</h1>
         <div class="cards">${VOWELS.map((x, i) => card(x.v, x.v, x.ex, Words.count(x.v), i)).join('')}${card('all', '전체', '모두 섞어서', tot, 6)}</div>
 </main>`;
     this.root.querySelector('#back').onclick = () => this.hangulLevelMenu();

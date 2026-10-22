@@ -1,24 +1,24 @@
 // 놀이 : 다른 그림 찾기 / 어울리는 그림 찾기 / 숨은 그림 찾기  (각 쉬움·보통·어려움)
 App.oddMenu = function () {
-  this.cardMenu('다른 그림 찾기', [
+  this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🍎🍎🍅', bs: 'font-size:1.8rem', t: '쉬움', bg: '#8ddc9b', go: () => this.oddGame(1) },
     { b: '🐶🐶🐶🐶', bs: 'font-size:1.4rem', t: '보통', bg: '#6ec6ff', go: () => this.oddGame(2) },
     { b: '🐜🐜🐜🐜🐜🐜', bs: 'font-size:1.15rem', t: '어려움', bg: '#ff9aa8', go: () => this.oddGame(3) },
-  ], () => this.playMenu(), 'play');
+  ], () => this.playMenu(), 'play', '🧩 놀이');
 };
 App.mateMenu = function () {
-  this.cardMenu('어울리는 그림 찾기', [
+  this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🐶🦴', bs: 'font-size:2.2rem', t: '쉬움 · 보기 4개', bg: '#8ddc9b', go: () => this.mateGame(1) },
     { b: '🐰🧦🔑', bs: 'font-size:1.6rem', t: '보통 · 3쌍 짝짓기', bg: '#6ec6ff', go: () => this.mateGame(2) },
     { b: '🧠', bs: 'font-size:2.4rem', t: '어려움 · 기억하기', bg: '#ff9aa8', go: () => this.mateGame(3) },
-  ], () => this.playMenu(), 'play');
+  ], () => this.playMenu(), 'play', '🧩 놀이');
 };
 App.hideMenu = function () {
-  this.cardMenu('숨은 그림 찾기', [
+  this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🔎', t: '쉬움 · 2개', bg: '#8ddc9b', go: () => this.hideGame(1) },
     { b: '🔎🔎', bs: 'font-size:2.4rem', t: '보통 · 3개', bg: '#6ec6ff', go: () => this.hideGame(2) },
     { b: '🔎🔎🔎', bs: 'font-size:1.9rem', t: '어려움 · 5개', bg: '#ff9aa8', go: () => this.hideGame(3) },
-  ], () => this.playMenu(), 'play');
+  ], () => this.playMenu(), 'play', '🧩 놀이');
 };
 
 /* ---------- 다른 그림 찾기 ---------- */
