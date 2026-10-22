@@ -60,7 +60,7 @@ App.fruitGame = function (level, good, bad) {
     return true;
   };
   const NL = 6; let laneBag = [], typeBag = [], lastLane = -1;   // 가로 칸과 종류를 섞은 주머니에서 뽑아 골고루 퍼지게 함
-  const nextType = () => { if (!typeBag.length) typeBag = bad.length ? [0, 0, 0, 0, 1].sort(() => Math.random() - .5) : [0]; return typeBag.pop() === 1; };
+  const nextType = () => { if (!typeBag.length) typeBag = bad.length ? (Math.random() < .5 ? [0, 0, 0, 0, 1] : [0, 0, 0, 1, 1]).sort(() => Math.random() - .5) : [0]; return typeBag.pop() === 1; };
   const nextLanes = () => { const l = Array.from({ length: NL }, (_, i) => i).sort(() => Math.random() - .5); if (l[0] === lastLane) l.push(l.shift()); return l; };
   const spawn = t => {
     let isBad = nextType(); if (isBad && t < 2) isBad = false;   // 처음 2초는 받을 과일만
