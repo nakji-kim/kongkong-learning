@@ -157,13 +157,30 @@ App.mateGame = function (level) {
 };
 
 /* ---------- 숨은 그림 찾기 ---------- */
+// 숨은 그림 찾기: 한 문제에서 5번 틀리면 그림 밑에 "정답 보기" 버튼이 뾰로롱 나타남
+const HS_ASSIST_MISS = 5;
+function hsAssist(main) {
+  let n = 0, btn = null;
+  return {
+    reset() { n = 0; if (btn) { btn.remove(); btn = null; } },
+    miss(onShow) {
+      if (++n !== HS_ASSIST_MISS || btn) return;
+      btn = document.createElement('button'); btn.className = 'chip big hshow'; btn.textContent = '👀 정답 보기'; main.appendChild(btn);
+      try { _sfx.init(); [784, 988, 1319, 1760].forEach((f, i) => setTimeout(() => _sfx.tone(f, f * 1.03, 0.16, 'sine', 0.45), i * 80)); } catch (e) { }
+      const r = btn.getBoundingClientRect();
+      for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; e.textContent = ['⭐', '✨'][i % 2]; e.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 50 - 25)}vmin;--y:${Math.round(Math.random() * 30 - 20)}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1300); }
+      btn.onclick = () => { btn.disabled = true; btn.style.visibility = 'hidden'; onShow(); };
+    }
+  };
+}
 App.hideGameEmoji = function (level) {
   const root = this.root, T = [2, 3, 5][level - 1], CL = [8, 16, 28][level - 1], SZ = [21, 16.5, 13.5][level - 1];
   const scenes = _shuf(HIDE_SCENES).slice(0, 5);
-  let si = 0, miss = 0, found, locked = true;
+  let si = 0, miss = 0, found, locked = true, gone = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🔎 0/5</span></header>
     <main class="game mg hide"><div class="hbar" id="hbar"></div><div class="hbox" id="hbox"></div></main>`;
-  root.querySelector('#back').onclick = () => { Speech.stop(); App.hideMenu(); };
+  const assist = hsAssist(root.querySelector('main'));
+  root.querySelector('#back').onclick = () => { gone = true; Speech.stop(); App.hideMenu(); };
   const say = (k, done) => Speech.play(PBYK[k].ko, done, 'p_it_' + k);
   function place(n, size, avoid, gap) {   // 겹치지 않게 무작위 위치 (실패하면 그냥 둠)
     const out = [];
@@ -181,7 +198,7 @@ App.hideGameEmoji = function (level) {
   }
   function start() {
     const sc = scenes[si], box = root.querySelector('#hbox'), bar = root.querySelector('#hbar');
-    root.querySelector('#stars').textContent = `🔎 ${si}/5`; found = 0; locked = true;
+    assist.reset(); root.querySelector('#stars').textContent = `🔎 ${si}/5`; found = 0; locked = true;
     const tk = _shuf(sc.targets).slice(0, T);
     const tp = place(T, SZ, [], 1).map(o => ({ ...o, t: 1 })), cp = place(CL, SZ * 0.92, tp, 0.62);
     box.style.background = sc.bg;
@@ -209,6 +226,10 @@ App.hideGameEmoji = function (level) {
       } else if (!t) {
         miss++; const r = box.getBoundingClientRect(); const w = document.createElement('i'); w.className = 'hmiss'; w.style.left = (e.clientX - r.left) + 'px'; w.style.top = (e.clientY - r.top) + 'px'; box.appendChild(w); setTimeout(() => w.remove(), 600);
         const now = Date.now(); if (!start.last || now - start.last > 4000) { start.last = now; Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2'); }
+        assist.miss(() => {   // 정답을 두근두근 보여 주고 2초 뒤 다음 문제
+          locked = true; Speech.stop(); box.querySelectorAll('.ht:not(.got)').forEach(t => t.classList.add('hhint'));
+          setTimeout(() => { if (gone) return; si++; if (si >= 5) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 2000);
+        });
       }
     };
     locked = false;
@@ -224,11 +245,12 @@ App.hideSceneGame = function (level) {
   let si = 0, miss = 0, found = 0, locked = true, gone = false, items = [], lastMsg = 0;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🔎 0/${ROUNDS}</span></header>
     <main class="game mg hide"><div class="hs2" id="hs2"></div><div class="hbar" id="hbar"></div></main>`;
+  const assist = hsAssist(root.querySelector('main'));
   root.querySelector('#back').onclick = () => { gone = true; Speech.stop(); App.hideMenu(); };
   const spark = (x, y) => { for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; e.textContent = ['⭐', '✨'][i % 2]; e.style.cssText = `position:fixed;left:${x}px;top:${y}px;--x:${Math.random() * 30 - 15}vmin;--y:${Math.random() * 30 - 15}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1400); } };
   function start() {
     const sc = scenes[si], box = root.querySelector('#hs2'), bar = root.querySelector('#hbar');
-    root.querySelector('#stars').textContent = `🔎 ${si}/${ROUNDS}`; found = 0; locked = false;
+    assist.reset(); root.querySelector('#stars').textContent = `🔎 ${si}/${ROUNDS}`; found = 0; locked = false;
     const hard = level === 3, hrot = _shuf(HS_HARD_ROT);
     items = (N === 5 ? sc.items.slice() : _shuf(sc.items).slice(0, N)).map((it, n) => { const hc = hard && HS_HARD[sc.id] && HS_HARD[sc.id][it[0]]; return { k: it[0], x: it[1], y: it[2], s: it[3], hs: hard ? it[3] * 0.7 : it[3], r: hard ? hrot[n % 5][0] : it[4], fl: hard ? hrot[n % 5][1] : 0, f: hc ? hc[0] : it[5], st: hc ? hc[1] : it[6], got: false }; });
     const g = it => `<g transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${it.fl ? -it.hs / 100 : it.hs / 100} ${it.hs / 100}) translate(-50 -50)">${hsShape(it.k, it.f, hard ? _mix(it.f, it.st, 0.4) : it.st, (hard ? 1.5 : 2.4) / (it.hs / 100))}</g>`;
@@ -258,6 +280,11 @@ App.hideSceneGame = function (level) {
       } else {
         miss++; const rr = box.getBoundingClientRect(), w = document.createElement('i'); w.className = 'hmiss'; w.style.left = (e.clientX - rr.left) + 'px'; w.style.top = (e.clientY - rr.top) + 'px'; box.appendChild(w); setTimeout(() => w.remove(), 600);
         const now = Date.now(); if (now - lastMsg > 4000) { lastMsg = now; Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2'); }
+        assist.miss(() => {   // 안 찾은 그림에 두근두근 표시 후 2초 뒤 다음 문제
+          locked = true; Speech.stop();
+          box.querySelector('#rings').insertAdjacentHTML('beforeend', items.filter(it => !it.got).map(it => `<circle class="hhint" cx="${it.x}" cy="${it.y}" r="${it.s * 0.6 + 6}"/>`).join(''));
+          setTimeout(() => { if (gone) return; si++; if (si >= ROUNDS) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 2000);
+        });
       }
     };
   }

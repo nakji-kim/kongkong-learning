@@ -300,3 +300,11 @@ img.sil{filter:brightness(0) opacity(.82)}
 .wdone{background:#ff8fab!important}
 .wbt .chip{color:#3b2f4a!important;margin-top:0}.wbt .wdone{background:#ff8fab!important}
 .wpic{display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:4px solid #3b2f4a;border-radius:20px;padding:6px 18px;box-shadow:0 5px 0 rgba(0,0,0,.15)}.wpic img{height:min(18vh,120px);width:auto;max-width:60vw;object-fit:contain}.wpic .kcap{font-size:1.7rem}
+
+.hshow{margin-top:14px;background:#ff8fb6!important;color:#fff!important;font-size:1.4rem;text-shadow:0 1px 2px rgba(0,0,0,.3);animation:hpop .7s cubic-bezier(.3,1.6,.5,1) both,hshine 1.2s .7s ease-in-out infinite alternate}
+@keyframes hpop{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.3) rotate(8deg);opacity:1}80%{transform:scale(.92) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes hshine{to{box-shadow:0 0 0 8px rgba(255,92,138,.35),0 0 22px 6px rgba(255,209,102,.9)}}
+.ht.hhint{animation:hbeat .55s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px #ffd166) drop-shadow(0 0 3px #ff5c8a);z-index:5}
+@keyframes hbeat{from{scale:.92}to{scale:1.22}}
+circle.hhint{fill:rgba(255,241,168,.5);stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;transform-origin:center;animation:hbeatc .55s ease-in-out infinite alternate;filter:drop-shadow(0 0 5px #ffd166)}
+@keyframes hbeatc{from{transform:scale(.85)}to{transform:scale(1.2)}}
