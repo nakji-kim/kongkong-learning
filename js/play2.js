@@ -1,9 +1,9 @@
 // 놀이 : 다른 그림 찾기 / 어울리는 그림 찾기 / 숨은 그림 찾기  (각 쉬움·보통·어려움)
 App.oddMenu = function () {
   this.cardMenu('다른 그림 찾기', [
-    { b: '🍎🍎🍎🍌', bs: 'font-size:1.8rem', t: '쉬움', bg: '#8ddc9b', go: () => this.oddGame(1) },
-    { b: '🍎🍎🍎🍎🍎🍌', bs: 'font-size:1.3rem', t: '보통', bg: '#6ec6ff', go: () => this.oddGame(2) },
-    { b: '🍎🍎🍎🍎🍅', bs: 'font-size:1.6rem', t: '어려움', bg: '#ff9aa8', go: () => this.oddGame(3) },
+    { b: '🍎🍎🍅', bs: 'font-size:1.8rem', t: '쉬움', bg: '#8ddc9b', go: () => this.oddGame(1) },
+    { b: '🐶🐶🐶🐶', bs: 'font-size:1.4rem', t: '보통', bg: '#6ec6ff', go: () => this.oddGame(2) },
+    { b: '🐜🐜🐜🐜🐜🐜', bs: 'font-size:1.15rem', t: '어려움', bg: '#ff9aa8', go: () => this.oddGame(3) },
   ], () => this.playMenu(), 'play');
 };
 App.mateMenu = function () {
@@ -23,18 +23,23 @@ App.hideMenu = function () {
 
 /* ---------- 다른 그림 찾기 ---------- */
 App.oddGame = function (level) {
-  const N = [4, 6, 9][level - 1], cols = [2, 3, 3][level - 1], ids = [];
-  const grp = k => Object.keys(ODD_GROUPS).find(g => ODD_GROUPS[g].includes(k));
-  if (level === 3) ODD_LOOK.forEach(([a, b]) => { ids.push(a + '>' + b, b + '>' + a); });
-  else Object.entries(ODD_GROUPS).forEach(([g, list]) => list.forEach(base => {
-    Object.entries(ODD_GROUPS).forEach(([g2, list2]) => list2.forEach(odd => { if (odd !== base && (level === 1 ? g2 !== g : g2 === g)) ids.push(base + '>' + odd); }));
-  }));
+  // 쉬움: 비슷하게 생긴 그림 9장 중 다른 그림 · 보통/어려움: 같은 그림 4/6장 중 모양이 살짝 다른 1장
+  const N = [9, 4, 6][level - 1], cols = [3, 2, 3][level - 1], ids = [];
+  if (level === 1) ODD_LOOK.forEach(([a, b]) => { ids.push(a + '>' + b, b + '>' + a); });
+  else Object.entries(ODD2).forEach(([k, o]) => o['lv' + level].forEach(d => ids.push(k + ':' + d)));
   const make = () => {
-    const pid = App.pickNew('odd' + level, ids, { random: true }), [base, odd] = pid.split('>');
-    const cells = _shuf([...Array(N - 1).fill(base), odd]), ans = cells.indexOf(odd);
+    const pid = App.pickNew('odd' + level, ids, { random: true });
+    if (level === 1) {
+      const [base, odd] = pid.split('>'), cells = _shuf([...Array(N - 1).fill(base), odd]), ans = cells.indexOf(odd);
+      return {
+        key: 'od1:' + odd, done: ['odd1', pid], answer: String(ans), q: _line('p_q_odd'), once: true, stage: '', a: [],
+        choices: cells.map((k, i) => ({ id: String(i), cls: 'pimg', html: pimg(PBYK[k].code) })),
+      };
+    }
+    const [k, d] = pid.split(':'), cells = _shuf([...Array(N - 1).fill(null), d]), ans = cells.indexOf(d);
     return {
-      key: 'od' + level + ':' + odd, done: ['odd' + level, pid], answer: String(ans), q: _line('p_q_odd'), once: true, stage: '',
-      choices: cells.map((k, i) => ({ id: String(i), cls: 'pimg', html: pimg(PBYK[k].code) })), a: [_line('p_it_' + odd)],
+      key: 'od' + level + ':' + pid, done: ['odd' + level, pid], answer: String(ans), q: _line('p_q_odd'), once: true, stage: '', a: [],
+      choices: cells.map((x, i) => ({ id: String(i), cls: 'pimg', html: ODD2[k].draw(x) })),
     };
   };
   this.quiz(make, () => App.oddGame(level), () => App.oddMenu(), 'odd g' + cols);

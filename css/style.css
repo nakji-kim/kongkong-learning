@@ -215,3 +215,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 @keyframes hm{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
 
 .ver{position:fixed;right:10px;bottom:6px;font-size:.75rem;opacity:.45;pointer-events:none}
+.cb.pimg svg{position:absolute;left:7%;top:7%;width:86%;height:86%;pointer-events:none}
