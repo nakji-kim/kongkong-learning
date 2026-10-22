@@ -1,3 +1,93 @@
+// 어려움: 숨은 그림 윤곽 대비를 낮추고(색 섞기), 찾는 그림이 아닌 가짜 모양도 몰래 섞어 둠
+const _mix = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const A = p(a), B = p(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+// 어려움 가짜 모양: 비슷한 생김새끼리 묶음 (정답 모양과 같은 묶음은 가짜로 쓰지 않음)
+const HS_SIM = [['apple', 'heart', 'cloud', 'snail'], ['fish', 'bird', 'duck', 'butterfly'], ['cat'], ['umbrella', 'mushroom', 'bell'], ['cup'], ['house', 'hat', 'icecream'], ['car'], ['leaf', 'banana', 'carrot', 'pencil', 'sock'], ['key'], ['star']];
+const HS_DECOYS = 4;
+
+// 숨은 그림 찾기 보통/어려움: 배경에 잡다한 사물을 더 깔아서 헷갈리게 함 (장면 분위기별 사물 모음)
+const HS_THEME = { house: 'land', sea: 'water', forest: 'land', class: 'indoor', park: 'land', farm: 'land', market: 'indoor', kitchen: 'indoor', living: 'indoor', snow: 'snow', space: 'space', aqua: 'water', dino: 'land', camp: 'land', street: 'land' };
+const _pk = a => a[Math.floor(Math.random() * a.length)];
+const HS_CLUT = {
+  land: [
+    () => `<line y2="18" stroke="#4a9a45" stroke-width="3"/><circle cy="-2" r="7" fill="${_pk(['#ff8fb6', '#fff', '#ffd84a', '#b78cf0'])}"/><circle cy="-2" r="3" fill="#ffe27a"/>`,
+    () => `<ellipse cx="-8" cy="4" rx="12" ry="9" fill="#5fb85a"/><ellipse cx="8" cy="4" rx="12" ry="9" fill="#4ea34c"/><ellipse cy="-2" rx="11" ry="9" fill="#6ccb63"/>`,
+    () => `<path d="M-16 10L-10-6L4-10L16-2L14 10z" fill="#a8a8a8" stroke="#8a8a8a" stroke-width="2"/>`,
+    () => `<rect x="-3" y="2" width="6" height="16" fill="#8c5e3a"/><circle cy="-6" r="14" fill="#5fb85a"/><circle cx="8" cy="-2" r="9" fill="#4ea34c"/>`,
+    () => `<g fill="#c9a064"><rect x="-16" y="-8" width="5" height="22"/><rect x="-3" y="-8" width="5" height="22"/><rect x="10" y="-8" width="5" height="22"/><rect x="-18" y="-2" width="36" height="4"/><rect x="-18" y="6" width="36" height="4"/></g>`,
+    () => `<rect x="-2" y="-4" width="4" height="22" fill="#8c5e3a"/><rect x="-14" y="-14" width="28" height="12" rx="2" fill="#e8c872" stroke="#8c5e3a" stroke-width="2"/>`,
+    () => `<path d="M0-16L12-2 0 12-12-2z" fill="${_pk(['#ff8fb6', '#7fc8ff', '#ffd84a'])}"/><path d="M0 12Q-6 20 0 26" stroke="#888" fill="none" stroke-width="2"/>`,
+    () => `<rect x="-12" y="-4" width="24" height="16" rx="2" fill="#d98a5a" stroke="#a8603a" stroke-width="2"/><path d="M-14-4Q0-16 14-4z" fill="#c4704a"/>`,
+  ],
+  water: [
+    () => `<g fill="none" stroke="#fff" stroke-width="2" opacity=".9"><circle cx="-8" cy="6" r="5"/><circle cx="6" cy="-2" r="7"/><circle cx="10" cy="14" r="3"/></g>`,
+    () => `<path d="M-6 18Q-14 6-6 -2T-6-18M6 18Q14 6 6-2T6-18" stroke="#3fa86a" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    () => `<path d="M0 18V0M0 8L-10-4M0 4L10-8M-10-4L-12-12M10-8L12-16" stroke="${_pk(['#ff8a6a', '#e86aa0'])}" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    () => `<g fill="#cfc2a8" stroke="#a89878" stroke-width="1.5"><ellipse cx="-8" cy="6" rx="8" ry="5"/><ellipse cx="8" cy="8" rx="7" ry="4.5"/><ellipse cx="0" cy="-2" rx="6" ry="4"/></g>`,
+    () => `<path d="M-14 10Q-14-12 0-12Q14-12 14 10z" fill="#ffd1a8" stroke="#e8a878" stroke-width="2"/><path d="M0 10V-10M-7 10L-8-8M7 10L8-8" stroke="#e8a878" stroke-width="1.5"/>`,
+    () => `<rect x="-12" y="-2" width="24" height="16" rx="3" fill="#caa56a" stroke="#8c6a3a" stroke-width="2"/><rect x="-12" y="-8" width="24" height="8" rx="3" fill="#b98a4a" stroke="#8c6a3a" stroke-width="2"/>`,
+  ],
+  space: [
+    () => `<circle r="11" fill="${_pk(['#f0a878', '#8fc8f0', '#c8a0f0'])}"/><ellipse rx="19" ry="5" fill="none" stroke="#fff" stroke-width="2" transform="rotate(-20)"/>`,
+    () => `<path d="M-12 4L-8-8L4-10L12-2L8 10L-4 12z" fill="#9a9aa8" stroke="#7a7a88" stroke-width="2"/><circle cx="-2" cy="0" r="2.5" fill="#7a7a88"/>`,
+    () => `<circle r="6" fill="#fff"/><path d="M6-3L26-10M6 0L28 0M6 3L26 10" stroke="#fff" stroke-width="2" opacity=".6"/>`,
+    () => `<rect x="-5" y="-5" width="10" height="10" fill="#c8c8d8" stroke="#8a8aa0" stroke-width="2"/><rect x="-22" y="-4" width="14" height="8" fill="#5a8ae8"/><rect x="8" y="-4" width="14" height="8" fill="#5a8ae8"/>`,
+    () => `<ellipse rx="15" ry="5" cy="4" fill="#a8b0c8"/><path d="M-8 2Q0-14 8 2z" fill="#d8e8ff"/>`,
+    () => `<circle r="9" fill="#e8c8a0"/><circle cx="-3" cy="-2" r="2" fill="#c8a070"/><circle cx="4" cy="3" r="3" fill="#c8a070"/>`,
+  ],
+  snow: [
+    () => `<ellipse cy="8" rx="20" ry="9" fill="#fff" stroke="#cfe2f0" stroke-width="2"/>`,
+    () => `<path d="M0-18L10-4H-10zM0-8L13 8H-13z" fill="#4a9a6a"/><rect x="-2" y="8" width="4" height="8" fill="#8c5e3a"/><path d="M0-18L6-10H-6z" fill="#fff"/>`,
+    () => `<g stroke="#bfe0f5" stroke-width="2.5" stroke-linecap="round"><path d="M0-12V12M-11-6L11 6M-11 6L11-6"/></g>`,
+    () => `<circle cy="8" r="10" fill="#fff" stroke="#cfe2f0" stroke-width="2"/><circle cy="-6" r="7" fill="#fff" stroke="#cfe2f0" stroke-width="2"/><circle cx="-2" cy="-7" r="1" fill="#333"/><circle cx="2" cy="-7" r="1" fill="#333"/>`,
+    () => `<path d="M-12-6H12L6 4 2-8-2 6-6 2z" fill="#cfeaff" stroke="#9fcbe8" stroke-width="1.5"/>`,
+    () => `<rect x="-12" y="-2" width="24" height="14" rx="3" fill="#e8756a"/><rect x="-14" y="-6" width="28" height="6" rx="3" fill="#fff" stroke="#cfe2f0" stroke-width="1.5"/>`,
+  ],
+  indoor: [
+    () => `<g stroke="#00000030" stroke-width="1.5"><rect x="-14" y="2" width="28" height="7" fill="${_pk(['#e8756a', '#6aa8e8'])}"/><rect x="-12" y="-5" width="24" height="7" fill="${_pk(['#ffd84a', '#7fc261'])}"/></g>`,
+    () => `<rect x="-14" y="-12" width="28" height="22" rx="2" fill="#c9a064" stroke="#8c6a3a" stroke-width="2"/><rect x="-10" y="-8" width="20" height="14" fill="${_pk(['#bfe6ff', '#d8f0c0', '#ffe3c2'])}"/>`,
+    () => `<path d="M-8 6H8L6 18H-6z" fill="#c4704a"/><path d="M0 6Q-14-6-8-14M0 6Q14-6 8-14M0 6V-12" stroke="#4a9a45" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    () => `<rect x="-12" y="-8" width="24" height="20" fill="#d9a870" stroke="#a87840" stroke-width="2"/><path d="M-12-2H12" stroke="#a87840" stroke-width="2"/>`,
+    () => `<circle r="13" fill="#fff" stroke="#3b2f4a" stroke-width="2.5"/><path d="M0-8V0L6 4" stroke="#3b2f4a" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+    () => `<path d="M-8-10H8L14 8H-14z" fill="#ffd84a" stroke="#d9b030" stroke-width="2"/><rect x="-2" y="8" width="4" height="10" fill="#8a8a8a"/>`,
+  ]
+};
+const HS_ZONE = { land: 'ggggggsg', water: 'aaaaaa', space: 'aaaaaa', snow: 'ggagag', indoor: 'gwggwg' };   // g=바닥쪽 · s=하늘쪽 · w=벽쪽 · a=어디든
+function hsClutter(sc, items, n) {   // 정답 그림 뒤쪽에 사물 n개를 흩뿌림 (겹쳐도 됨)
+  const th = HS_THEME[sc.id] || 'land', list = HS_CLUT[th], zone = HS_ZONE[th], pts = [], out = [];
+  for (let i = 0; i < n; i++) {
+    const zi = Math.floor(Math.random() * list.length), z = zone[zi];
+    for (let t = 0; t < 40; t++) {
+      const px = 22 + Math.random() * 356, py = z === 'g' ? 150 + Math.random() * 126 : z === 's' ? 22 + Math.random() * 110 : z === 'w' ? 30 + Math.random() * 130 : 22 + Math.random() * 256;
+      if (items.some(it => Math.hypot(it.x - px, it.y - py) < 34) || pts.some(p => Math.hypot(p[0] - px, p[1] - py) < 36)) continue;
+      pts.push([px, py]); out.push(`<g transform="translate(${px.toFixed(1)} ${py.toFixed(1)}) rotate(${Math.round(Math.random() * 30 - 15)}) scale(${(0.85 + Math.random() * 0.6).toFixed(2)})">${list[zi]()}</g>`); break;
+    }
+  }
+  return out.join('');
+}
+function addDecoys(sc, items, box, hrot) {   // 배경 색을 읽어서 같은 색으로 가짜 모양을 몰래 깔아 둠 (눌러도 틀린 것으로 처리)
+  const tgt = new Set(HS_SIM.filter(g => items.some(it => g.includes(it.k))).flat());
+  const pool = _shuf(Object.keys(HS_SHAPES).filter(k => !tgt.has(k))).slice(0, HS_DECOYS);
+  if (!pool.length) return;
+  const img = new Image(), key = sc.id + Math.random();
+  box.dataset.dk = key;
+  img.onload = () => {
+    if (box.dataset.dk !== key) return;
+    const c = document.createElement('canvas'); c.width = 400; c.height = 300; const x = c.getContext('2d'); x.drawImage(img, 0, 0, 400, 300);
+    const col = (px, py) => { let r = 0, g = 0, b = 0, n = 0; for (let dx = -4; dx <= 4; dx += 4) for (let dy = -4; dy <= 4; dy += 4) { const d = x.getImageData(Math.max(0, Math.min(399, px + dx)), Math.max(0, Math.min(299, py + dy)), 1, 1).data; r += d[0]; g += d[1]; b += d[2]; n++; } return '#' + [r, g, b].map(v => Math.round(v / n).toString(16).padStart(2, '0')).join(''); };
+    const avg = items.reduce((t, it) => t + it.hs, 0) / items.length, pts = items.map(it => [it.x, it.y]), out = [];
+    pool.forEach((k, n) => {
+      for (let t = 0; t < 80; t++) {
+        const px = 34 + Math.random() * 332, py = 34 + Math.random() * 232;
+        if (pts.some(p => Math.hypot(p[0] - px, p[1] - py) < 62)) continue;
+        pts.push([px, py]); const f = col(Math.round(px), Math.round(py)), r = hrot[n % 5];
+        out.push(`<g transform="translate(${px} ${py}) rotate(${r[0]}) scale(${r[1] ? -avg / 100 : avg / 100} ${avg / 100}) translate(-50 -50)">${hsShape(k, f, _mix(f, '#000000', 0.07), 1.5 / (avg / 100))}</g>`);
+        break;
+      }
+    });
+    const g = box.querySelector('#dcy'); if (g) g.innerHTML = out.join('');
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">${sc.bg}</svg>`);
+}
 // 놀이 : 다른 그림 찾기 / 어울리는 그림 찾기 / 숨은 그림 찾기  (각 쉬움·보통·어려움)
 App.oddMenu = function () {
   this.cardMenu('어떤 난이도로 할까요?', [
@@ -141,8 +231,9 @@ App.hideSceneGame = function (level) {
     root.querySelector('#stars').textContent = `🔎 ${si}/${ROUNDS}`; found = 0; locked = false;
     const hard = level === 3, hrot = _shuf(HS_HARD_ROT);
     items = (N === 5 ? sc.items.slice() : _shuf(sc.items).slice(0, N)).map((it, n) => { const hc = hard && HS_HARD[sc.id] && HS_HARD[sc.id][it[0]]; return { k: it[0], x: it[1], y: it[2], s: it[3], hs: hard ? it[3] * 0.7 : it[3], r: hard ? hrot[n % 5][0] : it[4], fl: hard ? hrot[n % 5][1] : 0, f: hc ? hc[0] : it[5], st: hc ? hc[1] : it[6], got: false }; });
-    const g = it => `<g transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${it.fl ? -it.hs / 100 : it.hs / 100} ${it.hs / 100}) translate(-50 -50)">${hsShape(it.k, it.f, it.st, 2.4 / (it.hs / 100))}</g>`;
-    box.innerHTML = `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">${sc.bg}${items.map(g).join('')}<g id="rings"></g></svg>`;
+    const g = it => `<g transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${it.fl ? -it.hs / 100 : it.hs / 100} ${it.hs / 100}) translate(-50 -50)">${hsShape(it.k, it.f, hard ? _mix(it.f, it.st, 0.4) : it.st, (hard ? 1.5 : 2.4) / (it.hs / 100))}</g>`;
+    box.innerHTML = `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">${sc.bg}<g id="cl">${hsClutter(sc, items, hard ? 12 : 8)}</g><g id="dcy"></g>${items.map(g).join('')}<g id="rings"></g></svg>`;
+    if (hard) addDecoys(sc, items, box, hrot);
     Speech.stop(); Speech.play(PLAY_LINES.p_q_hide, null, 'p_q_hide');
     bar.innerHTML = items.map(it => `<span class="hb" data-k="${it.k}"><svg viewBox="0 0 100 100">${hsShape(it.k, '#fff', '#222', 3)}</svg><i>✔</i></span>`).join('');
     box.onclick = e => {
