@@ -59,4 +59,5 @@ const HIDE_SCENES = [
   { id: 'garden', bg: 'linear-gradient(#d8f4ff 0,#e9fbd4 35%,#a6e08c)', targets: ['butterfly', 'bird', 'snail', 'apple', 'strawberry', 'duck'], clutter: ['1f33c', '1f337', '1f33b', '1f33f', '1f340', '1f338', '1f343'] },
   { id: 'town', bg: 'linear-gradient(#bfe6ff 0,#e6f6ff 55%,#cfd6dc 55%,#b9c1c8)', targets: ['car', 'bus', 'train', 'plane', 'house', 'umbrella'], clutter: ['1f333', '2601', '1f3e2', '1f6a6', '1f333', '1f3e2'] },
   { id: 'forest', bg: 'linear-gradient(#dff6e0 0,#b8e0a0 55%,#9cc87c)', targets: ['bear', 'rabbit', 'dog', 'cat', 'bird', 'butterfly'], clutter: ['1f332', '1f344', '1f342', '1f330', '1f333', '1f33f', '1f341'] },
+  { id: 'zoo', bg: 'linear-gradient(#d8f4ff 0,#f1fbd9 45%,#b5e08f)', targets: ['elephant', 'giraffe', 'bear', 'turtle', 'rabbit', 'bird'], clutter: ['1f333', '1f33f', '1faa8', '1f33c', '1f332', '1f343'] },
 ];
