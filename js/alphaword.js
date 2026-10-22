@@ -73,7 +73,7 @@ App.alphaWordGame = function (level, letters) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); App.markDone(key, cur.L); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(key, cur.L); upd();
       b.classList.add('right'); root.querySelectorAll('#ch .cb').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) {
         const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal', 'cap');

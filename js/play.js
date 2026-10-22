@@ -68,7 +68,7 @@ App.quiz = function (make, again, back, extraCls = '') {
     if (locked || b.classList.contains('wrong')) return;
     const s = st(q.key);
     if (b.dataset.id === String(q.answer)) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (q.done) App.markDone(q.done[0], q.done[1]); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (q.done && tries === 0) App.markDone(q.done[0], q.done[1]); upd();
       b.classList.add('right'); root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));
       if (q.reveal) q.reveal(root, b);
       burst();

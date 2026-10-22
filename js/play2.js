@@ -213,7 +213,7 @@ App.mateSet = function (level) {
       const x = qs[selQ], c = choices[selC], qe = cards[selQ], ce = opts[selC];
       if (c.i === x.i) {
         qe.classList.remove('sel'); ce.classList.remove('sel'); qe.classList.remove('hid'); qe.classList.add('done'); ce.classList.add('done'); matched++;
-        App.markDone(key, String(x.i)); selQ = selC = null;
+        if (!bad[selQ]) App.markDone(key, String(x.i)); selQ = selC = null;
         const sp = document.createElement('i'); sp.className = 'spark'; sp.textContent = '✨'; qe.appendChild(sp); setTimeout(() => sp.remove(), 1200);
         if (matched === 3) { lock = true; const pi = Math.floor(Math.random() * 4); Speech.stop(); Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => later(next, 600), '_praise' + pi); }
       } else {

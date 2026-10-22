@@ -82,7 +82,7 @@ App.alphaGame = function (level, letters, lower = false) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); App.markDone(pre + level, cur.L); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(pre + level, cur.L); upd();
       b.classList.add('right'); root.querySelectorAll('.fl').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) { const bl = root.querySelector('.blank'); bl.textContent = show(cur.L); bl.classList.add('filled'); root.querySelector('#word').insertAdjacentHTML('beforeend', `<span class="aw">${cur.word}</span>`); }
       else { const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal'); pic.innerHTML = `<span class="big">${show(cur.L)}</span>`; }

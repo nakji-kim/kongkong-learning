@@ -74,7 +74,7 @@ App.hangul = function (mode, level = 1) {
       if (+b.dataset.i !== steps[n].right) return wrong(b);
       b.classList.add('right'); row.querySelectorAll('.jb').forEach(x => x !== b && x.classList.add('fade')); row.querySelectorAll('.hint').forEach(x => x.classList.remove('hint'));
       if (n < steps.length - 1) { step++; rows[step].classList.remove('off'); blank.textContent = steps[n].show(); blank.classList.add('part'); return; }
-      step = 99; locked = true; if (tries === 0) s0.ok++; { const key = w.w + (level === 3 ? c.syl : ''); if (!solvedList().includes(key)) solvedList().push(key); } App.save();
+      step = 99; locked = true; if (tries === 0) s0.ok++; if (tries === 0) { const key = w.w + (level === 3 ? c.syl : ''); if (!solvedList().includes(key)) solvedList().push(key); } App.save();
       blank.classList.remove('part'); blank.textContent = ans; blank.classList.add('filled');
       if (tries === 0) good++; upd(); burst();
       const pi = Math.floor(Math.random() * praise.length); Speech.stop();
@@ -87,7 +87,7 @@ App.hangul = function (mode, level = 1) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(ans);
     if (l === ans) {
-      locked = true; if (tries === 0) s.ok++; if (!solvedList().includes(w.w)) solvedList().push(w.w); App.save();
+      locked = true; if (tries === 0) s.ok++; if (tries === 0 && !solvedList().includes(w.w)) solvedList().push(w.w); App.save();
       b.classList.add('right');
       root.querySelectorAll('.blank').forEach(bl => { bl.textContent = ans; bl.classList.add('filled'); });
       root.querySelectorAll('.fl').forEach(x => x !== b && x.classList.add('fade'));

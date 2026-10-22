@@ -93,7 +93,7 @@ App.mathGame = function (mode, level = 'easy') {
     if (locked || b.classList.contains('wrong')) return;
     const n = +b.dataset.n, s = st(q.key);
     if (n === q.s) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); App.markDone(KEY, q.key); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(KEY, q.key); upd();
       b.classList.add('right');
       const bl = root.querySelector('#blank'); bl.textContent = q.s; bl.classList.add('filled');
       root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));

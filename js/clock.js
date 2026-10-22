@@ -71,7 +71,7 @@ App.clockGame = function (mode) {
     if (locked || b.classList.contains('wrong')) return;
     const n = isA ? b.dataset.n : +b.dataset.n, s = st((isA ? 'ca:' : isH ? 'ch:' : 'cm:') + v);
     if (n === v) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); App.markDone(isA ? 'ca' : isH ? 'ch' : 'cm', v); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(isA ? 'ca' : isH ? 'ch' : 'cm', v); upd();
       b.classList.add('right');
       const bl = root.querySelector('#blank'); bl.textContent = isA ? label(v) : v; bl.classList.add('filled');
       root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));
