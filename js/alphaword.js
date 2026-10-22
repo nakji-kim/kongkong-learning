@@ -28,7 +28,7 @@ App.alphaWordGame = function (level, letters) {
     img.onerror = () => { if (++k < list.length) img.src = list[k]; else img.replaceWith(Object.assign(document.createElement('span'), { className: 'emo', style: 'font-size:2rem;font-weight:800', textContent: a.word })); };
     img.src = list[0];
   };
-  const wordSound = (a, done) => Speech.play(a.word, done, 'enw_' + a.L, 'en-US');
+  const wordSound = (a, done) => Speech.play(a.word, done, a.snd || 'enw_' + a.L, 'en-US');
   const doneL = App.doneArr(key); let todo = pool.filter(a => !doneL.includes(a.L));
   if (!todo.length) { App.prof().done[key] = doneL.filter(l => !letters.includes(l)); App.save(); todo = pool.slice(); }
   const total = todo.length;
@@ -45,7 +45,7 @@ App.alphaWordGame = function (level, letters) {
 
   function next() {
     qn++; upd(); tries = 0; locked = true;
-    cur = NAMES[App.pickNew(key, pool.map(a => a.L), { random: true })];     // 무작위, 푼 글자는 건너뜀
+    cur = alphaVariant(NAMES[App.pickNew(key, pool.map(a => a.L), { random: true })]);     // 무작위, 푼 글자는 건너뜀
     const group = letters.filter(l => l !== cur.L), rest = Object.keys(NAMES).filter(l => l !== cur.L && !letters.includes(l));
     const decoys = []; const src = [...group];
     while (decoys.length < 3 && src.length) { const d = wpick(src, weight); decoys.push(d); src.splice(src.indexOf(d), 1); }
@@ -55,8 +55,9 @@ App.alphaWordGame = function (level, letters) {
     if (level === 1) {
       stage.innerHTML = `<button class="pic spk" id="pic" aria-label="소리 듣기"><span class="spkic">🔊</span></button>`;
       word.innerHTML = '<div class="wd ghost">&nbsp;</div>';
-      ch.innerHTML = opts.map(l => `<button class="cb pimg" data-l="${l}" aria-label="${NAMES[l].word}"><img alt=""></button>`).join('');
-      ch.querySelectorAll('.cb').forEach(b => wire(b.querySelector('img'), NAMES[b.dataset.l]));
+      const vm = Object.fromEntries(opts.map(l => [l, l === cur.L ? cur : alphaVariant(NAMES[l])]));   // 정답은 방금 고른 단어, 오답은 두 단어 중 무작위
+      ch.innerHTML = opts.map(l => `<button class="cb pimg" data-l="${l}" aria-label="${vm[l].word}"><img alt=""></button>`).join('');
+      ch.querySelectorAll('.cb').forEach(b => wire(b.querySelector('img'), vm[b.dataset.l]));
     } else {
       stage.innerHTML = `<button class="pic cap" id="pic" aria-label="${cur.word}"><img alt="${cur.word}"><span class="kcap">${cur.ko}</span></button>`;
       wire(stage.querySelector('img'), cur);
