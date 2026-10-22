@@ -290,3 +290,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 .sw .spic{display:block;width:min(52vw,13rem);height:min(40vw,10rem);object-fit:contain}
 .sw .kcap{font-size:clamp(2.2rem,8vw,3.4rem);margin-top:6px}
 .c-rd small{font-size:.82rem;word-break:keep-all;text-align:center;padding:0 6px}
+.sw{font-family:'Gothic A1','Noto Sans KR','Apple SD Gothic Neo',sans-serif!important;font-weight:800!important}
