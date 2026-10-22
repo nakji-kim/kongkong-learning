@@ -49,7 +49,7 @@ App.speakGame = function (level) {
   const next = () => {
     if (qn >= total) { stop(); return App.finishRound(good, total, () => App.speakGame(level), () => App.speakMenu()); }
     dbg.textContent = ''; cur = q[qn++]; tries = 0; busy = false; heard = false; upd();
-    const w = $('#sw'); w.textContent = cur; w.style.fontSize = level === 1 ? '10rem' : `min(7rem, ${Math.floor(88 / Math.max(cur.length, 3))}vw)`;
+    const w = $('#sw'); w.textContent = cur; w.style.fontSize = level === 1 ? '10rem' : `min(7rem, calc((100vw - 72px) / ${Math.max(cur.length, 3) + 1}))`;
     w.className = 'sw'; mic.className = 'mic'; msg.textContent = '🎤를 누르고 읽어 보세요';
   };
   const pass = ok => {   // ok=true: 맞게 읽음 / false: 두 번 해도 인식 안 됨 (그냥 넘어감)
