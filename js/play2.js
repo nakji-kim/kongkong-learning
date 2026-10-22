@@ -228,7 +228,7 @@ App.hideGameEmoji = function (level) {
         const now = Date.now(); if (!start.last || now - start.last > 4000) { start.last = now; Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2'); }
         assist.miss(() => {   // 정답을 두근두근 보여 주고 2초 뒤 다음 문제
           locked = true; Speech.stop(); box.querySelectorAll('.ht:not(.got)').forEach(t => t.classList.add('hhint'));
-          setTimeout(() => { if (gone) return; si++; if (si >= 5) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 2000);
+          setTimeout(() => { if (gone) return; si++; if (si >= 5) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 4000);
         });
       }
     };
@@ -283,7 +283,7 @@ App.hideSceneGame = function (level) {
         assist.miss(() => {   // 안 찾은 그림에 두근두근 표시 후 2초 뒤 다음 문제
           locked = true; Speech.stop();
           box.querySelector('#rings').insertAdjacentHTML('beforeend', items.filter(it => !it.got).map(it => `<circle class="hhint" cx="${it.x}" cy="${it.y}" r="${it.s * 0.6 + 6}"/>`).join(''));
-          setTimeout(() => { if (gone) return; si++; if (si >= ROUNDS) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 2000);
+          setTimeout(() => { if (gone) return; si++; if (si >= ROUNDS) { const stars = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(stars, 5, () => App.hideGame(level), () => App.hideMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) }); } else start(); }, 4000);
         });
       }
     };
