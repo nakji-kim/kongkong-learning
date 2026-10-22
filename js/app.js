@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v130</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v131</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -165,7 +165,7 @@ const App = {
   profiles() {
     const avatars = ['🐰','🐻','🐶','🐱','🐼','🦊','🐯','🐸'];
     const list = this.data.profiles.map(p => `<div class="prow"><button class="pbtn" data-id="${p.id}">${p.avatar}<span>${p.name}</span></button><button class="del" data-del="${p.id}" aria-label="삭제">✕</button></div>`).join('');
-    this.root.innerHTML = `<main class="home"><h1>누가 놀까요?</h1>
+    this.root.innerHTML = `<main class="home"><h1>누가 배우나요?</h1>
       <div class="plist">${list}</div>
       <div class="padd"><input id="nm" maxlength="8" placeholder="이름"><div class="avs">${avatars.map((a,i)=>`<button class="av${i?'':' on'}" data-a="${a}">${a}</button>`).join('')}</div><button class="chip big" id="add">+ 추가하기</button></div></main>`;
     let av = avatars[0];
