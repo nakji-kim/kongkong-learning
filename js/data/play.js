@@ -43,8 +43,8 @@ const MATCH_PAIRS = [
   ['cat', '1f431', '고양이', 'fish', '1f41f', '생선', 'A'], ['bear', '1f43b', '곰', 'honey', '1f36f', '꿀', 'A'], ['bee', '1f41d', '벌', 'flower', '1f33b', '꽃', 'A'],
   ['bird', '1f426', '새', 'nest', '1faba', '둥지', 'B'], ['hen', '1f414', '닭', 'egg', '1f95a', '달걀', 'B'], ['cow', '1f42e', '젖소', 'milk', '1f95b', '우유', 'B'], ['spider', '1f577', '거미', 'web', '1f578', '거미줄', 'B'],
   ['sock', '1f9e6', '양말', 'shoe', '1f45f', '신발', 'C'], ['key', '1f511', '열쇠', 'lock', '1f512', '자물쇠', 'C'], ['rain', '1f327', '비', 'umbrella', '2602', '우산', 'C'],
-  ['scissors', '2702', '가위', 'paper', '1f4c4', '종이', 'D'], ['colorpencil', 'svg:colorpencil', '색연필', 'sketchbook', 'svg:sketchbook', '스케치북', 'D'], ['mailbox', '1f4ee', '우체통', 'letter', '2709', '편지', 'D'], ['camera', '1f4f7', '카메라', 'photo', '1f5bc', '사진', 'D'],
-  ['toothbrush', '1faa5', '칫솔', 'tooth', 'svg:tooth', '치아', 'E'], ['cake', 'svg:cake', '케이크', 'candle', '1f56f', '초', 'E'], ['spoon', '1f944', '숟가락', 'rice', '1f35a', '밥', 'E'],
+  ['scissors', '2702', '가위', 'paper', 'svg:paper', '종이', 'D'], ['colorpencil', 'svg:colorpencil', '색연필', 'sketchbook', 'svg:sketchbook', '스케치북', 'D'], ['mailbox', '1f4ee', '우체통', 'letter', '2709', '편지', 'D'], ['camera', '1f4f7', '카메라', 'photo', '1f5bc', '사진', 'D'],
+  ['toothbrush', '1faa5', '칫솔', 'tooth', 'svg:tooth', '치아', 'E'], ['cake', 'svg:cake', '케이크', 'candle', 'svg:candle', '초', 'E'], ['spoon', '1f944', '숟가락', 'rice', '1f35a', '밥', 'E'],
 ];
 const _batch = w => (w.charCodeAt(w.length - 1) - 0xAC00) % 28;   // 받침 있으면 0 이 아님
 const matchLine = (a, b) => `${a}${_batch(a) ? '과' : '와'} ${b}${_batch(b) ? '은' : '는'}`;   // 앞부분만 녹음 · 뒤의 "짝꿍이에요!" 는 p_mt_end 한 개를 공통으로 붙여 읽음

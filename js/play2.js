@@ -50,9 +50,9 @@ App.oddGame = function (level) {
 App.mateGame = function (level) {
   if (level > 1) return this.mateSet(level);
   App._pre = new Audio('assets/audio/p_mt_end.mp3'); App._pre.preload = 'auto';   // 뒤 문장을 미리 불러와 두 문장 사이 지연을 줄임
-  const ids = []; MATCH_PAIRS.forEach((p, i) => { ids.push(i + ':0', i + ':1'); });
+  const ids = []; MATCH_PAIRS.forEach((p, i) => { ids.push(String(i)); });   // 같은 짝은 방향만 달라도 다시 나오지 않도록 짝 번호로만 기록
   const make = () => {
-    const pid = App.pickNew('mat' + level, ids, { random: true }), [i, dir] = pid.split(':').map(Number), p = MATCH_PAIRS[i];
+    const pid = App.pickNew('mat' + level, ids, { random: true }), i = Number(pid), dir = Math.random() < .5 ? 0 : 1, p = MATCH_PAIRS[i];
     const show = dir ? [p[3], p[4]] : [p[0], p[1]], ans = dir ? [p[0], p[1], p[2]] : [p[3], p[4], p[5]], side = dir ? 0 : 3;
     const others = MATCH_PAIRS.filter((_, j) => j !== i), same = others.filter(o => o[6] === p[6]), pool = _shuf(same.length >= 3 ? same : others);
     const wrong = pool.slice(0, 3).map(o => [o[side], o[side + 1]]);   // 틀린 보기 3개 (정답 포함 4개) · 같은 묶음 우선
