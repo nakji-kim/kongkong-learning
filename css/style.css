@@ -289,3 +289,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 .crumb{align-self:center;font-size:1.7rem;font-weight:800;color:#7a4a1d;background:#ffe3b0;border-radius:999px;padding:8px 28px;margin-bottom:-4px;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.1)}
 .sw .spic{display:block;width:min(52vw,13rem);height:min(40vw,10rem);object-fit:contain}
 .sw .kcap{font-size:clamp(2.2rem,8vw,3.4rem);margin-top:6px}
+.c-rd small{font-size:.82rem;word-break:keep-all;text-align:center;padding:0 6px}

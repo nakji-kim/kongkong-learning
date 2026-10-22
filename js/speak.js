@@ -25,7 +25,7 @@ const _heardEn = (word, alts) => {
 App.speakHome = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 공부를 할까요?</h1><div class="expt">🧪 아직 실험중이에요</div>
+    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 공부를 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
       <div class="cards">
         <button class="card al" data-k="ko" style="background:#ff8fab"><b>한글</b><span>ㄱ ㄴ ㄷ</span></button>
         <button class="card al" data-k="en" style="background:#8ddc9b"><b>알파벳</b><span>A B C</span></button>
@@ -36,7 +36,7 @@ App.speakHome = function () {
 App.speakAlpha = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🧪 아직 실험중이에요</div>
+    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
       <div class="cards">
         <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>알파벳 읽기</span></button>
         <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>그림 보고 말하기</span></button>
@@ -49,7 +49,7 @@ App.speakAlpha = function () {
 App.speakMenu = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🧪 아직 실험중이에요</div>
+    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
       <div class="cards">
         <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>한 글자 읽기</span></button>
         <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>받침 없는 말</span></button>
@@ -73,7 +73,7 @@ App.speakGame = function (level, kind = 'ko') {
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
   let good = 0, qn = 0, cur, tries, busy = false, rec = null, heard = false, reads = 0, anyOk = false, firstOk = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
-    <main class="spk"><div class="expt">🧪 아직 실험중이에요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div>${level === 1 ? `<div class="sex">${EN ? '예) "에이 에이", "비 비"' : '예) "가 가", "라 라"'}</div><div class="sex sub">한 글자 읽기는 인식이 좋지 않아요</div>` : ''}<div id="dbg" class="dbg"></div></main>`;
+    <main class="spk"><div class="expt">🎤 마이크 권한이 필요해요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div>${level === 1 ? `<div class="sex">${EN ? '예) "에이 에이", "비 비"' : '예) "가 가", "라 라"'}</div><div class="sex sub">한 글자 읽기는 인식이 좋지 않아요</div>` : ''}<div id="dbg" class="dbg"></div></main>`;
   const $ = s => root.querySelector(s), mic = $('#mic'), msg = $('#msg'), dbg = $('#dbg');
   const upd = () => $('#stars').textContent = `⭐ ${good} · ${qn}/${total}`;
   const stop = () => { try { rec && rec.abort(); } catch (e) { } rec = null; };
@@ -92,9 +92,10 @@ App.speakGame = function (level, kind = 'ko') {
   const pass = ok => {   // ok=true: 맞게 읽음 / false: 두 번 해도 인식 안 됨 (그냥 넘어감)
     busy = true; mic.className = 'mic'; Speech.stop();
     if (ok) { good++; if (tries === 0 && !this.doneArr(key).includes(cur)) this.markDone(key, cur); upd(); $('#sw').className = 'sw ok'; }
-    const pi = Math.floor(Math.random() * praise.length);
-    msg.textContent = ok ? praise[pi] : '잘했어요! 다음에 또 해 봐요';
-    Speech.play(ok ? praise[pi] : '잘했어요!', () => setTimeout(next, 600), ok ? '_praise' + pi : '_praise0');
+    const pr = EN ? EN_PRAISE : praise, pi = Math.floor(Math.random() * pr.length);   // 알파벳 읽기는 영어로 칭찬
+    msg.textContent = ok ? pr[pi] : '잘했어요! 다음에 또 해 봐요';
+    if (ok && EN) Speech.play(pr[pi], () => setTimeout(next, 600), 'en_praise' + pi, 'en-US');
+    else Speech.play(ok ? pr[pi] : '잘했어요!', () => setTimeout(next, 600), ok ? '_praise' + pi : '_praise0');
   };
   const handle = ok => {   // 쉬움(한 글자)은 마이크를 한 번 켜고 두 번 읽음("가 가"): 들린 글자 중 하나만 맞아도 정답
     return ok ? pass(true) : fail();
