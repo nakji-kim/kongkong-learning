@@ -59,10 +59,19 @@ App.fruitGame = function (level, good, bad) {
     }
     return true;
   };
+  const NL = 6; let laneBag = [], typeBag = [], lastLane = -1;   // 가로 칸과 종류를 섞은 주머니에서 뽑아 골고루 퍼지게 함
+  const nextType = () => { if (!typeBag.length) typeBag = bad.length ? [0, 0, 0, 0, 1].sort(() => Math.random() - .5) : [0]; return typeBag.pop() === 1; };
+  const nextLanes = () => { const l = Array.from({ length: NL }, (_, i) => i).sort(() => Math.random() - .5); if (l[0] === lastLane) l.push(l.shift()); return l; };
   const spawn = t => {
-    let isBad, x, ok = false;
-    for (let n = 0; n < 14 && !ok; n++) { isBad = bad.length > 0 && Math.random() < .2; x = sz / 2 + Math.random() * (W() - sz); ok = okPos(x, isBad, t); }
-    if (!ok) return;   // 알맞은 자리가 없으면 이번에는 건너뜀
+    let isBad = nextType(); if (isBad && t < 2) isBad = false;   // 처음 2초는 받을 과일만
+    if (!laneBag.length) laneBag = nextLanes();
+    let x = null, used = -1;
+    for (let i = 0; i < laneBag.length && x === null; i++) {
+      const lane = laneBag[i], lw = (W() - sz) / NL, cx = sz / 2 + lane * lw + lw * (.15 + Math.random() * .7);
+      if (okPos(cx, isBad, t) && !recent.some(r => t - r.t < .6 && Math.abs(r.x - cx) < sz * 1.1)) { x = cx; used = i; }
+    }
+    if (x === null) return;   // 알맞은 자리가 없으면 이번에는 건너뜀
+    lastLane = laneBag.splice(used, 1)[0];
     recent.push({ t, x, bad: isBad }); while (recent.length && t - recent[0].t > 1.5) recent.shift();
     const k = (isBad ? bad : good)[Math.floor(Math.random() * (isBad ? bad : good).length)];
     const el = document.createElement('img'); el.className = 'frfruit'; el.src = _fi(k); el.style.width = sz + 'px'; el.alt = ''; ff.appendChild(el);
