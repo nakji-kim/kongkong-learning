@@ -282,3 +282,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 .smsg{font-size:1.4rem;min-height:2rem;text-align:center}
 .c-rd b{font-size:clamp(1.9rem,5vw,2.8rem);word-break:keep-all;text-align:center}.card span{word-break:keep-all;text-align:center}
 .dbg{font-size:.8rem;opacity:.55;text-align:center;min-height:1.2rem;word-break:break-all}
+.sw{color:#1f1630!important;background:#fff;border:4px solid #3b2f4a;border-radius:28px;padding:.15em .4em;box-shadow:0 6px 0 rgba(0,0,0,.18);font-weight:900}.sw.ok{color:#1b7a33!important;border-color:#2f9e44}
