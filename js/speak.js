@@ -4,7 +4,8 @@ const _jam = s => [...s].map(ch => { const c = ch.charCodeAt(0) - 0xAC00; if (c 
 const _lev = (a, b) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
 // 관대한 판정: 후보 중 하나라도 정답을 포함하거나, 자모 기준으로 비슷하면 정답
 // 인식기가 "티비"를 TV, "이"를 2처럼 영어/숫자로 적는 경우를 한글로 되돌림
-const _norm = raw => raw.toLowerCase().replace(/tv|티브이/g, '티비').replace(/pc/g, '피씨').replace(/[0-9]/g, d => '영일이삼사오육칠팔구'[d]);
+const _EL = ['에이', '비', '씨', '디', '이', '에프', '지', '에이치', '아이', '제이', '케이', '엘', '엠', '엔', '오', '피', '큐', '알', '에스', '티', '유', '브이', '더블유', '엑스', '와이', '제트'];
+const _norm = raw => raw.toLowerCase().replace(/tv|티브이/g, '티비').replace(/pc/g, '피씨').replace(/[0-9]/g, d => '영일이삼사오육칠팔구'[d]).replace(/[a-z]/g, c => _EL[c.charCodeAt(0) - 97]);   // T → 티 처럼 영어 알파벳을 한글 이름으로
 const _heardOk = (target, alts, loose) => {
   if (loose) {   // 한 글자: 들린 글자 중 모음이 같은 것이 하나라도 있으면 정답 (한 글자는 인식이 약해서 아주 관대하게)
     const tj = _jam(target), tv = tj[1];
