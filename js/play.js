@@ -21,6 +21,7 @@ App.playMenu = function () {
     { b: '🍎🍎🍅', bs: 'font-size:1.8rem', t: '다른 그림 찾기', bg: '#cdb8f5', go: () => this.oddMenu() },
     { b: '🧦👟', bs: 'font-size:2.2rem', t: '어울리는 그림', bg: '#b8e8b0', go: () => this.mateMenu() },
     { b: '🔎', t: '숨은 그림 찾기', bg: '#ffb3c1', go: () => this.hideMenu() },
+    { b: '🧺🍎', bs: 'font-size:2rem', t: '과일 받기', bg: '#ffe0a3', go: () => this.fruitMenu() },
   ], () => this.home(), 'play');
 };
 App.matchMenu = function () {

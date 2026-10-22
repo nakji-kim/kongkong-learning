@@ -1,5 +1,14 @@
 /* 숫자 · 순발력: 판에 흩어진 숫자를 1부터 차례로 빠르게 누르기 (한 판, 기록 저장) */
 const SPEED_LV = { 1: { name: '쉬움', max: 10, n: 3, bg: '#b8e6a1' }, 2: { name: '보통', max: 20, n: 3, bg: '#ffd166' }, 3: { name: '어려움', max: 30, n: 4, bg: '#d9c8f5' } };
+/* 효과음: 파일 없이 Web Audio로 바로 만들어 지연이 거의 없음 */
+const _sfx = { ctx: null,
+  init() { try { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); } catch (e) { } },
+  tone(f0, f1, dur, type, vol) { try { const c = this.ctx; if (!c) return; const t = c.currentTime, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02); } catch (e) { } },
+  ok() { this.tone(988, 1568, 0.09, 'sine', 0.35); },
+  bad() { this.tone(330, 300, 0.14, 'square', 0.14); } };
 const _fmt = ms => (ms / 1000).toFixed(1) + '초';
 App.speedMenu = function () {
   Speech.stop();
@@ -12,7 +21,7 @@ App.speedMenu = function () {
     if (!confirm('순발력 기록을 모두 지울까요?')) return;
     p.speed = {}; this.save(); this.toast('기록을 지웠어요'); this.speedMenu();
   };
-  this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => this.speedGame(+b.dataset.l));
+  this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => { _sfx.init(); this.speedGame(+b.dataset.l); });
 };
 App.speedGame = function (level) {
   const root = this.root, { max, n, name } = SPEED_LV[level], cnt = n * n;
@@ -33,11 +42,11 @@ App.speedGame = function (level) {
       const b = e.target.closest('.spc'); if (!b || busy || gone || b.classList.contains('gone')) return;
       const i = +b.dataset.i, v = cells[i];
       if (v === next) {
-        next++; cells[i] = 0; b.classList.add('gone');
+        _sfx.ok(); next++; cells[i] = 0; b.classList.add('gone');
         if (next > max) return finish();
         const nv = v + cnt; later(() => { if (nv <= max) { cells[i] = nv; b.textContent = nv; b.classList.remove('gone'); b.classList.add('born'); later(() => b.classList.remove('born'), 300); } }, 180);
       } else {
-        pen++; b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad');
+        _sfx.bad(); pen++; b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad');
         const f = document.createElement('i'); f.className = 'sppen'; f.textContent = '+1초'; b.appendChild(f); later(() => f.remove(), 700);
         tm.textContent = '⏱ ' + _fmt(elapsed());
       }
@@ -52,7 +61,7 @@ App.speedGame = function (level) {
         <div class="rstars"><span class="rs on" style="--i:0">${isNew ? '🏆' : '⏱'}</span></div>
         <div class="rscore">내 기록 <b>${_fmt(total)}</b>${pen ? `<br><small>(틀려서 +${pen}초 포함)</small>` : ''}<br><small>${name} 최고 기록 ${_fmt(p.speed[level])}${best == null ? ' · 첫 기록이에요!' : ''}</small></div>
         <div class="rbtns"><button class="chip big" id="again">다시 하기</button><button class="chip big" id="quit">그만하기</button></div></main>`;
-      root.querySelector('#again').onclick = () => { leave(); App.speedGame(level); };
+      root.querySelector('#again').onclick = () => { leave(); _sfx.init(); App.speedGame(level); };
       root.querySelector('#quit').onclick = () => { leave(); App.speedMenu(); };
       if (isNew) later(() => Speech.play('대단해요! 신기록이에요!', null, 'p_speed_new'), 500);
     }, 700);
