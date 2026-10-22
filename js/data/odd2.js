@@ -163,3 +163,97 @@ ODD2.house = { ko: '집', lv2: ['chimney'], lv3: ['knob'],
     <rect x="42" y="62" width="18" height="28" rx="2" fill="#a0642d"/>
     ${d === 'knob' ? '' : '<circle cx="55" cy="77" r="2.2" fill="#ffe266" stroke="none"/>'}
     <rect x="22" y="58" width="14" height="14" fill="#bfe6ff"/><rect x="66" y="58" width="12" height="14" fill="#bfe6ff"/>`) };
+
+// ---- 추가 그림 12종 ----
+ODD2.fox = { ko: '여우', lv2: ['ear'], lv3: ['tip'],
+  draw: d => _s(`
+    <path d="M62 76Q96 74 92 44Q86 62 66 62z" fill="#f08a3c"/><path d="M92 44Q90 56 82 62Q92 66 94 50z" fill="${d === 'tip' ? '#f08a3c' : '#fff'}" stroke-width="2"/>
+    <ellipse cx="46" cy="78" rx="24" ry="16" fill="#f08a3c"/><ellipse cx="46" cy="82" rx="12" ry="9" fill="#fff" stroke="none"/>
+    <path d="M22 36L24 10L42 26z" fill="#f08a3c"/>${d === 'ear' ? '' : '<path d="M70 36L68 10L50 26z" fill="#f08a3c"/>'}
+    <path d="M26 30L26 18L35 26z" fill="#5b4033" stroke="none"/>${d === 'ear' ? '' : '<path d="M66 30L66 18L57 26z" fill="#5b4033" stroke="none"/>'}
+    <path d="M18 44Q46 18 74 44Q70 66 46 68Q22 66 18 44z" fill="#f08a3c"/><path d="M18 46Q30 62 46 62Q62 62 74 46Q62 54 46 54Q30 54 18 46z" fill="#fff" stroke="none"/>
+    <circle cx="35" cy="44" r="3" fill="#222" stroke="none"/><circle cx="57" cy="44" r="3" fill="#222" stroke="none"/><ellipse cx="46" cy="56" rx="4" ry="3" fill="#222"/>`) };
+ODD2.chicken = { ko: '닭', lv2: ['comb'], lv3: ['dot'],
+  draw: d => _s(`
+    <path d="M40 86v8M60 86v8M34 95h12M54 95h12" stroke="#ff9d3d" stroke-width="4" fill="none"/>
+    <ellipse cx="50" cy="62" rx="32" ry="28" fill="#fff"/>
+    <path d="M30 60q20-10 32 6q-12 18-32-6z" fill="#ffe9c4"/>${d === 'dot' ? '' : '<circle cx="46" cy="64" r="2.6" fill="#ff9d3d" stroke="none"/>'}
+    ${d === 'comb' ? '' : '<path d="M36 26Q38 10 46 18Q50 6 56 18Q64 10 64 26z" fill="#ef5b5b"/>'}
+    <circle cx="50" cy="32" r="16" fill="#fff"/><circle cx="43" cy="30" r="3" fill="#222" stroke="none"/><circle cx="57" cy="30" r="3" fill="#222" stroke="none"/>
+    <path d="M45 36h10l-5 7z" fill="#ff9d3d"/><path d="M48 44q2 8 4 0" fill="#ef5b5b" stroke-width="2"/>`) };
+ODD2.frog = { ko: '개구리', lv2: ['eye'], lv3: ['cheek'],
+  draw: d => _s(`
+    <circle cx="30" cy="30" r="13" fill="#7ecb5a"/>${d === 'eye' ? '' : '<circle cx="70" cy="30" r="13" fill="#7ecb5a"/>'}
+    <circle cx="30" cy="30" r="7" fill="#fff"/><circle cx="30" cy="30" r="3" fill="#222" stroke="none"/>${d === 'eye' ? '' : '<circle cx="70" cy="30" r="7" fill="#fff"/><circle cx="70" cy="30" r="3" fill="#222" stroke="none"/>'}
+    <ellipse cx="50" cy="56" rx="38" ry="30" fill="#7ecb5a"/>
+    <path d="M24 60Q50 82 76 60" fill="none"/>
+    <circle cx="22" cy="58" r="5" fill="#ff9fae" stroke="none"/>${d === 'cheek' ? '' : '<circle cx="78" cy="58" r="5" fill="#ff9fae" stroke="none"/>'}
+    <circle cx="45" cy="48" r="1.6" fill="#3f7a2e" stroke="none"/><circle cx="55" cy="48" r="1.6" fill="#3f7a2e" stroke="none"/>`) };
+ODD2.koala = { ko: '코알라', lv2: ['ear'], lv3: ['nose'],
+  draw: d => _s(`
+    <circle cx="20" cy="38" r="17" fill="#b8bcc6"/>${d === 'ear' ? '' : '<circle cx="80" cy="38" r="17" fill="#b8bcc6"/>'}
+    <circle cx="20" cy="38" r="9" fill="#f1dfe3" stroke="none"/>${d === 'ear' ? '' : '<circle cx="80" cy="38" r="9" fill="#f1dfe3" stroke="none"/>'}
+    <ellipse cx="50" cy="56" rx="32" ry="30" fill="#b8bcc6"/>
+    <circle cx="38" cy="50" r="3.4" fill="#222" stroke="none"/><circle cx="62" cy="50" r="3.4" fill="#222" stroke="none"/>
+    <ellipse cx="50" cy="60" rx="9" ry="12" fill="${d === 'nose' ? '#8a5a45' : '#3b3b3b'}"/><path d="M50 72q-6 5-10 2M50 72q6 5 10 2" fill="none"/>`) };
+ODD2.sheep = { ko: '양', lv2: ['leg'], lv3: ['ear'],
+  draw: d => _s(`
+    <path d="M36 82v10M64 82v10" stroke-width="5" fill="none"/>${d === 'leg' ? '' : '<path d="M50 84v8" stroke-width="5" fill="none"/>'}
+    ${[[26,58],[40,46],[58,46],[74,58],[30,74],[50,78],[70,74],[50,58]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="15" fill="#fff"/>`).join('')}
+    <ellipse cx="26" cy="28" rx="9" ry="5" transform="rotate(-24 26 28)" fill="#4a4048"/><ellipse cx="74" cy="28" rx="9" ry="5" transform="rotate(24 74 28)" fill="${d === 'ear' ? '#ffb3c6' : '#4a4048'}"/>
+    <ellipse cx="50" cy="38" rx="17" ry="19" fill="#4a4048"/><circle cx="43" cy="36" r="2.6" fill="#fff" stroke="none"/><circle cx="57" cy="36" r="2.6" fill="#fff" stroke="none"/>
+    <ellipse cx="50" cy="46" rx="5" ry="3.4" fill="#ffb3c6" stroke="none"/>`) };
+ODD2.horse = { ko: '말', lv2: ['mane'], lv3: ['nostril'],
+  draw: d => _s(`
+    <path d="M30 28L26 8L42 22zM70 28L74 8L58 22z" fill="#b9814f"/>
+    ${d === 'mane' ? '' : '<path d="M42 14Q50 2 58 14Q56 28 50 34Q44 28 42 14z" fill="#5b3a29"/>'}
+    <path d="M30 24Q50 14 70 24Q74 54 66 78Q50 96 34 78Q26 54 30 24z" fill="#b9814f"/>
+    <ellipse cx="50" cy="76" rx="15" ry="13" fill="#d9a66b"/>
+    <circle cx="38" cy="44" r="3.4" fill="#222" stroke="none"/><circle cx="62" cy="44" r="3.4" fill="#222" stroke="none"/>
+    <ellipse cx="44" cy="76" rx="2.4" ry="3.6" fill="#5b3a29" stroke="none"/>${d === 'nostril' ? '' : '<ellipse cx="56" cy="76" rx="2.4" ry="3.6" fill="#5b3a29" stroke="none"/>'}`) };
+ODD2.giraffe = { ko: '기린', lv2: ['horn'], lv3: ['spot'],
+  draw: d => _s(`
+    <path d="M38 22V8${d === 'horn' ? '' : 'M62 22V8'}" stroke-width="4" fill="none"/><circle cx="38" cy="8" r="4.4" fill="#8a5a35"/>${d === 'horn' ? '' : '<circle cx="62" cy="8" r="4.4" fill="#8a5a35"/>'}${d === 'horn' ? '<path d="M62 22V12" stroke-width="0" fill="none"/>' : ''}
+    <ellipse cx="22" cy="34" rx="9" ry="5" transform="rotate(-24 22 34)" fill="#f6c44f"/><ellipse cx="78" cy="34" rx="9" ry="5" transform="rotate(24 78 34)" fill="#f6c44f"/>
+    <ellipse cx="50" cy="46" rx="26" ry="28" fill="#f6c44f"/><ellipse cx="50" cy="64" rx="15" ry="11" fill="#ffe3a0" stroke="none"/>
+    <circle cx="40" cy="42" r="3.4" fill="#222" stroke="none"/><circle cx="60" cy="42" r="3.4" fill="#222" stroke="none"/>
+    <ellipse cx="44" cy="64" rx="2" ry="3" fill="#8a5a35" stroke="none"/><ellipse cx="56" cy="64" rx="2" ry="3" fill="#8a5a35" stroke="none"/>
+    <circle cx="36" cy="26" r="4" fill="#c98a3a" stroke="none"/><circle cx="62" cy="30" r="4.6" fill="#c98a3a" stroke="none"/>${d === 'spot' ? '' : '<circle cx="50" cy="22" r="3.4" fill="#c98a3a" stroke="none"/>'}<circle cx="70" cy="52" r="3.4" fill="#c98a3a" stroke="none"/>`) };
+ODD2.dino = { ko: '공룡', lv2: ['spike'], lv3: ['eye'],
+  draw: d => _s(`
+    <path d="M8 70Q30 74 38 58L52 62Q40 84 6 80z" fill="#7ecb6a"/>
+    <path d="M30 84v10M62 84v10" stroke-width="7" fill="none" stroke="#5aa94b"/>
+    <ellipse cx="46" cy="64" rx="30" ry="22" fill="#7ecb6a"/>
+    ${[[30,44],[42,38],[54,38],[66,44]].map(([x, y], i) => (d === 'spike' && i === 1) ? '' : `<path d="M${x - 6} ${y + 4}L${x} ${y - 10}L${x + 6} ${y + 4}z" fill="#ffb347"/>`).join('')}
+    <path d="M64 56Q64 34 80 32Q94 32 94 46Q94 58 80 58z" fill="#7ecb6a"/>
+    ${d === 'eye' ? '' : '<circle cx="82" cy="42" r="3" fill="#222" stroke="none"/>'}<path d="M80 52q6 3 12 0" fill="none"/>
+    <ellipse cx="46" cy="70" rx="15" ry="11" fill="#d6f2c2" stroke="none"/>`) };
+ODD2.rocket = { ko: '로켓', lv2: ['flame'], lv3: ['window'],
+  draw: d => _s(`
+    ${d === 'flame' ? '' : '<path d="M42 78Q50 100 58 78z" fill="#ffb02e"/><path d="M46 78Q50 92 54 78z" fill="#ffe27a" stroke="none"/>'}
+    <path d="M32 54L16 76L36 72zM68 54L84 76L64 72z" fill="#ef5b5b"/>
+    <path d="M50 6Q74 24 68 62L68 78H32L32 62Q26 24 50 6z" fill="#fff"/><path d="M50 6Q58 12 62 22H38Q42 12 50 6z" fill="#ef5b5b"/>
+    <circle cx="50" cy="42" r="9" fill="#7cc0ff"/><circle cx="50" cy="42" r="3" fill="#e6f4ff" stroke="none"/>
+    <circle cx="42" cy="66" r="3.6" fill="#7cc0ff" stroke-width="2"/>${d === 'window' ? '' : '<circle cx="58" cy="66" r="3.6" fill="#7cc0ff" stroke-width="2"/>'}`) };
+ODD2.ship = { ko: '배', lv2: ['flag'], lv3: ['window'],
+  draw: d => _s(`
+    ${d === 'flag' ? '' : '<path d="M50 8V32M50 8L68 14L50 20" fill="#ef5b5b"/>'}
+    <path d="M50 30V32" fill="none"/>
+    <rect x="30" y="32" width="40" height="24" rx="3" fill="#fff"/><rect x="38" y="40" width="8" height="8" fill="#7cc0ff" stroke-width="2"/>${d === 'window' ? '' : '<rect x="54" y="40" width="8" height="8" fill="#7cc0ff" stroke-width="2"/>'}
+    <path d="M10 58H90L78 82H22z" fill="#4a90e2"/><path d="M14 62H86" fill="none" stroke="#fff" stroke-width="2"/>
+    <path d="M6 90q8-8 16 0t16 0t16 0t16 0t16 0" fill="none" stroke="#7cc0ff" stroke-width="3"/>`) };
+ODD2.icecream = { ko: '아이스크림', lv2: ['cherry'], lv3: ['line'],
+  draw: d => _s(`
+    <path d="M32 54L50 94L68 54z" fill="#f2c27a"/>
+    <path d="M38 60L58 76M62 60L42 76M36 52L46 74" fill="none" stroke="#c9904a" stroke-width="2"/>${d === 'line' ? '' : '<path d="M64 52L54 74" fill="none" stroke="#c9904a" stroke-width="2"/>'}
+    <circle cx="50" cy="42" r="20" fill="#ffb3c6"/><circle cx="50" cy="40" r="16" fill="none" stroke="none"/>
+    <path d="M30 50q4 8 10 2q4 8 10 0q4 8 10 0q4 8 10-2" fill="#fff"/>
+    ${d === 'cherry' ? '' : '<circle cx="50" cy="20" r="7" fill="#ef3b4d"/><path d="M50 14Q54 6 58 6" fill="none" stroke="#4f9a45"/>'}`) };
+ODD2.umbrella = { ko: '우산', lv2: ['handle'], lv3: ['stripe'],
+  draw: d => _s(`
+    ${d === 'handle' ? '<path d="M50 42V80" stroke-width="3.4" fill="none"/>' : '<path d="M50 42V80Q50 92 40 90Q34 88 36 82" stroke-width="3.4" fill="none"/>'}
+    <path d="M8 52Q10 14 50 12Q90 14 92 52Q82 44 71 52Q60 44 50 52Q40 44 29 52Q18 44 8 52z" fill="#ff6b81"/>
+    <path d="M50 12Q40 30 40 50M50 12Q60 30 60 50" fill="none" stroke-width="2"/>
+    <path d="M50 12Q36 28 29 52Q40 44 50 52Q42 32 50 12z" fill="#ffd84a" stroke="none"/>
+    <path d="M50 12Q64 28 71 52Q60 44 50 52Q58 32 50 12z" fill="${d === 'stripe' ? '#ff6b81' : '#ffd84a'}" stroke="none"/>
+    <path d="M8 52Q10 14 50 12Q90 14 92 52Q82 44 71 52Q60 44 50 52Q40 44 29 52Q18 44 8 52z" fill="none"/>`) };

@@ -40,11 +40,14 @@ const ODD_GROUPS = {
 // 어울리는 짝 : [왼쪽 이름, 코드, 한글, 오른쪽 이름, 코드, 한글, 묶음]  (묶음이 같으면 어려움에서 서로 헷갈리는 보기로 씀)
 const MATCH_PAIRS = [
   ['rabbit', '1f430', '토끼', 'carrot', '1f955', '당근', 'A'], ['monkey', '1f412', '원숭이', 'banana', '1f34c', '바나나', 'A'], ['dog', '1f436', '강아지', 'bone', '1f9b4', '뼈', 'A'],
-  ['cat', '1f431', '고양이', 'fish', '1f41f', '생선', 'A'], ['bear', '1f43b', '곰', 'honey', '1f36f', '꿀', 'A'], ['bee', '1f41d', '벌', 'flower', '1f33b', '꽃', 'A'],
+  ['fish2', 'svg:fish', '물고기', 'fishbowl', 'svg:fishbowl', '어항', 'G'], ['bear', '1f43b', '곰', 'honey', '1f36f', '꿀', 'A'], ['bee', '1f41d', '벌', 'flower', '1f33b', '꽃', 'A'],
   ['bird', '1f426', '새', 'nest', '1faba', '둥지', 'B'], ['hen', '1f414', '닭', 'egg', '1f95a', '달걀', 'B'], ['cow', '1f42e', '젖소', 'milk', '1f95b', '우유', 'B'], ['spider', '1f577', '거미', 'web', '1f578', '거미줄', 'B'],
   ['sock', '1f9e6', '양말', 'shoe', '1f45f', '신발', 'C'], ['key', '1f511', '열쇠', 'lock', '1f512', '자물쇠', 'C'], ['rain', '1f327', '비', 'umbrella', '2602', '우산', 'C'],
-  ['scissors', '2702', '가위', 'paper', 'svg:paper', '종이', 'D'], ['colorpencil', 'svg:colorpencil', '색연필', 'sketchbook', 'svg:sketchbook', '스케치북', 'D'], ['mailbox', '1f4ee', '우체통', 'letter', '2709', '편지', 'D'], ['camera', '1f4f7', '카메라', 'photo', '1f5bc', '사진', 'D'],
+  ['scissors', '2702', '가위', 'paper', 'svg:paper', '종이', 'D'], ['colorpencil', 'svg:colorpencil', '색연필', 'sketchbook', 'svg:sketchbook', '스케치북', 'D'], ['mailbox', '1f4ee', '우체통', 'letter', '2709', '편지', 'D'], ['camera', '1f4f7', '카메라', 'photo', 'svg:photo', '사진', 'D'],
   ['toothbrush', '1faa5', '칫솔', 'tooth', 'svg:tooth', '치아', 'E'], ['cake', 'svg:cake', '케이크', 'candle', 'svg:candle', '초', 'E'], ['spoon', '1f944', '숟가락', 'rice', '1f35a', '밥', 'E'],
+  ['eye', 'svg:eye', '눈', 'glasses', 'svg:glasses', '안경', 'F'], ['hand', 'svg:hand', '손', 'glove', 'svg:glove', '장갑', 'F'], ['snowman', 'svg:snowman', '눈사람', 'scarf', 'svg:scarf', '목도리', 'F'],
+  ['police', 'svg:police', '경찰관', 'policecar', 'svg:policecar', '경찰차', 'G'], ['doctor', 'svg:doctor', '의사', 'stetho', 'svg:stetho', '청진기', 'G'], ['ramen', 'svg:ramen', '라면', 'chopsticks', 'svg:chopsticks', '젓가락', 'G'],
+  ['bread', 'svg:bread', '빵', 'jam', 'svg:jam', '잼', 'G'], ['duck2', 'svg:duck2', '오리', 'pond', 'svg:pond', '연못', 'G'], ['firefighter', 'svg:firefighter', '소방관', 'firetruck', 'svg:firetruck', '소방차', 'G'],
 ];
 const _batch = w => (w.charCodeAt(w.length - 1) - 0xAC00) % 28;   // 받침 있으면 0 이 아님
 const matchLine = (a, b) => `${a}${_batch(a) ? '과' : '와'} ${b}${_batch(b) ? '은' : '는'}`;   // 앞부분만 녹음 · 뒤의 "짝꿍이에요!" 는 p_mt_end 한 개를 공통으로 붙여 읽음

@@ -228,7 +228,7 @@ img.sil{filter:brightness(0) opacity(.82)}
 .m3qc .m3m{position:absolute;inset:0;display:none;place-items:center;font-size:clamp(2.6rem,11vmin,4.6rem)}
 .m3qc.hid .m3f{visibility:hidden}.m3qc.hid .m3m{display:grid}.m3qc.hid{background:#fff3c4}
 .m3qc.sel,.m3cc.sel{border-color:#3d8bfd;background:#e6f0ff;transform:translateY(-4px)}
-.m3qc.done,.m3cc.done{border-color:var(--ok);background:#e7f8ee}.m3cc.done{opacity:.45}
+.m3qc.done,.m3cc.done{border-color:var(--ok);background:#e7f8ee;opacity:.45}
 .m3qc.bad,.m3cc.bad{border-color:#e0605e;background:#ffe3e3;animation:mshake .35s}
 @keyframes mshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .m3bar{width:min(80vw,420px);height:14px;margin:0 auto;border-radius:9px;background:#ffe9a8;overflow:hidden}
