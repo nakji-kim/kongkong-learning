@@ -8,9 +8,9 @@ App.oddMenu = function () {
 };
 App.mateMenu = function () {
   this.cardMenu('어울리는 그림 찾기', [
-    { b: '🧦👟', bs: 'font-size:2.2rem', t: '쉬움 · 보기 2개', bg: '#8ddc9b', go: () => this.mateGame(1) },
-    { b: '🐰🥕', bs: 'font-size:2.2rem', t: '보통 · 보기 3개', bg: '#6ec6ff', go: () => this.mateGame(2) },
-    { b: '🐶🦴', bs: 'font-size:2.2rem', t: '어려움 · 보기 4개', bg: '#ff9aa8', go: () => this.mateGame(3) },
+    { b: '🐶🦴', bs: 'font-size:2.2rem', t: '쉬움 · 보기 4개', bg: '#8ddc9b', go: () => this.mateGame(1) },
+    { b: '🐰🧦🔑', bs: 'font-size:1.6rem', t: '보통 · 3쌍 짝짓기', bg: '#6ec6ff', go: () => this.mateGame(2) },
+    { b: '🧠', bs: 'font-size:2.4rem', t: '어려움 · 기억하기', bg: '#ff9aa8', go: () => this.mateGame(3) },
   ], () => this.playMenu(), 'play');
 };
 App.hideMenu = function () {
@@ -48,13 +48,14 @@ App.oddGame = function (level) {
 
 /* ---------- 어울리는 그림 찾기 ---------- */
 App.mateGame = function (level) {
+  if (level > 1) return this.mateSet(level);
   App._pre = new Audio('assets/audio/p_mt_end.mp3'); App._pre.preload = 'auto';   // 뒤 문장을 미리 불러와 두 문장 사이 지연을 줄임
   const ids = []; MATCH_PAIRS.forEach((p, i) => { ids.push(i + ':0', i + ':1'); });
   const make = () => {
     const pid = App.pickNew('mat' + level, ids, { random: true }), [i, dir] = pid.split(':').map(Number), p = MATCH_PAIRS[i];
     const show = dir ? [p[3], p[4]] : [p[0], p[1]], ans = dir ? [p[0], p[1], p[2]] : [p[3], p[4], p[5]], side = dir ? 0 : 3;
-    const others = MATCH_PAIRS.filter((_, j) => j !== i), same = others.filter(o => o[6] === p[6]), pool = _shuf(level === 3 && same.length >= 3 ? same : others);
-    const wrong = pool.slice(0, level).map(o => [o[side], o[side + 1]]);   // 틀린 보기: 쉬움 1개 · 보통 2개 · 어려움 3개 (정답 포함 2·3·4개)
+    const others = MATCH_PAIRS.filter((_, j) => j !== i), same = others.filter(o => o[6] === p[6]), pool = _shuf(same.length >= 3 ? same : others);
+    const wrong = pool.slice(0, 3).map(o => [o[side], o[side + 1]]);   // 틀린 보기 3개 (정답 포함 4개) · 같은 묶음 우선
     return {
       key: 'mt:' + i, done: ['mat' + level, pid], answer: ans[0], q: _line('p_q_match'), once: true,
       a: [[PLAY_LINES['p_mt_' + i], 'p_mt_' + i], [PLAY_LINES.p_mt_end, 'p_mt_end']],   // "A와 B는" + 공통 "짝꿍이에요!" 를 끊김 없이 이어 읽음
@@ -125,4 +126,70 @@ App.hideGame = function (level) {
   }
   const spark = el => { const r = el.getBoundingClientRect(); for (let i = 0; i < 6; i++) { const s = document.createElement('i'); s.className = 'spark'; s.textContent = ['⭐', '✨'][i % 2]; s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 80 - 40)}vmin;--y:${Math.round(Math.random() * 60 - 40)}vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1300); } };
   start();
+};
+
+/* ---------- 어울리는 그림 찾기 · 보통/어려움: 위 3장(문제)과 아래 5장(보기)을 짝지음 ----------
+   보통: 문제 그림이 계속 보임 · 어려움: 6초 동안 보여 준 뒤 가리고 기억으로 짝짓기 */
+App.mateSet = function (level) {
+  const root = this.root, ROUNDS = 5, VIEW = 6000, key = 'mat' + level;
+  const ids = MATCH_PAIRS.map((_, i) => String(i));
+  let round = 0, wrong = 0, timers = [], gone = false;
+  const later = (fn, ms) => { const t = setTimeout(() => { if (!gone) fn(); }, ms); timers.push(t); return t; };
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🧩 0/${ROUNDS}</span></header>
+    <main class="game mg mt3"><div class="m3q" id="m3q"></div><div class="m3bar" id="m3bar"><i></i></div><div class="m3c" id="m3c"></div></main>`;
+  root.querySelector('#back').onclick = () => { gone = true; Speech.stop(); App.mateMenu(); };
+  const next = () => {
+    if (gone) return;
+    if (round >= ROUNDS) {
+      const stars = wrong <= 2 ? 5 : wrong <= 5 ? 4 : wrong <= 9 ? 3 : 2;
+      return App.finishRound(stars, 5, () => App.mateGame(level), () => App.mateMenu(), { label: `별 <b>${stars}</b>개를 받았어요`, say: _line('p_ms_' + stars) });
+    }
+    round++; root.querySelector('#stars').textContent = `🧩 ${round}/${ROUNDS}`;
+    // 아직 안 푼 짝 3개 (모자라면 기록을 지우고 다시 시작)
+    let fresh = ids.filter(i => !App.doneArr(key).includes(i));
+    if (fresh.length < 3) { App.prof().done[key] = []; App.save(); fresh = ids.slice(); App.toast('모두 풀었어요! 다시 시작해요 🎉'); }
+    const pick = _shuf(fresh).slice(0, 3).map(Number), dir = Math.random() < .5 ? 0 : 1, side = dir ? 3 : 0, oth = dir ? 0 : 3;
+    const qs = pick.map(i => ({ i, q: MATCH_PAIRS[i][side + 1], a: MATCH_PAIRS[i][oth], ac: MATCH_PAIRS[i][oth + 1] }));
+    const groups = new Set(pick.map(i => MATCH_PAIRS[i][6]));
+    const others = MATCH_PAIRS.map((p, i) => i).filter(i => !pick.includes(i));
+    const near = _shuf(others.filter(i => groups.has(MATCH_PAIRS[i][6]))), far = _shuf(others.filter(i => !groups.has(MATCH_PAIRS[i][6])));
+    const wr = (level === 3 ? [...near, ...far] : _shuf(others)).slice(0, 2).map(i => ({ i, a: MATCH_PAIRS[i][oth], ac: MATCH_PAIRS[i][oth + 1] }));
+    const choices = _shuf([...qs.map(x => ({ i: x.i, a: x.a, ac: x.ac })), ...wr]);
+    const mq = root.querySelector('#m3q'), mc = root.querySelector('#m3c'), bar = root.querySelector('#m3bar');
+    mq.innerHTML = qs.map((x, n) => `<button class="m3qc" data-n="${n}"><span class="m3f">${pimg(x.q)}</span><span class="m3m">❓</span></button>`).join('');
+    mc.innerHTML = choices.map((c, n) => `<button class="m3cc" data-n="${n}">${pimg(c.ac)}</button>`).join('');
+    mc.style.visibility = 'hidden'; bar.style.visibility = 'hidden';
+    let selQ = null, selC = null, matched = 0, lock = true; const bad = [0, 0, 0];
+    const cards = [...mq.children], opts = [...mc.children];
+    const hide = on => cards.forEach(c => !c.classList.contains('done') && c.classList.toggle('hid', on));
+    const evalPair = () => {
+      if (selQ == null || selC == null) return;
+      const x = qs[selQ], c = choices[selC], qe = cards[selQ], ce = opts[selC];
+      if (c.i === x.i) {
+        qe.classList.remove('sel'); ce.classList.remove('sel'); qe.classList.remove('hid'); qe.classList.add('done'); ce.classList.add('done'); matched++;
+        App.markDone(key, String(x.i)); selQ = selC = null;
+        const sp = document.createElement('i'); sp.className = 'spark'; sp.textContent = '✨'; qe.appendChild(sp); setTimeout(() => sp.remove(), 1200);
+        if (matched === 3) { lock = true; const pi = Math.floor(Math.random() * 4); Speech.stop(); Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => later(next, 600), '_praise' + pi); }
+      } else {
+        wrong++; bad[selQ]++; const qi = selQ; qe.classList.add('bad'); ce.classList.add('bad'); lock = true;
+        Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2');
+        later(() => {
+          qe.classList.remove('bad', 'sel'); ce.classList.remove('bad', 'sel'); selQ = selC = null; lock = false;
+          if (level === 3 && bad[qi] >= 2 && !cards[qi].classList.contains('done')) { cards[qi].classList.remove('hid'); lock = true; later(() => { cards[qi].classList.add('hid'); lock = false; }, 1500); }
+        }, 700);
+      }
+    };
+    cards.forEach((c, n) => c.onclick = () => { if (lock || c.classList.contains('done')) return; cards.forEach(z => z.classList.remove('sel')); c.classList.add('sel'); selQ = n; evalPair(); });
+    opts.forEach((o, n) => o.onclick = () => { if (lock || o.classList.contains('done')) return; opts.forEach(z => z.classList.remove('sel')); o.classList.add('sel'); selC = n; evalPair(); });
+    // 그림을 모두 불러온 뒤 시작
+    const imgs = [...root.querySelectorAll('img')], loaded = Promise.all(imgs.map(i => (i.complete ? 0 : new Promise(r => { i.addEventListener('load', r); i.addEventListener('error', r); }))));
+    Promise.race([loaded, new Promise(r => setTimeout(r, 3000))]).then(() => {
+      if (gone || !root.contains(mq)) return;
+      Speech.stop(); Speech.play(PLAY_LINES.p_q_match, null, 'p_q_match');
+      if (level === 2) { mc.style.visibility = ''; lock = false; return; }
+      bar.style.visibility = ''; const fill = bar.firstElementChild; fill.style.transition = 'none'; fill.style.width = '100%'; void fill.offsetWidth; fill.style.transition = `width ${VIEW}ms linear`; fill.style.width = '0';
+      later(() => { hide(true); bar.style.visibility = 'hidden'; mc.style.visibility = ''; lock = false; }, VIEW);
+    });
+  };
+  next();
 };

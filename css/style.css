@@ -216,3 +216,20 @@ img.sil{filter:brightness(0) opacity(.82)}
 
 .ver{position:fixed;right:10px;bottom:6px;font-size:.75rem;opacity:.45;pointer-events:none}
 .cb.pimg svg{position:absolute;left:7%;top:7%;width:86%;height:86%;pointer-events:none}
+
+/* 어울리는 그림 찾기 · 보통/어려움 */
+.mt3{justify-content:center;gap:clamp(10px,3vh,26px)}
+.m3q,.m3c{display:flex;justify-content:center;gap:clamp(8px,2.6vw,20px);flex-wrap:nowrap}
+.m3qc,.m3cc{position:relative;aspect-ratio:1;background:#fff;border:5px solid var(--sun);border-radius:26px;padding:0;box-shadow:0 6px 0 rgba(0,0,0,.12);cursor:pointer}
+.m3qc{width:clamp(84px,27vw,170px)}.m3cc{width:clamp(58px,17.5vw,118px);border-radius:20px;border-width:4px}
+.m3qc .m3f,.m3cc{display:block}.m3qc .m3f{position:absolute;inset:0}
+.m3qc img,.m3cc img{position:absolute;left:12%;top:12%;width:76%;height:76%;object-fit:contain;pointer-events:none}
+.m3qc .pemo,.m3cc .pemo{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(2rem,8vmin,3.6rem)}
+.m3qc .m3m{position:absolute;inset:0;display:none;place-items:center;font-size:clamp(2.6rem,11vmin,4.6rem)}
+.m3qc.hid .m3f{visibility:hidden}.m3qc.hid .m3m{display:grid}.m3qc.hid{background:#fff3c4}
+.m3qc.sel,.m3cc.sel{border-color:#3d8bfd;background:#e6f0ff;transform:translateY(-4px)}
+.m3qc.done,.m3cc.done{border-color:var(--ok);background:#e7f8ee}.m3cc.done{opacity:.45}
+.m3qc.bad,.m3cc.bad{border-color:#e0605e;background:#ffe3e3;animation:mshake .35s}
+@keyframes mshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.m3bar{width:min(80vw,420px);height:14px;margin:0 auto;border-radius:9px;background:#ffe9a8;overflow:hidden}
+.m3bar i{display:block;height:100%;width:100%;background:#ff8a00;border-radius:9px}
