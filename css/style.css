@@ -264,6 +264,7 @@ img.sil{filter:brightness(0) opacity(.82)}
 .frf{display:flex;flex-direction:column;align-items:center}.frf img{width:min(26vw,110px);height:min(26vw,110px)}.frf small{font-size:1.2rem;font-weight:700}
 .frg{padding:0;justify-content:stretch}.frfield{position:relative;flex:1;width:100%;min-height:60vh;overflow:hidden;touch-action:none;background:linear-gradient(#cfeeff,#fff8dc);border-radius:24px}
 .frfruit{position:absolute;left:0;top:0;pointer-events:none;will-change:transform}
-.frbk{position:absolute;left:0;bottom:6px;pointer-events:none;will-change:transform}.frbk.shk{animation:shake .35s}
+.frbk{position:absolute;left:0;bottom:6px;pointer-events:none;will-change:transform}.frbk.shk{animation:bkshk .35s}
 .frpop{position:absolute;bottom:90px;font-style:normal;font-weight:900;font-size:2rem;transform:translateX(-50%);animation:spup .7s forwards;pointer-events:none}.frpop.ok{color:#2aa856}.frpop.no{color:#e0443a}
 .frf small{color:#3b2f4a}
+@keyframes bkshk{0%,100%{rotate:0deg}25%{rotate:-12deg}75%{rotate:12deg}}

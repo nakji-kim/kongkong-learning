@@ -1,10 +1,10 @@
-/* 놀이 · 과일 받기: 15초 동안 바구니를 좌우로 움직여 떨어지는 과일 받기 (기록은 따로 저장) */
+/* 놀이 · 과일 받기: 20초 동안 바구니를 좌우로 움직여 떨어지는 과일 받기 (기록은 따로 저장) */
 const FRUITS = [['grape', '포도'], ['watermelon', '수박'], ['strawberry', '딸기'], ['apple', '사과'], ['banana', '바나나'], ['peach', '복숭아'], ['tangerine', '귤'], ['lemon', '레몬'], ['cherries', '체리'], ['pineapple', '파인애플']];
 const FR_LV = {
   1: { name: '쉬움', good: 1, bad: 0, every: .8, fall: 2.8, bg: '#b8e6a1', sub: '받을 과일 1종' },
   2: { name: '보통', good: 1, bad: 1, every: .55, fall: 2.3, bg: '#ffd166', sub: '받기 1종 · 피하기 1종' },
   3: { name: '어려움', good: 2, bad: 2, every: .4, fall: 2.0, bg: '#d9c8f5', sub: '받기 2종 · 피하기 2종' } };
-const FR_TIME = 15, _fi = k => `assets/images/play/fruit_${k}.svg`;
+const FR_TIME = 20, _fi = k => `assets/images/play/fruit_${k}.svg`;
 App.fruitMenu = function () {
   Speech.stop();
   const fr = this.prof().fruit || {};
@@ -41,17 +41,32 @@ App.fruitGame = function (level, good, bad) {
   const timers = []; const later = (fn, ms) => timers.push(setTimeout(() => { if (!gone) fn(); }, ms));
   const W = () => ff.clientWidth, H = () => ff.clientHeight;
   let bx = 0; const bw = () => bk.offsetWidth;
-  bk.style.width = Math.min(150, W() * .3) + 'px';
+  bk.style.width = Math.min(150, W() * .3) * (level === 3 ? .8 : 1) + 'px';
   const setBx = x => { bx = Math.max(bw() / 2, Math.min(W() - bw() / 2, x)); bk.style.transform = `translateX(${bx - bw() / 2}px)`; };
   const move = e => { if (!running) return; const r = ff.getBoundingClientRect(); setBx(e.clientX - r.left); e.preventDefault(); };
   ff.addEventListener('pointerdown', e => { try { ff.setPointerCapture(e.pointerId); } catch (_) { } move(e); });
   ff.addEventListener('pointermove', move);
   setBx(W() / 2);
   const fx = []; let sz = 56;
-  const spawn = () => {
-    const isBad = bad.length && Math.random() < .5, k = (isBad ? bad : good)[Math.floor(Math.random() * (isBad ? bad : good).length)];
+  const recent = [];   // 최근에 나온 과일 {t, x, bad} — 받을/피할 과일이 한꺼번에 겹쳐 억지로 받아지는 일을 막음
+  const okPos = (x, isBad, t) => {
+    const near = recent.filter(r => t - r.t < .7), R = bw() * .35 + sz * .3;
+    if (near.some(r => r.bad !== isBad && Math.abs(x - r.x) < bw() + sz * .5)) return false;   // 반대 종류와 바구니 폭 이상 떨어져야 함
+    if (isBad) {   // 피할 과일끼리도 피할 틈이 남아 있어야 함
+      const bads = near.filter(r => r.bad).map(r => r.x).concat(x);
+      let free = false; for (let c = bw() / 2; c <= W() - bw() / 2; c += 8) if (bads.every(b => Math.abs(b - c) > R)) { free = true; break; }
+      if (!free) return false;
+    }
+    return true;
+  };
+  const spawn = t => {
+    let isBad, x, ok = false;
+    for (let n = 0; n < 14 && !ok; n++) { isBad = bad.length > 0 && Math.random() < .5; x = sz / 2 + Math.random() * (W() - sz); ok = okPos(x, isBad, t); }
+    if (!ok) return;   // 알맞은 자리가 없으면 이번에는 건너뜀
+    recent.push({ t, x, bad: isBad }); while (recent.length && t - recent[0].t > 1.5) recent.shift();
+    const k = (isBad ? bad : good)[Math.floor(Math.random() * (isBad ? bad : good).length)];
     const el = document.createElement('img'); el.className = 'frfruit'; el.src = _fi(k); el.style.width = sz + 'px'; el.alt = ''; ff.appendChild(el);
-    fx.push({ el, x: sz / 2 + Math.random() * (W() - sz), y: -sz, bad: isBad, v: (H() + sz) / (L.fall * (.9 + Math.random() * .2)) });
+    fx.push({ el, x, y: -sz, bad: isBad, v: (H() + sz) / (L.fall * (.9 + Math.random() * .2)) });
   };
   const pop = (txt, cls) => { const i = document.createElement('i'); i.className = 'frpop ' + cls; i.textContent = txt; i.style.left = bx + 'px'; ff.appendChild(i); later(() => i.remove(), 700); };
   const start = () => {
@@ -61,12 +76,12 @@ App.fruitGame = function (level, good, bad) {
       if (gone) return; const dt = Math.min(.05, (now - last) / 1000); last = now; const el = (now - t0) / 1000;
       ft.textContent = '⏱ ' + Math.max(0, Math.ceil(FR_TIME - el));
       if (el >= FR_TIME) return finish();
-      if (el >= next) { spawn(); next = el + L.every * (.85 + Math.random() * .3); }
+      if (el >= next) { spawn(el); next = el + L.every * (.85 + Math.random() * .3); }
       const bTop = H() - bk.offsetHeight, half = bw() * .5;
       for (let i = fx.length - 1; i >= 0; i--) {
         const f = fx[i]; f.y += f.v * dt; f.el.style.transform = `translate(${f.x - sz / 2}px,${f.y}px)`;
         const cy = f.y + sz * .7;
-        if (cy >= bTop + bk.offsetHeight * .12 && f.y < H() - bk.offsetHeight * .35 && Math.abs(f.x - bx) <= half + sz * .1) {
+        if (cy >= bTop + bk.offsetHeight * .12 && f.y < H() - bk.offsetHeight * .35 && Math.abs(f.x - bx) <= half * .7) {
           if (f.bad) { score = Math.max(0, score - 1); _sfx.bad(); bk.classList.remove('shk'); void bk.offsetWidth; bk.classList.add('shk'); pop('-1', 'no'); }
           else { score++; _sfx.ok(); pop('+1', 'ok'); }
           fs.textContent = `🧺 ${score}개`; f.el.remove(); fx.splice(i, 1);
