@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v79</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v80</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -30,7 +30,7 @@ const App = {
   SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add3', 'sub', 'sub3', 'mix', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
   solvedCount(scope = 'all') {
     const p = this.prof(), d = p.done || {}; let n = 0;
-    if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length;
+    if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length + (p.solved3 || []).length;
     for (const [k, [, keys]] of Object.entries(this.SCOPES)) if (scope === 'all' || scope === k) n += keys.reduce((t, x) => t + (d[x] || []).length, 0);
     return n;
   },
@@ -39,8 +39,8 @@ const App = {
     const name = scope === 'all' ? '모든 공부' : this.SCOPES[scope][0];
     if (!confirm(`${name}에서 푼 문제 ${n}개의 기록을 지울까요?\n(다시 처음부터 나와요)`)) return;
     const p = this.prof(); p.done = p.done || {};
-    if (scope === 'all') { p.solved = []; p.solved2 = []; p.done = {}; }
-    else { if (scope === 'hangul') { p.solved = []; p.solved2 = []; } this.SCOPES[scope][1].forEach(k => delete p.done[k]); }
+    if (scope === 'all') { p.solved = []; p.solved2 = []; p.solved3 = []; p.done = {}; }
+    else { if (scope === 'hangul') { p.solved = []; p.solved2 = []; p.solved3 = []; } this.SCOPES[scope][1].forEach(k => delete p.done[k]); }
     this.save(); this.toast('기록을 지웠어요');
   },
   addClr(scope) {   // 화면 위쪽 막대에 "푼 기록 지우기" 버튼을 붙임
@@ -105,10 +105,10 @@ const App = {
         <div class="cards">
           <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>글자 고르기</span></button>
           <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>자음·모음 누르기</span></button>
-          <button class="card nm off" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>준비 중</span></button>
+          <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>받침까지 누르기</span></button>
         </div></main>`;
     this.root.querySelector('#back').onclick = () => this.home();
-    this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.l === '3' ? this.toast('어려움은 준비 중이에요') : this.hangulMenu(+b.dataset.l));
+    this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.l === '3' ? this.hangul('all', 3) : this.hangulMenu(+b.dataset.l));
   },
   hangulMenu(level = 1) {
     Speech.stop();
