@@ -213,3 +213,5 @@ img.sil{filter:brightness(0) opacity(.82)}
 .hbox .ht.got{animation:popc .5s;filter:drop-shadow(0 0 6px #ffd166) drop-shadow(0 0 10px #ffd166)}.hbox .ht.got::after{content:'';position:absolute;inset:-10%;border:5px solid #3ecf6e;border-radius:50%}
 .hmiss{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:4px solid rgba(255,92,138,.7);animation:hm .6s forwards;pointer-events:none}
 @keyframes hm{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
+
+.ver{position:fixed;right:10px;bottom:6px;font-size:.75rem;opacity:.45;pointer-events:none}
