@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><g stroke="#4a3b52" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><rect x="20" y="24" width="160" height="152" rx="18" fill="#fff"/>
+<path d="M64 38L74 62L100 66L80 84L86 110L64 96L42 110L48 84L28 66L54 62Z" fill="#ffd166" transform="translate(6,0)"/>
+<path d="M140 98Q116 74 128 56Q140 46 148 62Q158 46 170 56Q182 74 158 98Z" fill="#ff8fa3" transform="translate(-4,-2)"/>
+<circle cx="56" cy="142" r="22" fill="#6ec6ff"/><circle cx="48" cy="136" r="3" fill="#4a3b52" stroke="none"/><circle cx="64" cy="136" r="3" fill="#4a3b52" stroke="none"/><path d="M46 148Q56 158 66 148" fill="none" stroke-width="4"/>
+<g transform="translate(142,144)"><circle cx="0" cy="-14" r="9" fill="#fff6e5" stroke-width="4"/><circle cx="14" cy="-4" r="9" fill="#fff6e5" stroke-width="4"/><circle cx="9" cy="12" r="9" fill="#fff6e5" stroke-width="4"/><circle cx="-9" cy="12" r="9" fill="#fff6e5" stroke-width="4"/><circle cx="-14" cy="-4" r="9" fill="#fff6e5" stroke-width="4"/><circle cx="0" cy="0" r="8" fill="#ffd166" stroke-width="4"/></g></g></svg>

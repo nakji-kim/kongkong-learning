@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="horse" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a52"/><stop offset="1" stop-color="#8a5330"/></linearGradient>
+<linearGradient id="car" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d94a63"/><stop offset="1" stop-color="#a02640"/></linearGradient></defs>
+<ellipse cx="100" cy="188" rx="92" ry="8" fill="#000" opacity=".13"/>
+<!-- 말 다리(뒤) -->
+<path d="M116 130L112 176H126L132 134Z" fill="#7a4726" stroke="#3b2414" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M114 176H126V184H112Z" fill="#2c1b10"/>
+<path d="M150 132L156 176H142L140 136Z" fill="#7a4726" stroke="#3b2414" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M156 176H144V184H158Z" fill="#2c1b10"/>
+<!-- 꼬리 -->
+<path d="M112 98Q96 108 100 146Q108 130 116 118Z" fill="#3b2414"/>
+<!-- 말 몸통 -->
+<path d="M110 112C106 94 116 86 132 88L150 90C158 78 160 64 164 54L172 44L174 34L182 44C190 50 198 62 196 76C194 86 184 86 180 82C174 80 170 78 166 82C168 94 172 106 170 120L162 134C150 142 126 142 114 136Z" fill="url(#horse)" stroke="#3b2414" stroke-width="3" stroke-linejoin="round"/>
+<path d="M150 90C158 78 160 64 164 54L172 44L170 56C166 72 164 84 160 94Z" fill="#3b2414"/>
+<path d="M120 106Q136 98 152 106" fill="none" stroke="#a86a3a" stroke-width="3" opacity=".6" stroke-linecap="round"/>
+<circle cx="182" cy="64" r="3.4" fill="#1d1410"/><circle cx="183" cy="63" r="1.1" fill="#fff"/>
+<ellipse cx="192" cy="76" rx="2.2" ry="3" fill="#2c1b10"/>
+<!-- 말 다리(앞) -->
+<path d="M120 134L118 178H132L136 138Z" fill="url(#horse)" stroke="#3b2414" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M118 178H132V186H116Z" fill="#2c1b10"/>
+<path d="M158 134L166 176H152L148 138Z" fill="url(#horse)" stroke="#3b2414" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M156 178H168V186H154Z" fill="#2c1b10"/>
+<!-- 마구 -->
+<path d="M164 82Q170 96 170 108M132 90Q146 96 160 90" fill="none" stroke="#7a1f1f" stroke-width="4" stroke-linecap="round"/>
+<circle cx="170" cy="108" r="4" fill="#ffd166" stroke="#a87a1a" stroke-width="1.5"/>
+<path d="M92 122L132 112" fill="none" stroke="#5a3a20" stroke-width="5" stroke-linecap="round"/>
+<!-- 마차 바퀴 뒤 -->
+<circle cx="78" cy="148" r="24" fill="#fff6e0" stroke="#5a2a16" stroke-width="5"/>
+<circle cx="78" cy="148" r="19" fill="none" stroke="#d9a21b" stroke-width="2.5"/>
+<path d="M78 124V172M54 148H102M61 131L95 165M95 131L61 165" stroke="#7a3b1d" stroke-width="3" stroke-linecap="round"/>
+<circle cx="78" cy="148" r="5.5" fill="#ffd166" stroke="#5a2a16" stroke-width="2.5"/>
+<!-- 마차 몸체 -->
+<path d="M12 132V102Q12 52 56 48Q100 52 100 102V132Z" fill="url(#car)" stroke="#4a1522" stroke-width="4" stroke-linejoin="round"/>
+<path d="M12 132H100V142Q100 148 94 148H18Q12 148 12 142Z" fill="#7a1f2e" stroke="#4a1522" stroke-width="4" stroke-linejoin="round"/>
+<path d="M16 84Q22 58 56 56Q90 58 96 84" fill="none" stroke="#ffd166" stroke-width="4.5" stroke-linecap="round"/>
+<circle cx="56" cy="44" r="5" fill="#ffd166" stroke="#a87a1a" stroke-width="2"/>
+<rect x="24" y="82" width="26" height="28" rx="12" fill="#bfe8ff" stroke="#ffd166" stroke-width="4"/>
+<path d="M30 100L44 88" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>
+<rect x="56" y="80" width="30" height="46" rx="8" fill="none" stroke="#ffd166" stroke-width="3.5"/>
+<circle cx="80" cy="106" r="3.2" fill="#ffd166"/>
+<path d="M12 126H100" stroke="#ffd166" stroke-width="3.5"/>
+<path d="M22 40L18 24H34L30 38" fill="#ffd166" stroke="#a87a1a" stroke-width="2" opacity="0"/>
+<!-- 마차 바퀴 앞 -->
+<circle cx="38" cy="150" r="30" fill="#fff6e0" stroke="#5a2a16" stroke-width="5.5"/>
+<circle cx="38" cy="150" r="24" fill="none" stroke="#d9a21b" stroke-width="3"/>
+<path d="M38 120V180M8 150H68M17 129L59 171M59 129L17 171" stroke="#7a3b1d" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="38" cy="150" r="7" fill="#ffd166" stroke="#5a2a16" stroke-width="3"/></svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><g stroke="#4a3b52" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><defs><clipPath id="c"><rect x="6" y="6" width="188" height="188" rx="30"/></clipPath></defs>
+<g clip-path="url(#c)"><rect x="0" y="0" width="200" height="200" fill="#e6f4ff" stroke="none"/>
+<path d="M0 112L46 58L82 98L120 46L200 124V200H0Z" fill="#9db4d9"/>
+<path d="M36 70L46 58L56 72M110 62L120 46L134 64" fill="none" stroke="#fff" stroke-width="5"/>
+<rect x="0" y="116" width="200" height="90" fill="#7fcf6f" stroke="none"/>
+<ellipse cx="100" cy="148" rx="80" ry="36" fill="#6ec6ff"/>
+<path d="M48 144Q62 138 76 144M112 134Q126 128 140 134M86 160Q102 154 118 160" fill="none" stroke="#fff" stroke-width="4"/>
+<path d="M26 128V102M36 130V96M164 128V98M174 124V104" fill="none" stroke="#7a5c3a" stroke-width="5"/>
+<ellipse cx="136" cy="150" rx="20" ry="12" fill="#fff"/><circle cx="150" cy="138" r="8" fill="#fff"/><path d="M156 138L168 142L156 144Z" fill="#ffb347" stroke-width="3.5"/><circle cx="152" cy="136" r="2" fill="#4a3b52" stroke="none"/></g>
+<rect x="6" y="6" width="188" height="188" rx="30" fill="none"/></g></svg>
