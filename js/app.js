@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v126</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v129</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -128,14 +128,14 @@ const App = {
     this.subHome('📖 한글', [
       { b: '고르기', s: '👆', bg: '#b8e6a1', go: () => this.hangulLevelMenu() },
       { b: '읽고 말하기', s: '🎤', small: '마이크 권한이 필요해요', bg: '#ff8fab', go: () => this.speakMenu() },
-      { b: '쓰기', s: '✏️', small: '준비중', bg: '#ffd166', go: () => this.writeMenu() },
+      { b: '쓰기', s: '✏️', bg: '#ffd166', go: () => this.writeMenu() },
     ], () => this.home());
   },
   alphaHome() {
     this.subHome('🔤 알파벳', [
       { b: '고르기', s: '👆', bg: '#8ddc9b', go: () => this.alphaMenu() },
       { b: '읽고 말하기', s: '🎤', small: '마이크 권한이 필요해요', bg: '#ff8fab', go: () => this.speakAlpha() },
-      { b: '쓰기', s: '✏️', small: '준비중', bg: '#ffd166', go: () => this.writeMenuEn() },
+      { b: '쓰기', s: '✏️', bg: '#ffd166', go: () => this.writeMenuEn() },
     ], () => this.home());
   },
   hangulLevelMenu() {

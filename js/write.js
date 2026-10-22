@@ -1,4 +1,5 @@
 // 한글 > 쓰기 : 소리를 듣고 따라 쓰기 (손가락으로 쓰고, 글자 모양과 얼마나 겹치는지로 판정 — 획순은 보지 않음)
+const GUIDE = '#dedae4';   // 연한 배경 글자는 투명도 대신 불투명한 연한 색 (획이 겹쳐 진하게 보이는 현상 방지)
 const WFONT = s => `800 ${s}px "Gothic A1","Noto Sans KR","Apple SD Gothic Neo",sans-serif`;
 App.writeMenu = function () {
   Speech.stop();
@@ -32,7 +33,7 @@ App.writeGame = function (level, kind = 'ko') {
   const WORDS = EN ? ALPHA.flatMap(a => a.ws.map(w => ({ ...a, ...w }))) : [], W = Object.fromEntries(WORDS.map(x => [x.word, x]));
   const noF = w => [...w].every(ch => (ch.charCodeAt(0) - 0xAC00) % 28 === 0);
   const words = [...new Set(Words.list.map(x => x.w))];
-  const ids = EN ? (level === 1 ? ALPHA.flatMap(a => [a.L, a.L.toLowerCase()]) : [...new Set(WORDS.map(x => x.word))].filter(w => level === 3 || w.replace(/[^A-Za-z]/g, '').length < 6)) : level === 1 ? [...new Set(Words.list.map(x => x.syl))] : level === 2 ? words.filter(noF) : words;   // 어려움: 받침 없는 단어도 함께
+  const ids = EN ? (level === 1 ? ALPHA.flatMap(a => [a.L, a.L.toLowerCase()]) : [...new Set(WORDS.map(x => x.word))].filter(w => w.replace(/[^A-Za-z]/g, '').length < 6)) : level === 1 ? [...new Set(Words.list.map(x => x.syl))] : level === 2 ? words.filter(noF) : words;   // 어려움: 받침 없는 단어도 함께
   if (!ids.length) { this.toast('낱말이 없어요'); return menu(); }
   const total = this.roundSize(key, ids);
   let todo = ids.filter(i => !this.doneArr(key).includes(i)); if (!todo.length) todo = ids.slice();
@@ -45,7 +46,7 @@ App.writeGame = function (level, kind = 'ko') {
   const upd = () => $('#stars').textContent = `⭐ ${good} · ${qn}/${total}`;
   $('#back').onclick = () => { clearTimeout(timer); Speech.stop(); menu(); };
   const praise = ['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'];
-  const sayTarget = done => !EN ? Speech.play(cur, done) : level === 1 ? Speech.play(cur.toUpperCase(), done, 'en_' + cur.toUpperCase(), 'en-US') : Speech.play(cur, done, W[cur].snd || 'enw_' + W[cur].L, 'en-US');
+  const sayTarget = (done, once) => !EN ? (level === 1 && !once ? Speech.twice(cur, done) : Speech.play(cur, done)) : level === 1 ? (once ? Speech.play(cur.toUpperCase(), done, 'en_' + cur.toUpperCase(), 'en-US') : Speech.twice(cur.toUpperCase(), done, 'en_' + cur.toUpperCase(), 'en-US')) : Speech.play(cur, done, W[cur].snd || 'enw_' + W[cur].L, 'en-US');   // 쉬움(한 글자)은 두 번 읽어 줌
   const layout = word => {
     if (EN) {   // 영어: 한 줄 (글자 수에 맞춰 글자 크기 조절)
       const maxW = Math.min(innerWidth - 28, 520), mc = document.createElement('canvas').getContext('2d'); mc.font = WFONT(100);
@@ -96,11 +97,14 @@ App.writeGame = function (level, kind = 'ko') {
     gx.setTransform(dpr, 0, 0, dpr, 0, 0); ix.setTransform(dpr, 0, 0, dpr, 0, 0);
     $('#wst').style.width = L.W + 'px'; $('#wst').style.height = L.H + 'px';
     const pc = $('#wpic');
-    if (EN && level === 2) {   // 보통: 그림 카드(한글 이름 포함)
+    if (!EN && level === 2) {   // 한글 보통: 한글 고르기에서 쓰는 그림 (없으면 숨김)
+      const list = [...['svg', 'png', 'webp', 'jpg'].map(x => encodeURI(`assets/images/${cur}.${x}`)), ...(EMOJI[cur] ? [`https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${EMOJI[cur]}.svg`] : [])];
+      pc.style.display = ''; pc.innerHTML = '<img alt="">'; const img = pc.firstChild; let k = 0; img.onerror = () => { if (++k < list.length) img.src = list[k]; else pc.style.display = 'none'; }; img.src = list[0];
+    } else if (EN && level === 2) {   // 영어 보통: 그림 카드(한글 이름 포함)
       const a = W[cur], list = [...['svg', 'png', 'webp', 'jpg'].map(x => encodeURI(`assets/images/${a.word}.${x}`)), ...(a.e ? [`https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${a.e}.svg`] : [])];
       pc.style.display = ''; pc.innerHTML = `<img alt=""><div class="kcap">${a.ko}</div>`; const img = pc.firstChild; let k = 0; img.onerror = () => { if (++k < list.length) img.src = list[k]; else img.replaceWith(Object.assign(document.createElement('span'), { textContent: a.word })); }; img.src = list[0];
     } else pc.style.display = 'none';
-    strokes = []; guideOn = level !== 3; guide(guideOn ? 'rgba(59,47,74,.17)' : null); draw();
+    strokes = []; guideOn = level !== 3; guide(guideOn ? GUIDE : null); draw();
   };
   const finish = ok => {
     locked = true; clearTimeout(timer); Speech.stop();
@@ -108,12 +112,12 @@ App.writeGame = function (level, kind = 'ko') {
     const pi = Math.floor(Math.random() * praise.length);
     if (ok && EN) Speech.play(EN_PRAISE[pi], () => sayTarget(() => setTimeout(next, 500)), 'en_praise' + pi, 'en-US');
     else if (ok) Speech.play(praise[pi], () => Speech.play(cur, () => setTimeout(next, 500)), '_praise' + pi);
-    else { msg.textContent = '잘했어요! 다음에 또 해 봐요'; guide('rgba(47,158,68,.45)'); Speech.play('잘했어요!', () => setTimeout(next, 900), '_praise0'); }
+    else { msg.textContent = '잘했어요! 다음에 또 해 봐요'; guide('#a9dcb6'); Speech.play('잘했어요!', () => setTimeout(next, 900), '_praise0'); }
   };
   const retry = () => {   // 너무 벗어남 → 쓴 것 지우고 다시
     tries++; clear(); locked = true;
     if (tries >= 3) return finish(false);
-    if (tries >= 2 && !guideOn) { guideOn = true; guide('rgba(59,47,74,.17)'); }   // 어려움: 두 번 틀리면 흐린 글자를 보여줌
+    if (tries >= 2 && !guideOn) { guideOn = true; guide(GUIDE); }   // 어려움: 두 번 틀리면 흐린 글자를 보여줌
     msg.textContent = '다시 써 볼까요?';
     Speech.stop(); Speech.play('다시 써 볼까요?', () => sayTarget(() => { locked = false; }), 'wr_retry');
   };
@@ -131,7 +135,7 @@ App.writeGame = function (level, kind = 'ko') {
   cc.onpointermove = e => { if (!drawing) return; e.preventDefault(); drawing.push(pos(e)); draw(); };
   const up = e => { if (!drawing) return; drawing = null; if (level !== 3) timer = setTimeout(() => judge(false), 900); };   // 어려움은 "다 썼어요"를 눌러야 확인
   cc.onpointerup = up; cc.onpointercancel = up;
-  $('#wsnd').onclick = () => { if (!locked) { Speech.stop(); sayTarget(); } };
+  $('#wsnd').onclick = () => { if (!locked) { Speech.stop(); sayTarget(null, true); } };   // 다시 듣기는 한 번만
   $('#wclr').onclick = () => { if (!locked) { clearTimeout(timer); clear(); } };
   $('#wok').onclick = () => { if (!locked) { clearTimeout(timer); judge(true); } };
   const next = () => {
