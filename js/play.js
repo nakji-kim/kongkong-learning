@@ -1,6 +1,6 @@
 // 놀이 학습 : 짝 맞추기 / 패턴 (새 놀이 3종은 js/play2.js)
 const _tw = c => `https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${c}.svg`;
-const pimg = (code, cls = '') => `<img class="${cls}" alt="" src="${_tw(code)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'pemo ${cls}',textContent:String.fromCodePoint(0x${code})+'\\uFE0F'}))">`;
+const pimg = (code, cls = '') => code.startsWith('svg:') ? `<img class="${cls}" alt="" src="assets/images/play/${code.slice(4)}.svg">` : `<img class="${cls}" alt="" src="${_tw(code)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'pemo ${cls}',textContent:String.fromCodePoint(0x${code})+'\\uFE0F'}))">`;
 const _shuf = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
 const _line = k => [PLAY_LINES[k], k];
 const _chain = (lines, done) => lines.reduceRight((nxt, l) => () => Speech.play(l[0], nxt, l[1]), done || (() => { }))();
