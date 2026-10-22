@@ -268,3 +268,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 .frpop{position:absolute;bottom:90px;font-style:normal;font-weight:900;font-size:2rem;transform:translateX(-50%);animation:spup .7s forwards;pointer-events:none}.frpop.ok{color:#2aa856}.frpop.no{color:#e0443a}
 .frf small{color:#3b2f4a}
 @keyframes bkshk{0%,100%{rotate:0deg}25%{rotate:-12deg}75%{rotate:12deg}}
+.amd{display:block;margin-top:6px;font-size:.78rem;font-weight:600;line-height:1.25;opacity:.8;text-align:center}
