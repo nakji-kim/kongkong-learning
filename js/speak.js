@@ -40,7 +40,7 @@ App.speakGame = function (level) {
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
   let good = 0, qn = 0, cur, tries, busy = false, rec = null, heard = false, reads = 0, anyOk = false, firstOk = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
-    <main class="spk"><div class="expt">🧪 아직 실험중이에요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div><div id="dbg" class="dbg"></div></main>`;
+    <main class="spk"><div class="expt">🧪 아직 실험중이에요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div>${level === 1 ? '<div class="sex">예) "가 가", "라 라"</div>' : ''}<div id="dbg" class="dbg"></div></main>`;
   const $ = s => root.querySelector(s), mic = $('#mic'), msg = $('#msg'), dbg = $('#dbg');
   const upd = () => $('#stars').textContent = `⭐ ${good} · ${qn}/${total}`;
   const stop = () => { try { rec && rec.abort(); } catch (e) { } rec = null; };
@@ -50,7 +50,7 @@ App.speakGame = function (level) {
     if (qn >= total) { stop(); return App.finishRound(good, total, () => App.speakGame(level), () => App.speakMenu()); }
     dbg.textContent = ''; reads = 0; anyOk = false; firstOk = false; cur = q[qn++]; tries = 0; busy = false; heard = false; upd();
     const w = $('#sw'); w.textContent = cur; w.style.fontSize = level === 1 ? '10rem' : `min(7rem, calc((100vw - 72px) / ${Math.max(cur.length, 3) + 1}))`;
-    w.className = 'sw'; mic.className = 'mic'; msg.textContent = level === 1 ? '🎤를 누르고 두 번 읽어 보세요 (가 가)' : '🎤를 누르고 읽어 보세요';
+    w.className = 'sw'; mic.className = 'mic'; msg.textContent = level === 1 ? '🎤를 누르고 두 번 읽어 보세요' : '🎤를 누르고 읽어 보세요';
   };
   const pass = ok => {   // ok=true: 맞게 읽음 / false: 두 번 해도 인식 안 됨 (그냥 넘어감)
     busy = true; mic.className = 'mic'; Speech.stop();
@@ -80,4 +80,5 @@ App.speakGame = function (level) {
     try { r.start(); } catch (e) { busy = false; msg.textContent = '다시 눌러 주세요'; }
   };
   next();
+  if (level === 1) setTimeout(() => Speech.play('두 번 연속으로 읽어 주세요.', null, 'rd_two'), 400);   // 시작할 때 한 번 안내
 };
