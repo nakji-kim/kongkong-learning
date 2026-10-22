@@ -41,10 +41,12 @@ App.fruitGame = function (level, good, bad) {
   const timers = []; const later = (fn, ms) => timers.push(setTimeout(() => { if (!gone) fn(); }, ms));
   const W = () => ff.clientWidth, H = () => ff.clientHeight;
   let bx = 0; const bw = () => bk.offsetWidth;
+  bk.style.width = Math.min(150, W() * .3) + 'px';
   const setBx = x => { bx = Math.max(bw() / 2, Math.min(W() - bw() / 2, x)); bk.style.transform = `translateX(${bx - bw() / 2}px)`; };
   const move = e => { if (!running) return; const r = ff.getBoundingClientRect(); setBx(e.clientX - r.left); e.preventDefault(); };
   ff.addEventListener('pointerdown', e => { try { ff.setPointerCapture(e.pointerId); } catch (_) { } move(e); });
   ff.addEventListener('pointermove', move);
+  setBx(W() / 2);
   const fx = []; let sz = 56;
   const spawn = () => {
     const isBad = bad.length && Math.random() < .5, k = (isBad ? bad : good)[Math.floor(Math.random() * (isBad ? bad : good).length)];
@@ -53,7 +55,7 @@ App.fruitGame = function (level, good, bad) {
   };
   const pop = (txt, cls) => { const i = document.createElement('i'); i.className = 'frpop ' + cls; i.textContent = txt; i.style.left = bx + 'px'; ff.appendChild(i); later(() => i.remove(), 700); };
   const start = () => {
-    sz = Math.max(44, Math.min(72, W() * .17)); bk.style.width = Math.min(150, W() * .3) + 'px'; setBx(W() / 2);
+    sz = Math.max(44, Math.min(72, W() * .17));
     running = true; let t0 = performance.now(), last = t0, next = 0;
     const tick = now => {
       if (gone) return; const dt = Math.min(.05, (now - last) / 1000); last = now; const el = (now - t0) / 1000;
