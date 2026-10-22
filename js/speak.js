@@ -3,13 +3,15 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const _jam = s => [...s].map(ch => { const c = ch.charCodeAt(0) - 0xAC00; if (c < 0 || c > 11171) return ch; return String.fromCharCode(0x1100 + ((c / 588) | 0), 0x1161 + (((c % 588) / 28) | 0), ...(c % 28 ? [0x11A7 + (c % 28)] : [])); }).join('');
 const _lev = (a, b) => { const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]); for (let j = 1; j <= b.length; j++) d[0][j] = j; for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[a.length][b.length]; };
 // 관대한 판정: 후보 중 하나라도 정답을 포함하거나, 자모 기준으로 비슷하면 정답
+// 인식기가 "티비"를 TV, "이"를 2처럼 영어/숫자로 적는 경우를 한글로 되돌림
+const _norm = raw => raw.toLowerCase().replace(/tv|티브이/g, '티비').replace(/pc/g, '피씨').replace(/[0-9]/g, d => '영일이삼사오육칠팔구'[d]);
 const _heardOk = (target, alts, loose) => {
   if (loose) {   // 한 글자: 들린 글자 중 모음이 같은 것이 하나라도 있으면 정답 (한 글자는 인식이 약해서 아주 관대하게)
     const tj = _jam(target), tv = tj[1];
-    if (alts.some(raw => [...raw.replace(/[^가-힣]/g, '')].some(ch => { const j = _jam(ch); return ch === target || j[1] === tv; }))) return true;
+    if (alts.some(raw => [..._norm(raw).replace(/[^가-힣]/g, '')].some(ch => { const j = _jam(ch); return ch === target || j[1] === tv; }))) return true;
   }
   const tol = target.length <= 3 ? 1 : 2, tj = _jam(target);
-  return alts.some(raw => { const t = raw.replace(/[^가-힣]/g, ''); if (!t) return false; if (t.includes(target)) return true;
+  return alts.some(raw => { const t = _norm(raw).replace(/[^가-힣]/g, ''); if (!t) return false; if (t.includes(target)) return true;
     for (let i = 0; i + target.length <= t.length; i++) if (_lev(tj, _jam(t.slice(i, i + target.length))) <= tol) return true; return false; });
 };
 App.speakMenu = function () {
