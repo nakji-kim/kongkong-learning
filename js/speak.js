@@ -50,7 +50,7 @@ App.speakGame = function (level) {
     if (qn >= total) { stop(); return App.finishRound(good, total, () => App.speakGame(level), () => App.speakMenu()); }
     dbg.textContent = ''; reads = 0; anyOk = false; firstOk = false; cur = q[qn++]; tries = 0; busy = false; heard = false; upd();
     const w = $('#sw'); w.textContent = cur; w.style.fontSize = level === 1 ? '10rem' : `min(7rem, calc((100vw - 72px) / ${Math.max(cur.length, 3) + 1}))`;
-    w.className = 'sw'; mic.className = 'mic'; msg.textContent = level === 1 ? '🎤를 누르고 두 번 읽어 보세요' : '🎤를 누르고 읽어 보세요';
+    w.className = 'sw'; mic.className = 'mic'; msg.textContent = level === 1 ? '🎤를 누르고 두 번 읽어 보세요 (가 가)' : '🎤를 누르고 읽어 보세요';
   };
   const pass = ok => {   // ok=true: 맞게 읽음 / false: 두 번 해도 인식 안 됨 (그냥 넘어감)
     busy = true; mic.className = 'mic'; Speech.stop();
@@ -59,11 +59,8 @@ App.speakGame = function (level) {
     msg.textContent = ok ? praise[pi] : '잘했어요! 다음에 또 해 봐요';
     Speech.play(ok ? praise[pi] : '잘했어요!', () => setTimeout(next, 600), ok ? '_praise' + pi : '_praise0');
   };
-  const handle = ok => {   // 쉬움(한 글자)은 두 번 읽고, 둘 중 하나만 맞아도 정답
-    if (level !== 1) return ok ? pass(true) : fail();
-    reads++; if (ok) { anyOk = true; if (reads === 1) firstOk = true; }
-    if (reads < 2) { busy = false; mic.className = 'mic'; msg.textContent = '한 번 더 읽어 볼까요? (1/2)'; return; }
-    tries = firstOk ? 0 : 1; pass(anyOk);
+  const handle = ok => {   // 쉬움(한 글자)은 마이크를 한 번 켜고 두 번 읽음("가 가"): 들린 글자 중 하나만 맞아도 정답
+    return ok ? pass(true) : fail();
   };
   const fail = () => {
     tries++; mic.className = 'mic';
@@ -77,7 +74,7 @@ App.speakGame = function (level) {
     let got = false, settled = false;
     const settle = f => { if (settled) return; settled = true; rec = null; f(); };
     r.onstart = () => { mic.className = 'mic on'; msg.textContent = '듣고 있어요…'; };
-    r.onresult = e => { got = true; const alts = [...e.results[0]].map(a => a.transcript); dbg.textContent = (reads ? dbg.textContent + '  →  ' : '들린 말: ') + (alts.join(' / ') || '(없음)'); settle(() => handle(_heardOk(cur, alts, level === 1))); };
+    r.onresult = e => { got = true; const alts = [...e.results[0]].map(a => a.transcript); dbg.textContent = '들린 말: ' + (alts.join(' / ') || '(없음)'); settle(() => handle(_heardOk(cur, alts, level === 1))); };
     r.onerror = e => { dbg.textContent = '오류: ' + e.error; if (e.error === 'not-allowed' || e.error === 'service-not-allowed') return settle(() => { busy = false; mic.className = 'mic'; msg.textContent = '마이크를 허용해 주세요'; App.toast('마이크 권한이 필요해요'); }); if (e.error === 'aborted') return; settle(() => handle(false)); };
     r.onend = () => settle(() => { if (!got) dbg.textContent = dbg.textContent || '소리를 인식하지 못했어요'; got ? 0 : handle(false); });
     try { r.start(); } catch (e) { busy = false; msg.textContent = '다시 눌러 주세요'; }
