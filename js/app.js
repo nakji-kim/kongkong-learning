@@ -8,10 +8,9 @@ const App = {
         <li>계정 정보는 페이지를 실행한 기기/브라우저에만 저장 됩니다.<ul><li>자주 틀리는 문제를 자주 노출하기 위한 오답노트용 입니다.</li><li>기기나 브라우저가 변경되면 연동되지 않습니다.</li></ul></li>
         <li>한번 풀었던 문제는 모든 문제를 풀기전까지 다시 나오지 않아요.(중복 방지)<ul><li>틀렸던 문제는 한번에 맞힐때까지 다시 나와요.</li><li>푼 기록 지우기를 누르면 초기화 후 다시 풀 수 있어요.</li><li>공부 선택 화면에서 누를 시 전체 초기화. 각 공부 안에서 누를 시 해당 공부 초기화</li></ul></li>
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
-        <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v131</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v132</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
