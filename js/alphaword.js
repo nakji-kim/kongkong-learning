@@ -45,7 +45,7 @@ App.alphaWordGame = function (level, letters) {
 
   function next() {
     qn++; upd(); tries = 0; locked = true;
-    cur = NAMES[App.pickNew(key, pool.map(a => a.L))];     // A부터 순서대로, 푼 글자는 건너뜀
+    cur = NAMES[App.pickNew(key, pool.map(a => a.L), { random: true })];     // 무작위, 푼 글자는 건너뜀
     const group = letters.filter(l => l !== cur.L), rest = Object.keys(NAMES).filter(l => l !== cur.L && !letters.includes(l));
     const decoys = []; const src = [...group];
     while (decoys.length < 3 && src.length) { const d = wpick(src, weight); decoys.push(d); src.splice(src.indexOf(d), 1); }
