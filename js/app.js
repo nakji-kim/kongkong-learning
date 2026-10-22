@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li>새로고침을 자주 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v82</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v83</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -76,10 +76,11 @@ const App = {
           <button class="card nm" data-k="add" style="background:#ffb199"><b>＋</b><span>더하기</span></button>
           <button class="card nm" data-k="sub" style="background:#ffd166"><b>－</b><span>빼기</span></button>
           <button class="card nm" data-k="all" style="background:#b8a1f0"><b>＋－</b><span>종합</span></button>
+          <button class="card nm" data-k="sp" style="background:#8fd6e8"><b>⚡</b><span>순발력</span></button>
         </div></main>`;
     this.root.querySelector('#back').onclick = () => this.home();
     this.addClr('number');
-    this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => this.mathMenu({ add: 'add', sub: 'sub', all: 'mix' }[b.dataset.k]));
+    this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.k === 'sp' ? this.speedMenu() : this.mathMenu({ add: 'add', sub: 'sub', all: 'mix' }[b.dataset.k]));
   },
   finishRound(good, total, again, back, opt) {   // 10문제 끝 → 별 결과
     Speech.stop();

@@ -251,3 +251,10 @@ img.sil{filter:brightness(0) opacity(.82)}
 .blank.part{color:rgba(255,143,163,.8)}
 .nm.off{opacity:.45}
 .game:has(.jrows) .stage{min-height:min(36vh,340px)}.game:has(.jrows) .word{padding-bottom:14px}
+/* 숫자 · 순발력 */
+.sp{justify-content:center}.spg{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:clamp(8px,2vmin,16px);width:min(94vw,64vh,560px);aspect-ratio:1}
+.spc{border:0;border-radius:22px;font:inherit;font-weight:800;font-size:clamp(2.2rem,11vmin,4.6rem);color:#3b2f4a;background:var(--sun);box-shadow:0 6px 0 rgba(0,0,0,.18);position:relative;transition:transform .12s,opacity .15s}
+.spc:active{transform:translateY(3px)}.spc.gone{opacity:0;transform:scale(.4);pointer-events:none}.spc.born{animation:pop .3s}.spc.bad{animation:shake .35s;background:#ffc9c9}
+.sppen{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:.4em;color:#e0443a;font-style:normal;animation:spup .7s forwards;pointer-events:none}
+@keyframes spup{to{top:-34px;opacity:0}}
+.spcd{position:absolute;left:0;right:0;top:35%;text-align:center;font-size:min(30vw,14rem);font-weight:900;color:var(--ko);pointer-events:none}.spcd.go{animation:pop .5s}
