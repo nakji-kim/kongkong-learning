@@ -13,7 +13,53 @@ const ALPHA = [
 // 글자마다 두 번째 단어 (그림은 이모지/assets/images, 음성은 assets/audio/enw2_<글자>.mp3). 1단계에서 둘 중 하나가 무작위로 나옵니다.
 const ALPHA2 = { A: ['Ant', '1f41c', '개미'], B: ['Banana', '1f34c', '바나나'], C: ['Car', '1f697', '자동차'], D: ['Duck', '1f986', '오리'], E: ['Elephant', '1f418', '코끼리'], F: ['Frog', '1f438', '개구리'], G: ['Giraffe', '1f992', '기린'], H: ['Horse', '1f434', '말'], I: ['Island', '1f3dd', '섬'], J: ['Jellyfish', '1fabc', '해파리'], K: ['Key', '1f511', '열쇠'], L: ['Lemon', '1f34b', '레몬'], M: ['Mouse', '1f42d', '쥐'], N: ['Nest', '1faba', '둥지'], O: ['Owl', '1f989', '부엉이'], P: ['Pizza', '1f355', '피자'], Q: ['Question', '2753', '물음표'], R: ['Rainbow', '1f308', '무지개'], S: ['Star', '2b50', '별'], T: ['Tree', '1f332', '나무'], U: ['Unicorn', '1f984', '유니콘'], V: ['Volcano', '1f30b', '화산'], W: ['Whale', '1f433', '고래'], Y: ['Yellow', '', '노랑'], Z: ['Zero', '', '영'] };
 ALPHA.forEach(a => { const t = ALPHA2[a.L]; if (t) a.w2 = { word: t[0], e: t[1], ko: t[2] }; });   // X·Y는 단어 하나만
-const alphaVariant = a => (!a.w2 || Math.random() < 0.5 ? { ...a, snd: 'enw_' + a.L } : { ...a, ...a.w2, snd: 'enw2_' + a.L });   // 두 단어 중 하나를 무작위로
+// 글자마다 추가 단어 (그림은 assets/images/<단어>.svg, 음성은 assets/audio/enw3_<단어>.mp3)
+const ALPHA_EXTRA = [
+  ['A', 'Airplane', '2708', '비행기'],
+  ['B', 'Bear', '1f43b', '곰'],
+  ['B', 'Bus', '1f68c', '버스'],
+  ['B', 'Bird', '1f426', '새'],
+  ['C', 'Cow', '1f404', '소'],
+  ['C', 'Cake', '1f370', '케이크'],
+  ['C', 'Chicken', '1f414', '닭'],
+  ['D', 'Dinosaur', '1f996', '공룡'],
+  ['D', 'Donut', '1f369', '도넛'],
+  ['E', 'Eye', '1f441', '눈'],
+  ['E', 'Ear', '1f442', '귀'],
+  ['F', 'Flower', '1f338', '꽃'],
+  ['F', 'Fire', '1f525', '불'],
+  ['F', 'Fox', '1f98a', '여우'],
+  ['G', 'Gift', '1f381', '선물'],
+  ['G', 'Guitar', '1f3b8', '기타'],
+  ['H', 'House', '1f3e0', '집'],
+  ['H', 'Heart', '2764', '하트'],
+  ['K', 'Kangaroo', '1f998', '캥거루'],
+  ['K', 'Koala', '1f428', '코알라'],
+  ['L', 'Leaf', '1f343', '나뭇잎'],
+  ['L', 'Ladybug', '1f41e', '무당벌레'],
+  ['M', 'Moon', '1f319', '달'],
+  ['M', 'Milk', '1f95b', '우유'],
+  ['N', 'Nut', '1f95c', '땅콩'],
+  ['O', 'Octopus', '1f419', '문어'],
+  ['P', 'Panda', '1f43c', '판다'],
+  ['P', 'Penguin', '1f427', '펭귄'],
+  ['P', 'Pencil', '270f', '연필'],
+  ['R', 'Rose', '1f339', '장미'],
+  ['R', 'Robot', '1f916', '로봇'],
+  ['R', 'Rocket', '1f680', '로켓'],
+  ['S', 'Snake', '1f40d', '뱀'],
+  ['S', 'Shoes', '1f45f', '신발'],
+  ['S', 'Strawberry', '1f353', '딸기'],
+  ['S', 'Snowman', '26c4', '눈사람'],
+  ['T', 'Train', '1f682', '기차'],
+  ['T', 'Turtle', '1f422', '거북이'],
+  ['T', 'Tomato', '1f345', '토마토'],
+  ['W', 'Watch', '231a', '손목시계'],
+  ['W', 'Worm', '1fab1', '지렁이']
+];
+ALPHA.forEach(a => { a.ws = [{ word: a.word, e: a.e, ko: a.ko, snd: 'enw_' + a.L }]; if (a.w2) a.ws.push({ ...a.w2, snd: 'enw2_' + a.L }); });
+ALPHA_EXTRA.forEach(([L, word, e, ko]) => ALPHA.find(a => a.L === L).ws.push({ word, e, ko, snd: 'enw3_' + word }));
+const alphaVariant = a => { const w = a.ws[Math.floor(Math.random() * a.ws.length)]; return { ...a, ...w }; };   // 글자에 속한 단어 중 하나를 무작위로
 const ALPHA_GROUPS = [['A~G', 'ABCDEFG'], ['H~N', 'HIJKLMN'], ['O~U', 'OPQRSTU'], ['V~Z', 'VWXYZ'], ['전체', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']];
 
 // 알파벳 공부의 영어 칭찬 / 결과 음성 (문제 수 = 묶음의 글자 수)

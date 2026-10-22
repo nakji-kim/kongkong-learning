@@ -269,3 +269,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 .frf small{color:#3b2f4a}
 @keyframes bkshk{0%,100%{rotate:0deg}25%{rotate:-12deg}75%{rotate:12deg}}
 .amd{display:block;margin-top:6px;font-size:.78rem;font-weight:600;line-height:1.25;opacity:.8;text-align:center}
+.awb{aspect-ratio:auto;padding:18px 8px;min-width:150px}.awb b{font-size:2.4rem}.awb span{font-size:1.15rem;word-break:keep-all}

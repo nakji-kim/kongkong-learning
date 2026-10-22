@@ -2,21 +2,22 @@
 // 음성은 알파벳 공부에서 쓰는 enw_<글자>.mp3(단어), en_praise*.mp3(영어 칭찬)를 그대로 씁니다.
 App.alphaWordMenu = function () {
   Speech.stop();
-  const row = (lv, title, sub, color) => `<section class="lvrow" style="--c:${color}"><div class="lvt"><b>${title}</b><span>${sub}</span></div>
-    <div class="lvc">${ALPHA_GROUPS.map(([n, l]) => `<button class="chip lvb" data-lv="${lv}" data-l="${l}">${n}</button>`).join('')}</div></section>`;
+  const all = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home lvmain"><h1>단어 공부</h1>
-      ${row(1, '1단계 · 듣고 그림 찾기', '단어를 듣고 알맞은 그림을 찾아요', '#ffe3c2')}
-      ${row(2, '2단계 · 첫 글자 채우기', '빠진 첫 글자를 찾아요', '#d9ecff')}</main>`;
+    <main class="home"><h1>단어 공부</h1>
+      <div class="cards">
+        <button class="card nm awb" data-lv="1" style="background:#ffe3c2"><b>1단계</b><span>듣고 그림 찾기</span><small class="amd">단어를 듣고 알맞은 그림을 찾아요</small></button>
+        <button class="card nm awb" data-lv="2" style="background:#d9ecff"><b>2단계</b><span>첫 글자 채우기</span><small class="amd">빠진 첫 글자를 찾아요</small></button>
+      </div></main>`;
   this.root.querySelector('#back').onclick = () => this.alphaMenu();
   this.addClr('alpha');
-  this.root.querySelectorAll('.lvb').forEach(b => b.onclick = () => this.alphaWordGame(+b.dataset.lv, [...b.dataset.l]));
+  this.root.querySelectorAll(".awb").forEach(b => b.onclick = () => this.alphaWordGame(+b.dataset.lv, all));
 };
 
 App.alphaWordGame = function (level, letters) {
   const p = this.prof(), root = this.root, key = 'w' + level;
   const NAMES = Object.fromEntries(ALPHA.map(a => [a.L, a]));
-  const pool = letters.map(l => NAMES[l]);
+  const ITEMS = ALPHA.flatMap(a => a.ws.map(w => ({ ...a, ...w, id: w.word })));   // 단어 하나하나가 문제
   const st = l => (p.stats[`${key}:${l}`] = p.stats[`${key}:${l}`] || { ok: 0, bad: 0 });
   const weight = l => Math.max(0.5, 1 + 2 * st(l).bad - 0.5 * st(l).ok);
   const wpick = (arr, wf) => { let t = arr.reduce((s, x) => s + wf(x), 0), r = Math.random() * t; for (const x of arr) { if ((r -= wf(x)) <= 0) return x; } return arr[0]; };
@@ -29,9 +30,13 @@ App.alphaWordGame = function (level, letters) {
     img.src = list[0];
   };
   const wordSound = (a, done) => Speech.play(a.word, done, a.snd || 'enw_' + a.L, 'en-US');
-  const doneL = App.doneArr(key); let todo = pool.filter(a => !doneL.includes(a.L));
-  if (!todo.length) { App.prof().done[key] = doneL.filter(l => !letters.includes(l)); App.save(); todo = pool.slice(); }
-  const total = todo.length;
+  const SIZE = 10;   // 한 판 = 10문제 (별 10개)
+  const doneL = App.doneArr(key); let todo = ITEMS.filter(x => !doneL.includes(x.id));
+  if (todo.length < SIZE) { App.toast('모두 풀었어요! 다시 시작해요 🎉'); App.prof().done[key] = doneL.filter(id => !ITEMS.some(x => x.id === id)); App.save(); todo = ITEMS.slice(); }
+  const queue = [];   // 안 푼 단어에서 글자가 겹치지 않게 10개
+  for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.some(q => q.L === x.L)) queue.push(x); }
+  for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.includes(x)) queue.push(x); }
+  const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
   const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
   const wordHtml = a => {   // 2단계: 첫 글자를 빈칸으로
@@ -45,11 +50,8 @@ App.alphaWordGame = function (level, letters) {
 
   function next() {
     qn++; upd(); tries = 0; locked = true;
-    cur = alphaVariant(NAMES[App.pickNew(key, pool.map(a => a.L), { random: true })]);     // 무작위, 푼 글자는 건너뜀
-    const group = letters.filter(l => l !== cur.L), rest = Object.keys(NAMES).filter(l => l !== cur.L && !letters.includes(l));
-    const decoys = []; const src = [...group];
-    while (decoys.length < 3 && src.length) { const d = wpick(src, weight); decoys.push(d); src.splice(src.indexOf(d), 1); }
-    while (decoys.length < 3) decoys.push(rest.splice(Math.floor(Math.random() * rest.length), 1)[0]);
+    cur = queue[qn - 1];
+    const decoys = shuffle(Object.keys(NAMES).filter(l => l !== cur.L)).slice(0, 3);
     const opts = shuffle([cur.L, ...decoys]);
     const stage = root.querySelector('#stage'), word = root.querySelector('#word'), ch = root.querySelector('#ch');
     if (level === 1) {
@@ -74,7 +76,7 @@ App.alphaWordGame = function (level, letters) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(key, cur.L); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(key, cur.id); upd();
       b.classList.add('right'); root.querySelectorAll('#ch .cb').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) {
         const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal', 'cap');
