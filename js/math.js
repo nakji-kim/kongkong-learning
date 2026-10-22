@@ -24,7 +24,7 @@ const MPOOL = (() => {
 })();
 const MTITLE = { add: '더하기', sub: '빼기', mix: '종합' };
 const MCARD = { add: ['1＋2', '1＋2＋3'], sub: ['5－2', '9－2－3'], mix: ['＋ －', '3＋2－1'] };
-const MRANDOM = { add: { easy: false, hard: true }, sub: { easy: false, hard: true }, mix: { easy: true, hard: true } };   // false = 쉬운 것부터 순서대로
+const MRANDOM = { add: { easy: true, hard: true }, sub: { easy: true, hard: true }, mix: { easy: true, hard: true } };   // false = 쉬운 것부터 순서대로
 
 App.mathMenu = function (mode) {
   Speech.stop();
