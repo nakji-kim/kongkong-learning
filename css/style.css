@@ -270,3 +270,14 @@ img.sil{filter:brightness(0) opacity(.82)}
 @keyframes bkshk{0%,100%{rotate:0deg}25%{rotate:-12deg}75%{rotate:12deg}}
 .amd{display:block;margin-top:6px;font-size:.78rem;font-weight:600;line-height:1.25;opacity:.8;text-align:center}
 .awb{aspect-ratio:auto;padding:18px 8px;min-width:150px}.awb b{font-size:2.4rem}.awb span{font-size:1.15rem;word-break:keep-all}
+
+.c-rd{background:#ffc2d1}.card small{font-size:.9rem;opacity:.7}
+.expt{font-size:.85rem;opacity:.6;text-align:center}
+.spk{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:70vh;padding:0 16px}
+.sw{font-weight:700;color:#3b2f4a;text-align:center;line-height:1.15;transition:color .2s}.sw.ok{color:#2f9e44}
+.mic{width:120px;height:120px;border-radius:50%;border:0;font-size:3.4rem;background:#ff8fab;box-shadow:0 8px 0 rgba(0,0,0,.15)}
+.mic:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.mic.on{background:#e8590c;animation:micp 1s infinite}
+@keyframes micp{50%{transform:scale(1.12)}}
+.smsg{font-size:1.4rem;min-height:2rem;text-align:center}
+.c-rd b{font-size:clamp(1.9rem,5vw,2.8rem);word-break:keep-all;text-align:center}.card span{word-break:keep-all;text-align:center}

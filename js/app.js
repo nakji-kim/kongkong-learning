@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v102</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v103</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -37,7 +37,7 @@ const App = {
     return { label: `${total}개 중 <b>${good}</b>개 맞았어요`, say: good === total ? ['모두 맞았어요! 최고예요!', 'al_res_all'] : good === 0 ? ['괜찮아요, 다시 한번 해 볼까요?', '_res_0'] : [`${KCNT[good]} 개 맞았어요!`, 'al_res_' + good] };
   },
   // 푼 기록 범위: all=모든 공부 / 나머지는 해당 공부만
-  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
+  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
   solvedCount(scope = 'all') {
     const p = this.prof(), d = p.done || {}; let n = 0;
     if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length + (p.solved3 || []).length;
@@ -66,16 +66,17 @@ const App = {
       <header class="bar"><button class="chip" id="who">${p.avatar} ${p.name} · 바꾸기</button> <button class="chip" id="clr">🔄 푼 기록 지우기</button></header>
       <main class="home"><h1>무엇을 배워볼까요?</h1>
         <div class="cards">
+          <button class="card c-rd" data-k="rd"><b>읽고 말하기</b><span>🎤</span><small>🧪 실험중</small></button>
           <button class="card c-ko" data-k="ko"><b>한글</b><span>ㄱ ㄴ ㄷ</span></button>
-          <button class="card c-ma" data-k="ma"><b>숫자</b><span>1 2 3</span></button>
           <button class="card c-en" data-k="en"><b>알파벳</b><span>A B C</span></button>
+          <button class="card c-ma" data-k="ma"><b>숫자</b><span>1 2 3</span></button>
           <button class="card c-ck" data-k="ck"><b>시계</b><span>🕒</span></button>
           <button class="card c-pl" data-k="pl"><b>놀이</b><span>🧩</span></button>
         </div></main>`;
     this.root.querySelector('#who').onclick = () => this.profiles();
     this.root.querySelector('#clr').onclick = () => this.clearSolved();
     this.root.querySelectorAll('.card').forEach(b => b.onclick = () => {
-      if (b.dataset.k === 'ko') this.hangulLevelMenu(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaMenu();
+      if (b.dataset.k === 'rd') this.speakMenu(); else if (b.dataset.k === 'ko') this.hangulLevelMenu(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaMenu();
     });
   },
   numberMenu() {
