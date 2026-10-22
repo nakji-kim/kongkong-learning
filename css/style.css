@@ -239,3 +239,15 @@ img.sil{filter:brightness(0) opacity(.82)}
 .hs2 svg{display:block;width:100%;height:100%}
 .hb svg{position:absolute;left:12%;top:12%;width:76%;height:76%;pointer-events:none}
 .hs2~.hbar .hb{width:clamp(48px,13vmin,72px)}
+
+/* 한글 보통: 자음·모음 누르기 */
+.game:has(.jrows) .stage{min-height:min(40vh,380px)}.game:has(.jrows) .pic{width:min(36vh,60vw,340px)}
+.jrows{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%}
+.jrow{display:flex;gap:14px;justify-content:center;transition:opacity .3s}.jrow.off{opacity:.35;pointer-events:none}
+.jb{width:clamp(76px,22vw,112px);aspect-ratio:1;border-radius:50%;border:0;font:inherit;font-size:clamp(2.4rem,9vw,3.8rem);background:var(--sun);color:#3b2f4a;box-shadow:0 6px 0 rgba(0,0,0,.18);transition:opacity .3s}
+#jv .jb{background:#bfe3ff}
+.jb.wrong{background:#ddd;opacity:.45;animation:shake .4s;pointer-events:none}.jb.right{background:var(--ok);animation:pop .4s}.jb.fade{opacity:.2}
+.jb.hint{animation:hintring .7s ease-in-out infinite alternate;background:#fff1a8}
+.blank.part{color:rgba(255,143,163,.8)}
+.nm.off{opacity:.45}
+.game:has(.jrows) .stage{min-height:min(36vh,340px)}.game:has(.jrows) .word{padding-bottom:14px}
