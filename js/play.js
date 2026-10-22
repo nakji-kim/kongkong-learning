@@ -53,7 +53,15 @@ App.quiz = function (make, again, back, extraCls = '') {
     root.querySelector('#ch').innerHTML = q.choices.map(c => `<button class="cb ${c.cls || ''}" data-id="${c.id}">${c.html}</button>`).join('');
     root.querySelectorAll('.cb').forEach(b => b.onclick = () => pick(b));
     const again1 = root.querySelector('#again-q'); if (again1) again1.onclick = () => { if (!locked) { Speech.stop(); Speech.play(q.q[0], null, q.q[1]); } };
-    locked = false; setTimeout(() => (q.once ? Speech.play(q.q[0], null, q.q[1]) : Speech.twice(q.q[0], null, q.q[1])), 400);   // q.once: 한 번만 읽기
+    // 그림이 모두 불러와질 때까지 보기를 숨겨 두었다가 한꺼번에 보여 줌 (불러오는 시간 차이로 정답을 알 수 없게)
+    const chEl = root.querySelector('#ch'), imgs = [...root.querySelectorAll('#cstage img, #ch img')], mine = q;
+    chEl.style.visibility = 'hidden';
+    const loaded = Promise.all(imgs.map(i => (i.complete ? 0 : new Promise(r => { i.addEventListener('load', r); i.addEventListener('error', r); }))));
+    Promise.race([loaded, new Promise(r => setTimeout(r, 3000))]).then(() => {
+      if (q !== mine || root.querySelector('#ch') !== chEl) return;
+      chEl.style.visibility = ''; locked = false;
+      setTimeout(() => (q.once ? Speech.play(q.q[0], null, q.q[1]) : Speech.twice(q.q[0], null, q.q[1])), 400);   // q.once: 한 번만 읽기
+    });
   };
   const pick = b => {
     if (locked || b.classList.contains('wrong')) return;

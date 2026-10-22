@@ -25,6 +25,7 @@ App.hideMenu = function () {
 App.oddGame = function (level) {
   // 쉬움: 비슷하게 생긴 그림 9장 중 다른 그림 · 보통/어려움: 같은 그림 4/6장 중 모양이 살짝 다른 1장
   const N = [9, 4, 6][level - 1], cols = [3, 2, 3][level - 1], ids = [];
+  if (level === 1) ODD_LOOK.forEach(p => p.forEach(k => { new Image().src = _tw(PBYK[k].code); }));   // 그림을 미리 받아 둠
   if (level === 1) ODD_LOOK.forEach(([a, b]) => { ids.push(a + '>' + b, b + '>' + a); });
   else Object.entries(ODD2).forEach(([k, o]) => o['lv' + level].forEach(d => ids.push(k + ':' + d)));
   const make = () => {
