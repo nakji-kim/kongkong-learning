@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v103</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v104</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -66,12 +66,12 @@ const App = {
       <header class="bar"><button class="chip" id="who">${p.avatar} ${p.name} · 바꾸기</button> <button class="chip" id="clr">🔄 푼 기록 지우기</button></header>
       <main class="home"><h1>무엇을 배워볼까요?</h1>
         <div class="cards">
-          <button class="card c-rd" data-k="rd"><b>읽고 말하기</b><span>🎤</span><small>🧪 실험중</small></button>
           <button class="card c-ko" data-k="ko"><b>한글</b><span>ㄱ ㄴ ㄷ</span></button>
           <button class="card c-en" data-k="en"><b>알파벳</b><span>A B C</span></button>
           <button class="card c-ma" data-k="ma"><b>숫자</b><span>1 2 3</span></button>
           <button class="card c-ck" data-k="ck"><b>시계</b><span>🕒</span></button>
           <button class="card c-pl" data-k="pl"><b>놀이</b><span>🧩</span></button>
+          <button class="card c-rd" data-k="rd"><b>읽고 말하기</b><span>🎤</span><small>🧪 실험중</small></button>
         </div></main>`;
     this.root.querySelector('#who').onclick = () => this.profiles();
     this.root.querySelector('#clr').onclick = () => this.clearSolved();

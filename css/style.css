@@ -281,3 +281,4 @@ img.sil{filter:brightness(0) opacity(.82)}
 @keyframes micp{50%{transform:scale(1.12)}}
 .smsg{font-size:1.4rem;min-height:2rem;text-align:center}
 .c-rd b{font-size:clamp(1.9rem,5vw,2.8rem);word-break:keep-all;text-align:center}.card span{word-break:keep-all;text-align:center}
+.dbg{font-size:.8rem;opacity:.55;text-align:center;min-height:1.2rem;word-break:break-all}
