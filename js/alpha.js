@@ -8,7 +8,7 @@ App.alphaMenu = function () {
         <button class="card al" data-k="low" style="background:#ffd166"><b>a b c</b><span>소문자</span></button>
         <button class="card al" data-k="word" style="background:#b8a1f0"><b>Apple</b><span>단어</span></button>
       </div></main>`;
-  this.root.querySelector('#back').onclick = () => this.home();
+  this.root.querySelector('#back').onclick = () => this.alphaHome();
   this.addClr('alpha');
   this.root.querySelectorAll('.al').forEach(b => b.onclick = () => b.dataset.k === 'up' ? this.alphaUpper() : b.dataset.k === 'low' ? this.alphaUpper(true) : this.alphaWordMenu());
 };

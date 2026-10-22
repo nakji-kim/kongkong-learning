@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li><b style="color:#e8590c">새로고침을 자주</b> 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v121</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v126</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -37,7 +37,7 @@ const App = {
     return { label: `${total}개 중 <b>${good}</b>개 맞았어요`, say: good === total ? ['모두 맞았어요! 최고예요!', 'al_res_all'] : good === 0 ? ['괜찮아요, 다시 한번 해 볼까요?', '_res_0'] : [`${KCNT[good]} 개 맞았어요!`, 'al_res_' + good] };
   },
   // 푼 기록 범위: all=모든 공부 / 나머지는 해당 공부만
-  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3', 'ra1', 'ra2', 'ra3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
+  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], write: ['쓰기', ['wr1', 'wr2', 'wr3', 'wa1', 'wa2', 'wa3']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3', 'ra1', 'ra2', 'ra3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
   solvedCount(scope = 'all') {
     const p = this.prof(), d = p.done || {}; let n = 0;
     if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length + (p.solved3 || []).length;
@@ -71,12 +71,11 @@ const App = {
           <button class="card c-ma" data-k="ma"><b>숫자</b><span>1 2 3</span></button>
           <button class="card c-ck" data-k="ck"><b>시계</b><span>🕒</span></button>
           <button class="card c-pl" data-k="pl"><b>놀이</b><span>🧩</span></button>
-          <button class="card c-rd" data-k="rd"><b>읽고 말하기</b><span>🎤</span><small>마이크 권한이 필요해요</small></button>
         </div></main>`;
     this.root.querySelector('#who').onclick = () => this.profiles();
     this.root.querySelector('#clr').onclick = () => this.clearSolved();
     this.root.querySelectorAll('.card').forEach(b => b.onclick = () => {
-      if (b.dataset.k === 'rd') this.speakHome(); else if (b.dataset.k === 'ko') this.hangulLevelMenu(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaMenu();
+      if (b.dataset.k === 'ko') this.hangulHome(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaHome();
     });
   },
   numberMenu() {
@@ -111,6 +110,34 @@ const App = {
     this.root.querySelector('#again').onclick = leave(again);
     this.root.querySelector('#quit').onclick = leave(back);
   },
+  subHome(crumb, cards, back) {   // 한글/알파벳 첫 화면: 고르기 · 읽고 말하기 · 쓰기
+    Speech.stop();
+    this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
+      <main class="home"><div class="crumb">${crumb}</div><h1>어떤 공부를 할까요?</h1>
+        <div class="cards">${cards.map((c, i) => `<button class="card sh" data-i="${i}" style="background:${c.bg}"><b style="font-size:clamp(1.9rem,5vw,2.8rem);word-break:keep-all;text-align:center">${c.b}</b><span>${c.s}</span>${c.small ? `<small style="font-size:.82rem;opacity:.7;word-break:keep-all;text-align:center;padding:0 6px">${c.small}</small>` : ''}</button>`).join('')}</div></main>`;
+    this.root.querySelector('#back').onclick = back;
+    this.root.querySelectorAll('.sh').forEach(b => b.onclick = cards[+b.dataset.i].go);
+  },
+  writeStub(crumb, back) {   // 쓰기: 카드만 (기능은 나중에)
+    Speech.stop();
+    this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
+      <main class="home"><div class="crumb">${crumb}</div><h1>준비중이에요</h1><div class="expt">✏️ 곧 만들어요</div></main>`;
+    this.root.querySelector('#back').onclick = back;
+  },
+  hangulHome() {
+    this.subHome('📖 한글', [
+      { b: '고르기', s: '👆', bg: '#b8e6a1', go: () => this.hangulLevelMenu() },
+      { b: '읽고 말하기', s: '🎤', small: '마이크 권한이 필요해요', bg: '#ff8fab', go: () => this.speakMenu() },
+      { b: '쓰기', s: '✏️', small: '준비중', bg: '#ffd166', go: () => this.writeMenu() },
+    ], () => this.home());
+  },
+  alphaHome() {
+    this.subHome('🔤 알파벳', [
+      { b: '고르기', s: '👆', bg: '#8ddc9b', go: () => this.alphaMenu() },
+      { b: '읽고 말하기', s: '🎤', small: '마이크 권한이 필요해요', bg: '#ff8fab', go: () => this.speakAlpha() },
+      { b: '쓰기', s: '✏️', small: '준비중', bg: '#ffd166', go: () => this.writeMenuEn() },
+    ], () => this.home());
+  },
   hangulLevelMenu() {
     Speech.stop();
     this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
@@ -120,7 +147,7 @@ const App = {
           <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>자음·모음 누르기</span></button>
           <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>받침까지 누르기</span></button>
         </div></main>`;
-    this.root.querySelector('#back').onclick = () => this.home();
+    this.root.querySelector('#back').onclick = () => this.hangulHome();
     this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.l === '3' ? this.hangul('all', 3) : this.hangulMenu(+b.dataset.l));
   },
   hangulMenu(level = 1) {

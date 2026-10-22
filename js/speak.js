@@ -22,40 +22,29 @@ const _heardEn = (word, alts) => {
   const t = word.toLowerCase().replace(/[^a-z]/g, ''), tol = t.length >= 3 ? 1 : 0;
   return alts.some(raw => { const a = raw.toLowerCase(); return [a.replace(/[^a-z]/g, ''), ...a.split(/[^a-z]+/)].some(x => x && (x.includes(t) || _lev(t, x) <= tol)); });
 };
-App.speakHome = function () {
-  Speech.stop();
-  this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 공부를 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
-      <div class="cards">
-        <button class="card al" data-k="ko" style="background:#ff8fab"><b>한글</b><span>ㄱ ㄴ ㄷ</span></button>
-        <button class="card al" data-k="en" style="background:#8ddc9b"><b>알파벳</b><span>A B C</span></button>
-      </div></main>`;
-  this.root.querySelector('#back').onclick = () => this.home();
-  this.root.querySelectorAll('.al').forEach(b => b.onclick = () => b.dataset.k === 'ko' ? this.speakMenu() : this.speakAlpha());
-};
 App.speakAlpha = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
+    <main class="home"><div class="crumb">🔤 알파벳</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
       <div class="cards">
         <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>알파벳 읽기</span></button>
         <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>그림 보고 말하기</span></button>
         <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>단어 보고 읽기</span></button>
       </div></main>`;
-  this.root.querySelector('#back').onclick = () => this.speakHome();
+  this.root.querySelector('#back').onclick = () => this.alphaHome();
   this.addClr('read');
   this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => this.speakGame(+b.dataset.l, 'en'));
 };
 App.speakMenu = function () {
   Speech.stop();
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button></header>
-    <main class="home"><div class="crumb">🎤 읽고 말하기</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
+    <main class="home"><div class="crumb">📖 한글</div><h1>어떤 난이도로 할까요?</h1><div class="expt">🎤 마이크 권한이 필요해요</div>
       <div class="cards">
         <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>한 글자 읽기</span></button>
         <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>받침 없는 말</span></button>
         <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>받침 있는 말</span></button>
       </div></main>`;
-  this.root.querySelector('#back').onclick = () => this.speakHome();
+  this.root.querySelector('#back').onclick = () => this.hangulHome();
   this.addClr('read');
   this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => this.speakGame(+b.dataset.l));
 };
