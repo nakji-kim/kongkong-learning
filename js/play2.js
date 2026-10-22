@@ -139,9 +139,11 @@ App.hideSceneGame = function (level) {
   function start() {
     const sc = scenes[si], box = root.querySelector('#hs2'), bar = root.querySelector('#hbar');
     root.querySelector('#stars').textContent = `🔎 ${si}/${ROUNDS}`; found = 0; locked = false;
-    items = (N === 5 ? sc.items.slice() : _shuf(sc.items).slice(0, N)).map(it => ({ k: it[0], x: it[1], y: it[2], s: it[3], r: it[4], f: it[5], st: it[6], got: false }));
-    const g = it => `<g transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${it.s / 100}) translate(-50 -50)">${hsShape(it.k, it.f, it.st, 2.4 / (it.s / 100))}</g>`;
+    const hard = level === 3, hrot = _shuf(HS_HARD_ROT);
+    items = (N === 5 ? sc.items.slice() : _shuf(sc.items).slice(0, N)).map((it, n) => { const hc = hard && HS_HARD[sc.id] && HS_HARD[sc.id][it[0]]; return { k: it[0], x: it[1], y: it[2], s: it[3], hs: hard ? it[3] * 0.7 : it[3], r: hard ? hrot[n % 5][0] : it[4], fl: hard ? hrot[n % 5][1] : 0, f: hc ? hc[0] : it[5], st: hc ? hc[1] : it[6], got: false }; });
+    const g = it => `<g transform="translate(${it.x} ${it.y}) rotate(${it.r}) scale(${it.fl ? -it.hs / 100 : it.hs / 100} ${it.hs / 100}) translate(-50 -50)">${hsShape(it.k, it.f, it.st, 2.4 / (it.hs / 100))}</g>`;
     box.innerHTML = `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">${sc.bg}${items.map(g).join('')}<g id="rings"></g></svg>`;
+    Speech.stop(); Speech.play(PLAY_LINES.p_q_hide, null, 'p_q_hide');
     bar.innerHTML = items.map(it => `<span class="hb" data-k="${it.k}"><svg viewBox="0 0 100 100">${hsShape(it.k, '#fff', '#222', 3)}</svg><i>✔</i></span>`).join('');
     box.onclick = e => {
       if (locked) return;

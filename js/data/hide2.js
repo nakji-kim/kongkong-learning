@@ -77,3 +77,7 @@ ${[[110, 270, '#ff5b6b'], [330, 262, '#ffd84a'], [60, 280, '#ffffff']].map(([x, 
 <ellipse cx="190" cy="268" rx="44" ry="16" fill="#6fbfee" stroke="#4a9ccf" stroke-width="3"/>`,
     items: [['umbrella', 154, 172, 36, 6, '#ff6b81', '#e0506a'], ['duck', 190, 268, 32, 0, '#fff7c9', '#e0cf86'], ['heart', 70, 190, 24, 0, '#d84b4b', '#b53a3a'], ['mushroom', 348, 168, 30, 0, '#4f7fdd', '#3a62b8'], ['key', 312, 112, 34, 30, '#e8b6c4', '#c98a9e']] },
 ];
+
+/* 어려움: 배경색에 가깝게 · 70% 크기 · 눕거나 뒤집힘 */
+const HS_HARD = {"house": {"banana": ["#7fc261", "#66ae52"], "star": ["#d2574d", "#be4e45"], "fish": ["#66b6e6", "#58a6d6"], "snail": ["#9d804a", "#886c3c"], "butterfly": ["#c3b195", "#b99a86"]}, "sea": {"star": ["#e8cb84", "#dab973"], "bird": ["#eef8ff", "#dcecf9"], "fish": ["#47a3e0", "#3e98d4"], "umbrella": ["#6aba98", "#58a888"], "snail": ["#9b9b99", "#888a89"]}, "forest": {"apple": ["#7ac158", "#66ac4c"], "butterfly": ["#a2a458", "#969146"], "duck": ["#61b1d4", "#51a2ca"], "mushroom": ["#a8945c", "#927e4d"], "key": ["#a4bc66", "#94a850"]}, "class": {"heart": ["#f092aa", "#e6829b"], "key": ["#c8a274", "#b28e62"], "banana": ["#d8a84d", "#c6973b"], "star": ["#468262", "#569170"], "apple": ["#de804f", "#c87044"]}, "park": {"umbrella": ["#c29080", "#b87f75"], "duck": ["#aed6db", "#a6c5b8"], "heart": ["#e76b6b", "#d46060"], "mushroom": ["#7699db", "#6888c8"], "key": ["#cbb8d0", "#bea2bc"]}};
+const HS_HARD_ROT = [[150,0],[-100,1],[180,0],[95,1],[-160,0]];
