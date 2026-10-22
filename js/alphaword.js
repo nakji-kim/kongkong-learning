@@ -32,7 +32,7 @@ App.alphaWordGame = function (level, letters) {
   const wordSound = (a, done) => Speech.play(a.word, done, a.snd || 'enw_' + a.L, 'en-US');
   const SIZE = 10;   // 한 판 = 10문제 (별 10개)
   const doneL = App.doneArr(key); let todo = ITEMS.filter(x => !doneL.includes(x.id));
-  if (todo.length < SIZE) { App.toast('모두 풀었어요! 다시 시작해요 🎉'); App.prof().done[key] = doneL.filter(id => !ITEMS.some(x => x.id === id)); App.save(); todo = ITEMS.slice(); }
+  if (!todo.length) { App.toast('모두 풀었어요! 다시 시작해요 🎉'); App.prof().done[key] = doneL.filter(id => !ITEMS.some(x => x.id === id)); App.save(); todo = ITEMS.slice(); }
   const queue = [];   // 안 푼 단어에서 글자가 겹치지 않게 10개
   for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.some(q => q.L === x.L)) queue.push(x); }
   for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.includes(x)) queue.push(x); }

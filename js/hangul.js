@@ -11,10 +11,14 @@ App.hangul = function (mode, level = 1) {
   const probe = w => new Promise(res => { let i = 0; const l = local(w); const t = () => { if (i >= l.length) return res(null); const im = new Image(); const u = l[i++]; im.onload = () => res(u); im.onerror = t; im.src = u; }; t(); });
   const solvedList = () => (p[SK] = p[SK] || []);   // 이미 푼 단어 (프로필별로 기기에 저장)
   const praise = ['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'];
+  const HIDS = [...new Set(pool.map(x => x.w + (level === 3 ? x.syl : '')))];   // 한 판 = 안 푼 문제 수와 10 중 작은 값
+  let hleft = HIDS.filter(i => !solvedList().includes(i));
+  if (!hleft.length) { p[SK] = solvedList().filter(i => !HIDS.includes(i)); App.save(); hleft = HIDS.slice(); App.toast('모두 풀었어요! 다시 시작해요 🎉'); }
+  const total = Math.min(10, hleft.length);
   let last = null, good = 0, qn = 0, w, ans, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/10`; };
+  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/10</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
     <main class="game"><div class="stage" id="stage"></div><div class="word" id="word"></div>${level >= 2 ? '<div class="jrows" id="jr"></div>' : ''}</main>`;
   root.querySelector('#back').onclick = () => App.hangulBack(level);
 
@@ -78,7 +82,7 @@ App.hangul = function (mode, level = 1) {
       blank.classList.remove('part'); blank.textContent = ans; blank.classList.add('filled');
       if (tries === 0) good++; upd(); burst();
       const pi = Math.floor(Math.random() * praise.length); Speech.stop();
-      Speech.play(praise[pi], () => Speech.play(w.w, () => setTimeout(() => qn >= 10 ? App.finishRound(good, 10, () => App.hangul(mode, level), () => App.hangulBack(level)) : next(), 800)), '_praise' + pi);
+      Speech.play(praise[pi], () => Speech.play(w.w, () => setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.hangul(mode, level), () => App.hangulBack(level)) : next(), 800)), '_praise' + pi);
     }));
     locked = false; setTimeout(() => Speech.twice(c.w), 400);
   }
@@ -94,7 +98,7 @@ App.hangul = function (mode, level = 1) {
       if (tries === 0) good++; upd();
       burst();
       const pi = Math.floor(Math.random() * praise.length); Speech.stop();
-      Speech.play(praise[pi], () => Speech.play(w.w, () => setTimeout(() => qn >= 10 ? App.finishRound(good, 10, () => App.hangul(mode, level), () => App.hangulBack(level)) : next(), 800)), '_praise' + pi);
+      Speech.play(praise[pi], () => Speech.play(w.w, () => setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.hangul(mode, level), () => App.hangulBack(level)) : next(), 800)), '_praise' + pi);
     } else {
       tries++; s.bad++; App.save();
       b.classList.add('wrong');

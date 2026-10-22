@@ -30,7 +30,7 @@ App.alphaGame = function (level, letters, lower = false) {
   const p = this.prof(), root = this.root;
   const NAMES = Object.fromEntries(ALPHA.map(a => [a.L, a]));
   const SAY = { A: 'Ay.', B: 'Bee.', C: 'See.', D: 'Dee.', E: 'Ee.', F: 'Eff.', G: 'Jee.', H: 'Aitch.', I: 'Eye.', J: 'Jay.', K: 'Kay.', L: 'El.', M: 'Em.', N: 'En.', O: 'Oh.', P: 'Pee.', Q: 'Cue.', R: 'Are.', S: 'Ess.', T: 'Tee.', U: 'You.', V: 'Vee.', W: 'Double you.', X: 'Ex.', Y: 'Why.', Z: 'Zee.' };
-  const pool = letters.map(l => NAMES[l]);
+  const ITEMS = letters.flatMap(l => NAMES[l].ws.map(w => ({ ...NAMES[l], ...w, id: w.word })));   // 단어 하나하나가 문제
   const pre = lower ? 'l' : 'a', show = l => (lower ? l.toLowerCase() : l);   // 소문자: 보기와 정답 글자만 소문자로
   const st = l => (p.stats[`${pre}${level}:${l}`] = p.stats[`${pre}${level}:${l}`] || { ok: 0, bad: 0 });
   const weight = l => Math.max(0.5, 1 + 2 * st(l).bad - 0.5 * st(l).ok);
@@ -42,9 +42,12 @@ App.alphaGame = function (level, letters, lower = false) {
   const wordSound = (a, done) => Speech.play(a.word, done, a.snd || 'enw_' + a.L, 'en-US');
   const full = (a, done) => nameSound(a, () => Speech.after(() => wordSound(a, done), 300));          // "에이, 애플"
   const praise = EN_PRAISE;   // 알파벳은 영어로 칭찬
-  const doneL = App.doneArr(pre + level); let todo = pool.filter(a => !doneL.includes(a.L));
-  if (!todo.length) { App.prof().done[pre + level] = doneL.filter(l => !letters.includes(l)); App.save(); todo = pool.slice(); }
-  const total = todo.length;   // 문제 수 = 안 푼 글자 수 (처음엔 묶음의 글자 수)
+  const doneL = App.doneArr(pre + level); let todo = ITEMS.filter(x => !doneL.includes(x.id));
+  if (!todo.length) { App.toast('모두 풀었어요! 다시 시작해요 🎉'); App.prof().done[pre + level] = doneL.filter(id => !ITEMS.some(x => x.id === id)); App.save(); todo = ITEMS.slice(); }
+  const queue = [];   // 한 판 = 최대 10문제 (안 푼 문제가 10개보다 적으면 그만큼). 같은 글자가 겹치지 않게 먼저 뽑음
+  for (const x of shuffle(todo)) { if (queue.length < 10 && !queue.some(q => q.L === x.L)) queue.push(x); }
+  for (const x of shuffle(todo)) { if (queue.length < 10 && !queue.includes(x)) queue.push(x); }
+  const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
   const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
 
@@ -54,7 +57,7 @@ App.alphaGame = function (level, letters, lower = false) {
 
   function next() {
     qn++; upd(); tries = 0;
-    cur = alphaVariant(NAMES[App.pickNew(pre + level, pool.map(a => a.L), { random: true })]);     // 글자는 무작위(푼 글자는 건너뜀), 단어는 두 개 중 무작위
+    cur = queue[qn - 1];
     const group = letters.filter(l => l !== cur.L), rest = Object.keys(NAMES).filter(l => l !== cur.L && !letters.includes(l));
     const decoys = []; const src = [...group];
     while (decoys.length < 3 && src.length) { const d = wpick(src, weight); decoys.push(d); src.splice(src.indexOf(d), 1); }
@@ -82,7 +85,7 @@ App.alphaGame = function (level, letters, lower = false) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(pre + level, cur.L); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(pre + level, cur.id); upd();
       b.classList.add('right'); root.querySelectorAll('.fl').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) { const bl = root.querySelector('.blank'); bl.textContent = show(cur.L); bl.classList.add('filled'); root.querySelector('#word').insertAdjacentHTML('beforeend', `<span class="aw">${cur.word}</span>`); }
       else { const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal'); pic.innerHTML = `<span class="big">${show(cur.L)}</span>`; }

@@ -43,7 +43,7 @@ App.oddGame = function (level) {
       choices: cells.map((x, i) => ({ id: String(i), cls: 'pimg', html: ODD2[k].draw(x) })),
     };
   };
-  this.quiz(make, () => App.oddGame(level), () => App.oddMenu(), 'odd g' + cols);
+  this.quiz(make, () => App.oddGame(level), () => App.oddMenu(), 'odd g' + cols, App.roundSize('odd' + level, ids));
 };
 
 /* ---------- 어울리는 그림 찾기 ---------- */
@@ -63,7 +63,7 @@ App.mateGame = function (level) {
       choices: _shuf([[ans[0], ans[1]], ...wrong]).map(([k, c]) => ({ id: k, cls: 'pimg', html: pimg(c) })),
     };
   };
-  this.quiz(make, () => App.mateGame(level), () => App.mateMenu());
+  this.quiz(make, () => App.mateGame(level), () => App.mateMenu(), '', App.roundSize('mat' + level, ids));
 };
 
 /* ---------- 숨은 그림 찾기 ---------- */

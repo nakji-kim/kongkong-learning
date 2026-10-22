@@ -40,12 +40,12 @@ App.patMenu = function () {
 };
 /* ---------- 공통 문제 엔진 (보기 4개 · 10문제 · 별 결과) ---------- */
 // make(qn) → { stage, eq, choices:[{id, html, cls}], answer, q:[text,name], a:[[text,name],...], key, reveal(root) }
-App.quiz = function (make, again, back, extraCls = '') {
+App.quiz = function (make, again, back, extraCls = '', total = 10) {
   const p = this.prof(), root = this.root;
   const st = k => (p.stats[k] = p.stats[k] || { ok: 0, bad: 0 });
   let good = 0, qn = 0, q, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/10`; };
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/10</span></header>
+  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
     <main class="game mg ${extraCls}"><div class="cstage" id="cstage"></div><div class="eq ceq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => back();
   const next = () => {
@@ -73,7 +73,7 @@ App.quiz = function (make, again, back, extraCls = '') {
       if (q.reveal) q.reveal(root, b);
       burst();
       const pi = Math.floor(Math.random() * 4); Speech.stop();
-      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => _chain(q.a || [], () => setTimeout(() => qn >= 10 ? App.finishRound(good, 10, again, back) : next(), 800)), '_praise' + pi);
+      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => _chain(q.a || [], () => setTimeout(() => qn >= total ? App.finishRound(good, total, again, back) : next(), 800)), '_praise' + pi);
     } else {
       tries++; s.bad++; App.save(); b.classList.add('wrong');
       Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2');

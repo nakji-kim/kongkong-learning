@@ -65,10 +65,11 @@ App.mathGame = function (mode, level = 'easy') {
   const pic = code => `<img class="it" alt="" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${code}.svg" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'it emo',textContent:String.fromCodePoint(0x${code})+'\\uFE0F'}))">`;
   const grp = (n, code) => `<div class="grp" style="--c:${Math.min(n, 3)}">${Array.from({ length: n }, () => pic(code)).join('')}</div>`;
   const OPS = { '+': '＋', '-': '－' }, OPE = { '+': '+', '-': '−' };
+  const total = App.roundSize(KEY, pairs.map(y => y.key));
   let good = 0, qn = 0, q, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/10`; };
+  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/10</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
     <main class="game mg"><div class="mstage" id="mstage"></div><div class="eq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => App.mathMenu(mode);
 
@@ -99,7 +100,7 @@ App.mathGame = function (mode, level = 'easy') {
       root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));
       burst();
       const pi = Math.floor(Math.random() * 4); Speech.stop();
-      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => Speech.seq([[MNUM[q.s], 'n_' + q.s]], () => setTimeout(() => qn >= 10 ? App.finishRound(good, 10, () => App.mathGame(mode, level), () => App.mathMenu(mode)) : next(), 500)), '_praise' + pi);
+      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => Speech.seq([[MNUM[q.s], 'n_' + q.s]], () => setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.mathGame(mode, level), () => App.mathMenu(mode)) : next(), 500)), '_praise' + pi);
     } else {
       tries++; s.bad++; App.save(); b.classList.add('wrong');
       Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2');

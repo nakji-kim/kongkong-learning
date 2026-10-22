@@ -11,7 +11,7 @@ const App = {
         <li>지속 업데이트 중으로 계정 / 푼 기록이 지워질수 있어요.<ul><li>우측 하단에 버전이 표시됩니다.</li><li>새로고침을 자주 눌러주세요.</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v99</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v101</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -25,6 +25,16 @@ const App = {
     if (!left.length) { this.prof().done[key] = a.filter(i => !ids.includes(i)); this.save(); left = ids.slice(); this.toast('모두 풀었어요! 다시 시작해요 🎉'); }
     if (opt.weight) { let t = left.reduce((s, x) => s + opt.weight(x), 0), r = Math.random() * t; for (const x of left) { if ((r -= opt.weight(x)) <= 0) return x; } return left[0]; }
     return opt.random ? left[Math.floor(Math.random() * left.length)] : left[0];
+  },
+  // 한 판 문제 수 = 안 푼 문제 수와 10 중 작은 값. 모두 풀었으면 알리고 처음부터 다시
+  roundSize(key, ids) {
+    const a = this.doneArr(key); let left = ids.filter(i => !a.includes(i));
+    if (!left.length) { this.prof().done[key] = a.filter(i => !ids.includes(i)); this.save(); left = ids.slice(); this.toast('모두 풀었어요! 다시 시작해요 🎉'); }
+    return Math.min(10, left.length);
+  },
+  // 10문제가 아닌 판의 결과 문구/음성
+  resultOpt(good, total) {
+    return { label: `${total}개 중 <b>${good}</b>개 맞았어요`, say: good === total ? ['모두 맞았어요! 최고예요!', 'al_res_all'] : good === 0 ? ['괜찮아요, 다시 한번 해 볼까요?', '_res_0'] : [`${KCNT[good]} 개 맞았어요!`, 'al_res_' + good] };
   },
   // 푼 기록 범위: all=모든 공부 / 나머지는 해당 공부만
   SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
@@ -82,8 +92,9 @@ const App = {
     this.addClr('number');
     this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.k === 'sp' ? this.speedMenu() : this.mathMenu({ add: 'add', sub: 'sub', all: 'mix' }[b.dataset.k]));
   },
-  finishRound(good, total, again, back, opt) {   // 10문제 끝 → 별 결과
+  finishRound(good, total, again, back, opt) {   // 한 판 끝 → 별 결과
     Speech.stop();
+    if (!opt && total !== 10) opt = this.resultOpt(good, total);
     const CNT = ['', '한 개', '두 개', '세 개', '네 개', '다섯 개', '여섯 개', '일곱 개', '여덟 개', '아홉 개'];
     const msg0 = good === total ? '열 개 모두 맞았어요! 최고예요!' : good === 0 ? '괜찮아요, 다시 한번 해 볼까요?' : `열 개 중에 ${CNT[good]} 맞았어요!`;
     const msg = opt ? opt.say[0] : msg0, mname = opt ? opt.say[1] : '_res_' + good;

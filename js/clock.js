@@ -38,10 +38,11 @@ App.clockGame = function (mode) {
   const aParts = id => { const [h, m] = id.split(':').map(Number); return [[`${HW[h]} 시`, 'ct_h_' + h], [m === 0 ? '정각이에요' : `${MW[m]} 분이에요`, 'ct_m_' + m]]; };
   const st = k => (p.stats[k] = p.stats[k] || { ok: 0, bad: 0 });
   const shuffle = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+  const CK = isA ? 'ca' : isH ? 'ch' : 'cm', CIDS = isA ? HRS.flatMap(h => MINS.map(m => h + ':' + m)) : isH ? HRS : MINS, total = App.roundSize(CK, CIDS);
   let good = 0, qn = 0, v, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/10`; };
+  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/10</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
     <main class="game mg"><div class="clegend"><span style="--c:${HOUR_C}">짧은 바늘 = 시</span><span style="--c:${MIN_C}">긴 바늘 = 분</span></div>
     <div class="cstage" id="cstage"></div><div class="eq ceq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => App.clockMenu();
@@ -77,7 +78,7 @@ App.clockGame = function (mode) {
       root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));
       burst();
       const pi = Math.floor(Math.random() * 4); Speech.stop();
-      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => (isA ? Speech.seq : Speech.play).call(Speech, isA ? aParts(v) : aText(v), () => setTimeout(() => qn >= 10 ? App.finishRound(good, 10, () => App.clockGame(mode), () => App.clockMenu()) : next(), 800), isA ? undefined : aName(v)), '_praise' + pi);
+      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => (isA ? Speech.seq : Speech.play).call(Speech, isA ? aParts(v) : aText(v), () => setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.clockGame(mode), () => App.clockMenu()) : next(), 800), isA ? undefined : aName(v)), '_praise' + pi);
     } else {
       tries++; s.bad++; App.save(); b.classList.add('wrong');
       Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2');
