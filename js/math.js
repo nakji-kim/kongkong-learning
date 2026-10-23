@@ -21,7 +21,7 @@ const MPOOL = (() => {
   for (const a of R(2, 12)) for (const b of R(1, Math.min(9, a - 1))) for (const c of R(1, 9)) mpHard.push(mk([a, b, c], ['-', '+']));                // 빼고 더하기
   return {
     add: { easy: addEasy, mid: addMid, hard: addHard }, sub: { easy: subEasy, mid: subMid, hard: subHard },
-    mix: { easy: [...addEasy, ...subEasy], mid: [...addMid, ...subMid], hard: [...addHard, ...subHard, ...pmHard, ...mpHard] }
+    mix: { easy: [...addEasy, ...subEasy], mid: [...addMid, ...subMid], hard: [...pmHard, ...mpHard] }
   };
 })();
 const MTITLE = { add: '더하기', sub: '빼기', mix: '종합' };
@@ -29,7 +29,7 @@ const MCARD = { add: ['1＋2', '7＋8', '1＋2＋3'], sub: ['5－2', '9－4', '9
 const MDESC = {   // 메뉴 카드의 작은 설명 (난이도 차이 안내)
   add: ['두 수 1~3 · 합 6 이하', '두 수 1~9 · 합 최대 18', '세 수 · 합 20 이하'],
   sub: ['6 이하에서 빼기', '9 이하에서 빼기', '세 수 · 12 이하에서 시작'],
-  mix: ['더하기·빼기 · 6 이하', '더하기·빼기 · 9 이하', '세 수 섞어서 · 12 이하'] };
+  mix: ['더하기·빼기 · 6 이하', '더하기·빼기 · 9 이하', '세 수 더하기·빼기 섞어서'] };
 const MRANDOM = { add: { easy: true, mid: true, hard: true }, sub: { easy: true, mid: true, hard: true }, mix: { easy: true, mid: true, hard: true } };   // false = 쉬운 것부터 순서대로
 
 App.mathMenu = function (mode) {
