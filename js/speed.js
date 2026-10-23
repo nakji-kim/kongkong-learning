@@ -1,5 +1,5 @@
 /* 숫자 · 순발력: 판에 흩어진 숫자를 1부터 차례로 빠르게 누르기 (한 판, 기록 저장) */
-const SPEED_LV = { 1: { name: '쉬움', max: 10, n: 3, bg: '#b8e6a1' }, 2: { name: '보통', max: 20, n: 3, bg: '#ffd166' }, 3: { name: '어려움', max: 30, n: 4, bg: '#d9c8f5' } };
+const SPEED_LV = { 1: { name: '쉬움', max: 10, n: 3, bg: '#b8e6a1' }, 2: { name: '보통', max: 20, n: 3, bg: '#ffd166' }, 3: { name: '어려움', max: 30, n: 4, bg: '#d9c8f5' }, 4: { name: '100', max: 100, n: 5, bg: '#ff9f9f' } };
 /* 효과음: 파일 없이 Web Audio로 바로 만들어 지연이 거의 없음 */
 const _sfx = { ctx: null,
   init() { try { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); } catch (e) { } },
@@ -14,7 +14,7 @@ App.speedMenu = function () {
   Speech.stop();
   const sp = this.prof().speed || {};
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="clr">🔄 기록 지우기</button></span></header>
-    <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 범위로 할까요?</h1><div class="cards">${[1, 2, 3].map(l => { const c = SPEED_LV[l]; return `<button class="card nm" data-l="${l}" style="background:${c.bg}"><b>${c.name}</b><span>1~${c.max} · ${c.n}×${c.n}</span><span>${sp[l] ? '🏆 ' + _fmt(sp[l]) : '기록 없음'}</span></button>`; }).join('')}</div></main>`;
+    <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 범위로 할까요?</h1><div class="cards">${[1, 2, 3, 4].map(l => { const c = SPEED_LV[l]; return `<button class="card nm" data-l="${l}" style="background:${c.bg}"><b style="font-size:clamp(2rem,8.5vw,3.2rem);white-space:nowrap">${c.name}</b><span>1~${c.max} · ${c.n}×${c.n}</span><span>${sp[l] ? '🏆 ' + _fmt(sp[l]) : '기록 없음'}</span></button>`; }).join('')}</div></main>`;
   this.root.querySelector('#back').onclick = () => this.numberMenu();
   this.root.querySelector('#clr').onclick = () => {
     const p = this.prof(); if (!p.speed || !Object.keys(p.speed).length) return this.toast('지울 기록이 없어요');
@@ -29,7 +29,7 @@ App.speedGame = function (level) {
   const later = (fn, ms) => { const t = setTimeout(() => { if (!gone) fn(); }, ms); timers.push(t); return t; };
   const leave = () => { gone = true; timers.forEach(clearTimeout); clearInterval(iv); Speech.stop(); };
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="tm">⏱ 0.0초</span></header>
-    <main class="game sp"><div class="spg" id="spg" style="--n:${n}"></div><div class="spcd" id="cd"></div></main>`;
+    <main class="game sp"><div class="spg${n >= 5 ? ' big5' : ''}" id="spg" style="--n:${n}"></div><div class="spcd" id="cd"></div></main>`;
   root.querySelector('#back').onclick = () => { leave(); App.speedMenu(); };
   const grid = root.querySelector('#spg'), cd = root.querySelector('#cd'), tm = root.querySelector('#tm');
   const elapsed = () => Date.now() - t0 + pen * 1000;

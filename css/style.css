@@ -308,3 +308,5 @@ img.sil{filter:brightness(0) opacity(.82)}
 @keyframes hbeat{from{scale:.92}to{scale:1.22}}
 circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;transform-origin:center;animation:hbeatc .55s ease-in-out infinite alternate;filter:drop-shadow(0 0 5px #ffd166)}
 @keyframes hbeatc{from{transform:scale(.85)}to{transform:scale(1.2)}}
+
+.spg.big5{gap:clamp(5px,1.4vmin,10px)}.spg.big5 .spc{font-size:clamp(1.3rem,6.2vmin,2.4rem);border-radius:16px}
