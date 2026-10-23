@@ -66,7 +66,7 @@ App.mathGame = function (mode, level = 'easy') {
   const grp = (n, code) => `<div class="grp" style="--c:${Math.min(n, 3)}">${Array.from({ length: n }, () => pic(code)).join('')}</div>`;
   const OPS = { '+': '＋', '-': '－' }, OPE = { '+': '+', '-': '−' };
   const total = App.roundSize(KEY, pairs.map(y => y.key));
-  let good = 0, qn = 0, q, tries, locked = true;
+  let good = 0, qn = 0, q, tries, locked = true, qTimer;
   const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
 
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
@@ -87,7 +87,7 @@ App.mathGame = function (mode, level = 'easy') {
     const wrong = [...shuffle(near), ...shuffle(far)].slice(0, 3);
     root.querySelector('#ch').innerHTML = shuffle([q.s, ...wrong]).map(n => `<button class="cb" data-n="${n}">${n}</button>`).join('');
     root.querySelectorAll('.cb').forEach(b => b.onclick = () => pick(b));
-    locked = false; setTimeout(() => sayQ(false), 400);   // 문제는 한 번만 읽어줌
+    locked = false; qTimer = setTimeout(() => sayQ(false), 400);   // 문제는 한 번만 읽어줌
   }
 
   function pick(b) {
@@ -100,7 +100,11 @@ App.mathGame = function (mode, level = 'easy') {
       root.querySelectorAll('.cb').forEach(x => x !== b && x.classList.add('fade'));
       burst();
       const pi = Math.floor(Math.random() * 4); Speech.stop();
-      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => Speech.seq([[MNUM[q.s], 'n_' + q.s]], () => setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.mathGame(mode, level), () => App.mathMenu(mode)) : next(), 500)), '_praise' + pi);
+      clearTimeout(qTimer);
+      let moved = false;   // 음성이 끊기거나 끝나지 않아도 반드시 다음으로 넘어가게 함
+      const adv = () => { if (moved || !root.contains(b)) return; moved = true; clearTimeout(fb); setTimeout(() => qn >= total ? App.finishRound(good, total, () => App.mathGame(mode, level), () => App.mathMenu(mode)) : next(), 500); };
+      const fb = setTimeout(adv, 5000);
+      Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => Speech.seq([[MNUM[q.s], 'n_' + q.s]], adv), '_praise' + pi);
     } else {
       tries++; s.bad++; App.save(); b.classList.add('wrong');
       Speech.stop(); Speech.play('다시 생각해 볼까요?', null, '_retry2');
