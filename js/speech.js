@@ -7,18 +7,19 @@ const Speech = {
     return speechSynthesis.getVoices().filter(v => v.lang.replace('_', '-').startsWith('ko')).sort((a, b) => rank(a) - rank(b));
   },
   tts(text, done, lang = 'ko-KR') {
-    const t = this.t, end = () => { if (t === this.t && done) done(); };
+    const t = this.t; let fired = false, wd; const end = () => { clearTimeout(wd); if (fired) return; fired = true; if (t === this.t && done) done(); };
     if (!('speechSynthesis' in window)) return void setTimeout(end, 700);
     const u = new SpeechSynthesisUtterance(text), cute = this.S.tone === 'cute', vs = this.voices();
     u.lang = lang; u.rate = lang === 'ko-KR' ? (cute ? 0.7 : 0.85) : 0.8; u.pitch = lang === 'ko-KR' ? (cute ? 1.6 : 1) : 1.3;
     if (lang === 'ko-KR') u.voice = vs.find(v => v.name === this.S.voice) || vs[0] || null;
-    u.onend = end; u.onerror = end; speechSynthesis.speak(u);
+    u.onend = end; u.onerror = end; wd = setTimeout(end, 3000 + text.length * 450); speechSynthesis.speak(u);   // 기기 음성이 끝났다고 알려주지 않아도 넘어가게 함
   },
   play(text, done, name = text, lang = 'ko-KR') {   // assets/audio 파일 → 기기 음성
     const t = this.t; let used = false;
     const fb = () => { if (used || t !== this.t) return; used = true; this.tts(text, done, lang); };
-    const fin = () => { if (!used && t === this.t) { used = true; done && done(); } };
-    const file = () => { if (t !== this.t) return; const a = new Audio(encodeURI(`assets/audio/${name}.mp3`)); this.a = a; a.onended = fin; a.onerror = fb; a.play().catch(fb); };
+    let wd; const fin = () => { clearTimeout(wd); if (!used && t === this.t) { used = true; done && done(); } };
+    const file = () => { if (t !== this.t) return; const a = new Audio(encodeURI(`assets/audio/${name}.mp3`)); this.a = a; a.onended = fin; a.onerror = fb; a.play().catch(fb);
+      wd = setTimeout(fin, 8000); a.onloadedmetadata = () => { clearTimeout(wd); if (isFinite(a.duration)) wd = setTimeout(fin, a.duration * 1000 + 2500); }; };   // 소리가 끝났다는 신호가 안 와도 멈추지 않게 함
     file();
   },
   after(fn, ms) { const t = this.t; setTimeout(() => { if (t === this.t) fn(); }, ms); },   // 도중에 stop() 되면 이어 읽기 취소
