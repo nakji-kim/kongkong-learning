@@ -67,9 +67,9 @@ App.mathGame = function (mode, level = 'easy') {
   const OPS = { '+': '＋', '-': '－' }, OPE = { '+': '+', '-': '−' };
   const total = App.roundSize(KEY, pairs.map(y => y.key));
   let good = 0, qn = 0, q, tries, locked = true, qTimer;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game mg"><div class="mstage" id="mstage"></div><div class="eq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => App.mathMenu(mode);
 

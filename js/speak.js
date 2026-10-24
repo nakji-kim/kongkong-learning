@@ -61,10 +61,10 @@ App.speakGame = function (level, kind = 'ko') {
   let todo = ids.filter(i => !this.doneArr(key).includes(i)); if (!todo.length) todo = ids.slice();
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
   let good = 0, qn = 0, cur, tries, busy = false, rec = null, heard = false, reads = 0, anyOk = false, firstOk = false;
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="spk"><div class="expt">🎤 마이크 권한이 필요해요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div>${level === 1 ? `<div class="sex">${EN ? '예) "에이 에이", "비 비"' : '예) "가 가", "라 라"'}</div><div class="sex sub">한 글자 읽기는 인식이 좋지 않아요</div>` : ''}<div id="dbg" class="dbg"></div></main>`;
   const $ = s => root.querySelector(s), mic = $('#mic'), msg = $('#msg'), dbg = $('#dbg');
-  const upd = () => $('#stars').textContent = `⭐ ${good} · ${qn}/${total}`;
+  const upd = () => $('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`;
   const stop = () => { try { rec && rec.abort(); } catch (e) { } rec = null; };
   $('#back').onclick = () => { stop(); Speech.stop(); menu(); };
   const praise = ['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'];

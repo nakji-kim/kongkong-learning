@@ -320,10 +320,12 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .sp100 b{color:#ffd84d;text-shadow:0 0 12px #ffb300,0 3px 0 #b36b00}
 .sp100 .spr,.sp100 .sps{color:#e8e2ff;opacity:.95}
 .sp100 .spb{background:rgba(255,255,255,.2);color:#fff}
-.sp100::before,.sp100::after{content:'⭐';position:absolute;font-size:.9rem;animation:twk 1.6s ease-in-out infinite alternate}
-.sp100::before{right:14px;top:12px}.sp100::after{left:14px;bottom:52px;animation-delay:.8s;content:'✨'}
+.sp100::before,.sp100::after{content:'';width:.9rem;height:.9rem;background:center/contain no-repeat;position:absolute;animation:twk 1.6s ease-in-out infinite alternate}
+.sp100::before{right:14px;top:12px;background-image:var(--star)}.sp100::after{left:14px;bottom:52px;animation-delay:.8s;background-image:var(--sparkle)}
 @keyframes twk{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
 
 .helpage{font-size:.95rem;font-weight:700;opacity:.6;margin:-14px 0 6px;text-align:center;line-height:1.1}
 
 .spark img{width:1em;height:1em;display:block}.rs .rsimg{width:1em;height:1em;display:block;margin:auto}
+
+.stimg{width:1.05em;height:1.05em;vertical-align:-.15em}

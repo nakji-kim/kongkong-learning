@@ -49,9 +49,9 @@ App.alphaGame = function (level, letters, lower = false) {
   for (const x of shuffle(todo)) { if (queue.length < 10 && !queue.includes(x)) queue.push(x); }
   const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game"><div class="stage" id="stage"></div><div class="word" id="word"></div></main>`;
   root.querySelector('#back').onclick = () => App.alphaUpper(lower);
 

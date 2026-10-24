@@ -40,11 +40,11 @@ App.writeGame = function (level, kind = 'ko') {
   let todo = ids.filter(i => !this.doneArr(key).includes(i)); if (!todo.length) todo = ids.slice();
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
   let good = 0, qn = 0, cur, tries = 0, locked = true, strokes = [], drawing = null, timer = null, first = true, guideOn = false, L = null;
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="wr"><div id="wmsg" class="wmsg"></div><div id="wpic" class="wpic" style="display:none"></div><div class="wst" id="wst"><canvas id="wg"></canvas><canvas id="wc"></canvas></div>
       <div class="wbt"><button class="chip big" id="wsnd">🔊 다시 듣기</button><button class="chip big" id="wclr">🧽 지우기</button><button class="chip big wdone" id="wok">✔ 다 썼어요</button></div></main>`;
   const $ = s => root.querySelector(s), msg = $('#wmsg'), cg = $('#wg'), cc = $('#wc'), gx = cg.getContext('2d'), ix = cc.getContext('2d');
-  const upd = () => $('#stars').textContent = `⭐ ${good} · ${qn}/${total}`;
+  const upd = () => $('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`;
   $('#back').onclick = () => { clearTimeout(timer); Speech.stop(); menu(); };
   const praise = ['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'];
   const sayTarget = (done, once) => !EN ? (level === 1 && !once ? Speech.twice(cur, done) : Speech.play(cur, done)) : level === 1 ? (once ? Speech.play(cur.toUpperCase(), done, 'en_' + cur.toUpperCase(), 'en-US') : Speech.twice(cur.toUpperCase(), done, 'en_' + cur.toUpperCase(), 'en-US')) : Speech.play(cur, done, W[cur].snd || 'enw_' + W[cur].L, 'en-US');   // 쉬움(한 글자)은 두 번 읽어 줌

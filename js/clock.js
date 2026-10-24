@@ -40,9 +40,9 @@ App.clockGame = function (mode) {
   const shuffle = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
   const CK = isA ? 'ca' : isH ? 'ch' : 'cm', CIDS = isA ? HRS.flatMap(h => MINS.map(m => h + ':' + m)) : isH ? HRS : MINS, total = App.roundSize(CK, CIDS);
   let good = 0, qn = 0, v, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game mg"><div class="clegend"><span style="--c:${HOUR_C}">짧은 바늘 = 시</span><span style="--c:${MIN_C}">긴 바늘 = 분</span></div>
     <div class="cstage" id="cstage"></div><div class="eq ceq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => App.clockMenu();

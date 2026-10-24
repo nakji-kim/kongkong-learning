@@ -1,8 +1,13 @@
-const STAR_SVG = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 4l8.2 17.6 19.3 2.3-14.3 13.2 3.8 19L32 46.1 15 56.1l3.8-19L4.5 23.9l19.3-2.3z" fill="#ffd23f" stroke="#f5a300" stroke-width="4" stroke-linejoin="round"/></svg>')}`;   // 배경 없는 별
+const _svg = b => `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' + b + '</svg>')}`;   // 이모지 대신 쓰는 배경 없는 그림
+const STAR_SVG = _svg('<path d="M32 4l8.2 17.6 19.3 2.3-14.3 13.2 3.8 19L32 46.1 15 56.1l3.8-19L4.5 23.9l19.3-2.3z" fill="#ffd23f" stroke="#f5a300" stroke-width="4" stroke-linejoin="round"/>');
+const SPARKLE_SVG = _svg('<path d="M32 4c2 14 8 22 28 28-20 6-26 14-28 28C30 46 24 38 4 32c20-6 26-14 28-28z" fill="#fff3a0" stroke="#ffc928" stroke-width="3" stroke-linejoin="round"/>');
+const HEART_SVG = _svg('<path d="M32 56C10 40 6 28 6 20a14 14 0 0 1 26-7 14 14 0 0 1 26 7c0 8-4 20-26 36z" fill="#ffd23f" stroke="#f5a300" stroke-width="4" stroke-linejoin="round"/>');
+document.documentElement.style.setProperty('--star', `url("${STAR_SVG}")`); document.documentElement.style.setProperty('--sparkle', `url("${SPARKLE_SVG}")`);
+const STAR_IMG = `<img class="stimg" alt="" src="${STAR_SVG}">`;
 const App = {
   root: null, data: null,
   start() { this.root = document.getElementById('app'); this.data = Store.load(); Speech.S = this.data.settings; Words.load(); this.help(); },
-  sparkFill(el, ch) { if (ch === '⭐') el.innerHTML = `<img alt="" src="${STAR_SVG}">`; else el.textContent = ch; },   // ⭐ 이모지는 기기마다 배경이 붙어 보여서 그림으로 대신함
+  sparkFill(el, ch) { const u = { '⭐': STAR_SVG, '✨': SPARKLE_SVG, '💛': HEART_SVG }[ch]; if (u) el.innerHTML = `<img alt="" src="${u}">`; else el.textContent = ch; },   // ⭐ 이모지는 기기마다 배경이 붙어 보여서 그림으로 대신함
   help() {   // 첫 화면: 사용 도움말 → 공부 시작하기 → (프로필 있으면 홈, 없으면 계정 만들기)
     Speech.stop();
     this.root.innerHTML = `<main class="home helpv"><h1>콩콩 배움 놀이</h1><div class="helpage">(만 4~5세 권장)</div>
@@ -12,7 +17,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v159</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v160</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -105,7 +110,7 @@ const App = {
       <div class="rbtns"><button class="chip big" id="again">다시 하기</button><button class="chip big" id="quit">그만하기</button></div></main>`;
     const stage = this.root.querySelector('.rstars'), delay = good * 220 + 500;
     const timers = [];
-    for (let i = 0; i < good; i++) timers.push(setTimeout(() => { const s = document.createElement('i'); s.className = 'spark'; s.textContent = '✨'; const r = stage.children[i].getBoundingClientRect(); s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top}px;--x:${(Math.random() * 40 - 20)}vmin;--y:-14vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1400); }, 300 + i * 220));
+    for (let i = 0; i < good; i++) timers.push(setTimeout(() => { const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, '✨'); const r = stage.children[i].getBoundingClientRect(); s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top}px;--x:${(Math.random() * 40 - 20)}vmin;--y:-14vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1400); }, 300 + i * 220));
     if (good !== total) timers.push(setTimeout(() => Speech.play(msg, null, mname), delay));   // 모두 맞힌 경우에는 음성 없음
     const leave = fn => () => { timers.forEach(clearTimeout); Speech.stop(); fn(); };   // 버튼을 누르면 결과 음성을 바로 멈춤
     this.root.querySelector('#again').onclick = leave(again);

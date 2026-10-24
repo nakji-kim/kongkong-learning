@@ -16,9 +16,9 @@ App.hangul = function (mode, level = 1) {
   if (!hleft.length) { p[SK] = solvedList().filter(i => !HIDS.includes(i)); App.save(); hleft = HIDS.slice(); App.toast('모두 풀었어요! 다시 시작해요 🎉'); }
   const total = Math.min(10, hleft.length);
   let last = null, good = 0, qn = 0, w, ans, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game"><div class="stage" id="stage"></div><div class="word" id="word"></div>${level >= 2 ? '<div class="jrows" id="jr"></div>' : ''}</main>`;
   root.querySelector('#back').onclick = () => App.hangulBack(level);
 

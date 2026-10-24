@@ -44,8 +44,8 @@ App.quiz = function (make, again, back, extraCls = '', total = 10) {
   const p = this.prof(), root = this.root;
   const st = k => (p.stats[k] = p.stats[k] || { ok: 0, bad: 0 });
   let good = 0, qn = 0, q, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game mg ${extraCls}"><div class="cstage" id="cstage"></div><div class="eq ceq" id="eq"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => back();
   const next = () => {

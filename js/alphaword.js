@@ -38,13 +38,13 @@ App.alphaWordGame = function (level, letters) {
   for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.includes(x)) queue.push(x); }
   const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
-  const upd = () => { root.querySelector('#stars').textContent = `⭐ ${good} · ${qn}/${total}`; };
+  const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
   const wordHtml = a => {   // 2단계: 첫 글자를 빈칸으로
     const rest = a.word.slice(1), n = a.word.length;
     return `<div class="wd" style="font-size:min(clamp(2.8rem,10vw,5.6rem),calc(86vw / ${(n * 0.62).toFixed(2)}))"><span class="blank" id="blank">?</span><span class="rest">${rest.replace(/ /g, '&nbsp;')}</span></div>`;
   };
 
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⭐ 0 · 0/${total}</span></header>
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="game aw2"><div class="stage" id="stage"></div><div class="word" id="word"></div><div class="choices" id="ch"></div></main>`;
   root.querySelector('#back').onclick = () => App.alphaWordMenu();
 

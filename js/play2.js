@@ -332,7 +332,7 @@ App.mateSet = function (level) {
       if (c.i === x.i) {
         qe.classList.remove('sel'); ce.classList.remove('sel'); qe.classList.remove('hid'); qe.classList.add('done'); ce.classList.add('done'); matched++;
         if (!bad[selQ]) App.markDone(key, String(x.i)); selQ = selC = null;
-        const sp = document.createElement('i'); sp.className = 'spark'; sp.textContent = '✨'; qe.appendChild(sp); setTimeout(() => sp.remove(), 1200);
+        const sp = document.createElement('i'); sp.className = 'spark'; App.sparkFill(sp, '✨'); qe.appendChild(sp); setTimeout(() => sp.remove(), 1200);
         if (matched === 3) { lock = true; const pi = Math.floor(Math.random() * 4); Speech.stop(); Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => later(next, 600), '_praise' + pi); }
       } else {
         wrong++; bad[selQ]++; const qi = selQ; qe.classList.add('bad'); ce.classList.add('bad'); lock = true;
