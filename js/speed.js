@@ -42,11 +42,11 @@ App.speedGame = function (level) {
       const b = e.target.closest('.spc'); if (!b || busy || gone || b.classList.contains('gone')) return;
       const i = +b.dataset.i, v = cells[i];
       if (v === next) {
-        _sfx.ok(); next++; cells[i] = 0; b.classList.add('gone');
+        _sfx.ok(); next++; cells[i] = 0; b.classList.remove('bad'); b.classList.add('gone');
         if (next > max) return finish();
-        const nv = v + cnt; later(() => { if (nv <= max) { cells[i] = nv; b.textContent = nv; b.classList.remove('gone'); b.classList.add('born'); later(() => b.classList.remove('born'), 300); } }, 180);
+        const nv = v + cnt; later(() => { if (nv <= max) { cells[i] = nv; b.textContent = nv; b.classList.remove('gone', 'bad'); b.classList.add('born'); later(() => b.classList.remove('born'), 300); } }, 180);
       } else {
-        _sfx.bad(); pen++; b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad');
+        _sfx.bad(); pen++; b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad'); later(() => b.classList.remove('bad'), 600);
         const f = document.createElement('i'); f.className = 'sppen'; f.textContent = '+1초'; b.appendChild(f); later(() => f.remove(), 700);
         tm.textContent = '⏱ ' + _fmt(elapsed());
       }
