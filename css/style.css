@@ -324,4 +324,4 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .sp100::before{right:14px;top:12px}.sp100::after{left:14px;bottom:52px;animation-delay:.8s;content:'✨'}
 @keyframes twk{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
 
-.helpage{font-size:.95rem;font-weight:700;opacity:.6;margin:-6px 0 6px;text-align:center}
+.helpage{font-size:.95rem;font-weight:700;opacity:.6;margin:-14px 0 6px;text-align:center;line-height:1.1}
