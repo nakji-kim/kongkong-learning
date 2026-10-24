@@ -61,7 +61,7 @@ App.hangul = function (mode, level = 1) {
     const steps = [
       { id: 'c', right: ci, vals: shuffle([ci, ...shuffle(CHO.filter(x => x !== ci)).slice(0, 2)]), lab: x => JC[x], show: () => part(ci) },
       { id: 'v', right: vi, vals: shuffle([vi, ...shuffle(VOWELS.map(x => x.jung).filter(x => x !== vi)).slice(0, 2)]), lab: x => JV[x], show: () => part(ci, vi) }];
-    if (level === 3) steps.push({ id: 'f', right: fi, vals: shuffle([fi, 0, ...shuffle([1, 4, 8, 16, 17, 19, 21].filter(x => x !== fi)).slice(0, 1)].filter((x, n, a) => a.indexOf(x) === n).slice(0, 3)), lab: x => x ? JF[x] : '없음', show: () => part(ci, vi, fi) });
+    if (level === 3) steps.push({ id: 'f', right: fi, vals: shuffle([fi, ...shuffle([1, 4, 7, 8, 16, 17, 19, 21].filter(x => x !== fi)).slice(0, 2)]), lab: x => JF[x], show: () => part(ci, vi, fi) });
     root.querySelector('#stage').innerHTML = `<button class="pic" id="pic" aria-label="${c.w}"><img alt="${c.w}"></button>`;
     const img = root.querySelector('#pic img');
     const list = only ? [only] : [...local(c.w), `https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/${EMOJI[c.w]}.svg`]; let k = 0;
