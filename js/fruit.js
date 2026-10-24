@@ -32,7 +32,7 @@ App.fruitBrief = function (level) {   // 게임 전 안내: 받을 과일 / 피�
 };
 App.fruitGame = function (level, good, bad) {
   const L = FR_LV[level], root = this.root;
-  let gone = false, raf = 0, score = 0, running = false;
+  let gone = false, raf = 0, score = 0, running = false, bonus = 0;   // bonus: 받으면 +0.2초, 피할 과일을 받으면 -0.1초
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="fs">🧺 0개</span><span class="chip" id="ft">⏱ ${FR_TIME}</span></header>
     <main class="game frg"><div class="frfield" id="ff"><div class="spcd" id="cd"></div><img class="frbk" id="bk" src="${_fi('basket')}" alt=""></div></main>`;
   const ff = root.querySelector('#ff'), bk = root.querySelector('#bk'), cd = root.querySelector('#cd'), fs = root.querySelector('#fs'), ft = root.querySelector('#ft');
@@ -77,22 +77,22 @@ App.fruitGame = function (level, good, bad) {
     const el = document.createElement('img'); el.className = 'frfruit'; el.src = _fi(k); el.style.width = sz + 'px'; el.alt = ''; ff.appendChild(el);
     fx.push({ el, x, y: -sz, bad: isBad, v: (H() + sz) / (L.fall * (.9 + Math.random() * .2)) });
   };
-  const pop = (txt, cls) => { const i = document.createElement('i'); i.className = 'frpop ' + cls; i.textContent = txt; i.style.left = bx + 'px'; ff.appendChild(i); later(() => i.remove(), 700); };
+  const pop = (txt, cls) => { const i = document.createElement('i'); i.className = 'frpop ' + cls; i.textContent = txt; i.style.left = Math.max(70, Math.min(W() - 70, bx)) + 'px'; ff.appendChild(i); later(() => i.remove(), 700); };
   const start = () => {
     sz = Math.max(44, Math.min(72, W() * .17));
     running = true; let t0 = performance.now(), last = t0, next = 0;
     const tick = now => {
       if (gone) return; const dt = Math.min(.05, (now - last) / 1000); last = now; const el = (now - t0) / 1000;
-      ft.textContent = '⏱ ' + Math.max(0, Math.ceil(FR_TIME - el));
-      if (el >= FR_TIME) return finish();
+      ft.textContent = '⏱ ' + Math.max(0, Math.ceil(FR_TIME + bonus - el));
+      if (el >= FR_TIME + bonus) return finish();
       if (el >= next) { spawn(el); next = el + L.every * (.85 + Math.random() * .3); }
       const bTop = H() - bk.offsetHeight, half = bw() * .5;
       for (let i = fx.length - 1; i >= 0; i--) {
         const f = fx[i]; f.y += f.v * dt; f.el.style.transform = `translate(${f.x - sz / 2}px,${f.y}px)`;
         const cy = f.y + sz * .7;
         if (cy >= bTop + bk.offsetHeight * .12 && f.y < H() - bk.offsetHeight * .35 && Math.abs(f.x - bx) <= half * .7) {
-          if (f.bad) { score = Math.max(0, score - 1); _sfx.bad(); bk.classList.remove('shk'); void bk.offsetWidth; bk.classList.add('shk'); pop('-1', 'no'); }
-          else { score++; _sfx.ok(); pop('+1', 'ok'); }
+          if (f.bad) { score = Math.max(0, score - 1); bonus -= .1; _sfx.bad(); bk.classList.remove('shk'); void bk.offsetWidth; bk.classList.add('shk'); pop('-1 · -0.1초', 'no'); }
+          else { score++; bonus += .2; _sfx.ok(); pop('+1 · +0.2초', 'ok'); }
           fs.textContent = `🧺 ${score}개`; f.el.remove(); fx.splice(i, 1);
         } else if (f.y > H()) { f.el.remove(); fx.splice(i, 1); }
       }

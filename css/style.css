@@ -265,7 +265,7 @@ img.sil{filter:brightness(0) opacity(.82)}
 .frg{padding:0;justify-content:stretch}.frfield{position:relative;flex:1;width:100%;min-height:60vh;overflow:hidden;touch-action:none;background:linear-gradient(#cfeeff,#fff8dc);border-radius:24px}
 .frfruit{position:absolute;left:0;top:0;pointer-events:none;will-change:transform}
 .frbk{position:absolute;left:0;bottom:6px;pointer-events:none;will-change:transform}.frbk.shk{animation:bkshk .35s}
-.frpop{position:absolute;bottom:90px;font-style:normal;font-weight:900;font-size:2rem;transform:translateX(-50%);animation:spup .7s forwards;pointer-events:none}.frpop.ok{color:#2aa856}.frpop.no{color:#e0443a}
+.frpop{position:absolute;bottom:90px;font-style:normal;font-weight:900;font-size:1.35rem;white-space:nowrap;text-shadow:0 1px 0 #fff,0 0 4px #fff;transform:translateX(-50%);animation:spup .7s forwards;pointer-events:none}.frpop.ok{color:#2aa856}.frpop.no{color:#e0443a}
 .frf small{color:#3b2f4a}
 @keyframes bkshk{0%,100%{rotate:0deg}25%{rotate:-12deg}75%{rotate:12deg}}
 .amd{display:block;margin-top:6px;font-size:.78rem;font-weight:600;line-height:1.25;opacity:.8;text-align:center}
