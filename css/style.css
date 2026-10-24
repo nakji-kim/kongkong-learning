@@ -310,3 +310,16 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 @keyframes hbeatc{from{transform:scale(.85)}to{transform:scale(1.2)}}
 
 .spg.big5{gap:clamp(5px,1.4vmin,10px)}.spg.big5 .spc{font-size:clamp(1.3rem,6.2vmin,2.4rem);border-radius:16px}
+
+.spcard{gap:0;padding:0 6px}
+.spcard b{font-size:clamp(2rem,8.5vw,3.2rem);white-space:nowrap;line-height:1.15}
+.spcard .spr{font-size:1.25rem;line-height:1.2;margin-top:2px}
+.spcard .sps{font-size:.8rem;font-weight:800;opacity:.7;line-height:1.2;margin-top:0}
+.spcard .spb{margin-top:12px;background:rgba(255,255,255,.55);border-radius:12px;padding:3px 10px;font-weight:800;font-size:.85rem}
+.sp100{position:relative;overflow:hidden;background:radial-gradient(circle at 30% 20%,#4b3b9a,#1d1a4d 70%)!important;box-shadow:0 8px 0 #0d0b2b,0 0 18px rgba(120,100,255,.6);color:#fff}
+.sp100 b{color:#ffd84d;text-shadow:0 0 12px #ffb300,0 3px 0 #b36b00}
+.sp100 .spr,.sp100 .sps{color:#e8e2ff;opacity:.95}
+.sp100 .spb{background:rgba(255,255,255,.2);color:#fff}
+.sp100::before,.sp100::after{content:'⭐';position:absolute;font-size:.9rem;animation:twk 1.6s ease-in-out infinite alternate}
+.sp100::before{right:14px;top:12px}.sp100::after{left:14px;bottom:52px;animation-delay:.8s;content:'✨'}
+@keyframes twk{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}

@@ -14,7 +14,7 @@ App.speedMenu = function () {
   Speech.stop();
   const sp = this.prof().speed || {};
   this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="clr">🔄 기록 지우기</button></span></header>
-    <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 범위로 할까요?</h1><div class="cards">${[1, 2, 3, 4].map(l => { const c = SPEED_LV[l]; return `<button class="card nm" data-l="${l}" style="background:${c.bg}"><b style="font-size:clamp(2rem,8.5vw,3.2rem);white-space:nowrap">${c.name}</b><span>1~${c.max} · ${c.n}×${c.n}</span><span>${sp[l] ? '🏆 ' + _fmt(sp[l]) : '기록 없음'}</span></button>`; }).join('')}</div></main>`;
+    <main class="home"><div class="crumb">🔢 숫자</div><h1>어떤 범위로 할까요?</h1><div class="cards">${[1, 2, 3, 4].map(l => { const c = SPEED_LV[l]; return `<button class="card nm spcard${l === 4 ? ' sp100' : ''}" data-l="${l}" style="background:${c.bg}"><b>${c.name}</b><span class="spr">1~${c.max}</span><small class="sps">${c.n}×${c.n} 판</small><small class="spb">${sp[l] ? '🏆 ' + _fmt(sp[l]) : '기록 없음'}</small></button>`; }).join('')}</div></main>`;
   this.root.querySelector('#back').onclick = () => this.numberMenu();
   this.root.querySelector('#clr').onclick = () => {
     const p = this.prof(); if (!p.speed || !Object.keys(p.speed).length) return this.toast('지울 기록이 없어요');
