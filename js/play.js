@@ -93,15 +93,21 @@ App.quiz = function (make, again, back, extraCls = '', total = 10) {
 
 /* ---------- 패턴 이어가기 ---------- */
 App.patGame = function (level) {
-  const rules = PAT_LEVELS[level - 1]; let n = 0;
+  const rules = PAT_LEVELS[level - 1], hard = level === 3; let n = 0;
   const make = () => {
-    const rule = rules[n++ % rules.length], theme = PAT_THEMES[Math.floor(Math.random() * PAT_THEMES.length)];
-    const sh = _shuf(theme), d = Math.max(...rule) + 1, unit = sh.slice(0, d), L = rule.length;
-    const k = 2 * L + Math.floor(Math.random() * L), seq = Array.from({ length: k + 1 }, (_, i) => unit[rule[i % L]]), ans = seq[k];
-    const wrong = [...unit.filter(c => c !== ans), ...sh.slice(d)].slice(0, 3);
+    const rule = rules[n++ % rules.length], L = rule.length;
+    const theme = hard && Math.random() < .6 ? PAT_THEMES[0] : PAT_THEMES[Math.floor(Math.random() * PAT_THEMES.length)];
+    const sh = _shuf(theme), d = Math.max(...rule) + 1, unit = sh.slice(0, d);
+    // 어려움: 빈칸이 앞뒤 사이 어딘가에 있음 (두 번 반복 + 조금), 나머지는 끝의 한 칸
+    const k = hard ? 2 * L + (L === 3 ? 1 : 0) - 1 : 2 * L + Math.floor(Math.random() * L);
+    const total = hard ? k + 1 : k + 1, blank = hard ? 1 + Math.floor(Math.random() * (total - 2)) : k;
+    const seq = Array.from({ length: total }, (_, i) => unit[rule[i % L]]), ans = seq[blank];
+    let wrong = [...unit.filter(c => c !== ans), ...sh.slice(d)];
+    if (hard && PAT_TWIN[ans]) wrong = [PAT_TWIN[ans], ...wrong.filter(c => c !== PAT_TWIN[ans]), ...Object.values(PAT_TWIN).filter(c => c !== PAT_TWIN[ans])];   // 같은 색 네모처럼 비슷한 보기
+    wrong = wrong.slice(0, 3);
     return {
-      key: `pt:${level}:${rule.join('')}`, answer: ans, q: _line('p_q_pat'), a: [], once: true,
-      stage: `<div class="pseq">${seq.slice(0, k).map(c => `<span class="pi">${pimg(c)}</span>`).join('')}<span class="pi qslot" id="qslot">?</span></div>`,
+      key: `pt:${level}:${rule.join('')}`, answer: ans, q: _line(hard ? 'p_q_pat2' : 'p_q_pat'), a: [], once: true,
+      stage: `<div class="pseq">${seq.map((c, i) => i === blank ? `<span class="pi qslot" id="qslot">?</span>` : `<span class="pi">${pimg(c)}</span>`).join('')}</div>`,
       choices: _shuf([ans, ...wrong]).map(c => ({ id: c, cls: 'pimg', html: pimg(c) })),
       reveal: root => { const s = root.querySelector('#qslot'); s.classList.add('filled'); s.innerHTML = pimg(ans); },
     };
