@@ -1,5 +1,6 @@
 // 한글 > 쓰기 : 소리를 듣고 따라 쓰기 (손가락으로 쓰고, 글자 모양과 얼마나 겹치는지로 판정 — 획순은 보지 않음)
 const GUIDE = '#dedae4';   // 연한 배경 글자는 투명도 대신 불투명한 연한 색 (획이 겹쳐 진하게 보이는 현상 방지)
+const KFONT = s => `400 ${s}px "Gothic A1","Noto Sans KR","Apple SD Gothic Neo",sans-serif`;   // 한글 쓰기: 획이 구분되도록 굵지 않게
 const WFONT = s => `800 ${s}px "Gothic A1","Noto Sans KR","Apple SD Gothic Neo",sans-serif`;
 App.writeMenu = function () {
   Speech.stop();
@@ -50,7 +51,7 @@ App.writeGame = function (level, kind = 'ko') {
   const layout = word => {
     if (EN) {   // 영어: 한 줄 (글자 수에 맞춰 글자 크기 조절)
       const maxW = Math.min(innerWidth - 28, 520), mc = document.createElement('canvas').getContext('2d'); mc.font = WFONT(100);
-      if (level === 1) { const s = Math.min(maxW, 250); return { W: s, H: s, fs: s * 0.78, brush: 13, kb: level === 3 ? 30 : 22, tol: level === 3 ? 28 : 22, th: s * 0.035 }; }
+      if (level === 1) { const s = Math.min(maxW, 250); return { W: s, H: s, fs: s * 0.78, brush: 13, kb: level === 3 ? 30 : 22, tol: level === 3 ? 28 : 22, th: s * 0.0175 }; }
       const w100 = mc.measureText(word).width, fs = Math.min(150, (maxW - 24) / w100 * 100), brush = Math.max(6, Math.min(13, fs * 0.1));
       return { W: Math.min(maxW, Math.ceil(w100 * fs / 100 + 24)), H: Math.ceil(fs * 1.5), fs, brush, kb: brush * (level === 3 ? 2.3 : 1.7), tol: brush * (level === 3 ? 2.2 : 1.7), th: fs * 0.05 };
     }
@@ -60,7 +61,7 @@ App.writeGame = function (level, kind = 'ko') {
   };
   const glyph = (ctx, word, ly, scale, fill, lineW) => {   // 글자 모양을 그림 (판정 기준과 배경 글자에 같이 사용)
     if (EN) { ctx.font = WFONT(ly.fs * scale); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; const x = ly.W / 2 * scale, y = (ly.H / 2 + ly.fs * 0.04) * scale; if (lineW) { ctx.lineWidth = lineW * scale; ctx.strokeText(word, x, y); } ctx.fillText(word, x, y); return; }
-    ctx.font = WFONT(ly.s * 0.8 * scale); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+    ctx.font = KFONT(ly.s * 0.8 * scale); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
     [...word].forEach((ch, i) => {
       const row = Math.floor(i / ly.cols), inRow = Math.min(ly.cols, ly.n - row * ly.cols), x0 = (ly.cols - inRow) / 2 * ly.s, col = i % ly.cols;
       const x = (x0 + col * ly.s + ly.s / 2) * scale, y = (row * ly.s + ly.s / 2 + ly.s * 0.04) * scale;
@@ -146,5 +147,5 @@ App.writeGame = function (level, kind = 'ko') {
     if (first) { first = false; Speech.play('소리를 듣고 따라 써 보세요.', go, 'wr_intro'); } else go();
   };
   App._w = { score: () => score(), pts: () => { const T = maskOf(x => glyph(x, cur, L, GS, true, L.th)); const o = []; for (let y = 0; y < T.h; y += 2) for (let x = 0; x < T.w; x += 2) if (on(T, y * T.w + x)) o.push([x / GS, y / GS]); return o; }, cur: () => cur, canvas: () => cc, setStrokes: s => { strokes = s; draw(); } };
-  document.fonts && document.fonts.load('800 40px "Gothic A1"').catch(() => { }).finally(next) || next();
+  document.fonts && document.fonts.load('400 40px "Gothic A1"').then(() => document.fonts.load('800 40px "Gothic A1"')).catch(() => { }).finally(next) || next();
 };
