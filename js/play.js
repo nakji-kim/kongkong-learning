@@ -34,8 +34,8 @@ App.matchMenu = function () {
 App.patMenu = function () {
   this.cardMenu('어떤 난이도로 할까요?', [
     { b: '🔴🔵🔴🔵', bs: 'font-size:1.7rem', t: '1단계 · 두 가지', bg: '#ffb3c1', go: () => this.patGame(1) },
-    { b: '🔴🔴🔵🔴🔴', bs: 'font-size:1.5rem', t: '2단계 · 길게', bg: '#ffd166', go: () => this.patGame(2) },
-    { b: '🔴🔵🟢🔴🔵', bs: 'font-size:1.6rem', t: '3단계 · 세 가지', bg: '#8ddc9b', go: () => this.patGame(3) },
+    { b: '🔴🔴🔵🔵🟢', bs: 'font-size:1.5rem', t: '2단계 · 여러 규칙', bg: '#ffd166', go: () => this.patGame(2) },
+    { b: '🔴❓🟢🔴🔵', bs: 'font-size:1.6rem', t: '3단계 · 빈칸 찾기', bg: '#8ddc9b', go: () => this.patGame(3) },
   ], () => this.playMenu(), undefined, '🧩 놀이');
 };
 /* ---------- 공통 문제 엔진 (보기 4개 · 10문제 · 별 결과) ---------- */
