@@ -28,8 +28,8 @@ const MTITLE = { add: '더하기', sub: '빼기', mix: '종합' };
 const MCARD = { add: ['1＋2', '7＋8', '1＋2＋3'], sub: ['5－2', '9－4', '9－2－3'], mix: ['＋ －', '7＋8 · 9－4', '3＋2－1'] };
 const MDESC = {   // 메뉴 카드의 작은 설명 (난이도 차이 안내)
   add: ['두 수 1~3<br>합 6 이하', '두 수 1~9<br>합 최대 18', '세 수<br>합 20 이하'],
-  sub: ['6 이하에서 빼기', '9 이하에서 빼기', '세 수 · 12 이하에서 시작'],
-  mix: ['더하기·빼기 · 6 이하', '더하기·빼기 · 9 이하', '세 수 더하기·빼기 섞어서'] };
+  sub: ['두 수<br>6 이하에서 빼기', '두 수<br>9 이하에서 빼기', '세 수<br>12 이하에서 시작'],
+  mix: ['더하기·빼기<br>6 이하', '더하기·빼기<br>9 이하', '세 수<br>더하기·빼기 섞어서'] };
 const MRANDOM = { add: { easy: true, mid: true, hard: true }, sub: { easy: true, mid: true, hard: true }, mix: { easy: true, mid: true, hard: true } };   // false = 쉬운 것부터 순서대로
 
 App.mathMenu = function (mode) {
