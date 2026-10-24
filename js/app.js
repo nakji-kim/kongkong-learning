@@ -1,6 +1,8 @@
+const STAR_SVG = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 4l8.2 17.6 19.3 2.3-14.3 13.2 3.8 19L32 46.1 15 56.1l3.8-19L4.5 23.9l19.3-2.3z" fill="#ffd23f" stroke="#f5a300" stroke-width="4" stroke-linejoin="round"/></svg>')}`;   // 배경 없는 별
 const App = {
   root: null, data: null,
   start() { this.root = document.getElementById('app'); this.data = Store.load(); Speech.S = this.data.settings; Words.load(); this.help(); },
+  sparkFill(el, ch) { if (ch === '⭐') el.innerHTML = `<img alt="" src="${STAR_SVG}">`; else el.textContent = ch; },   // ⭐ 이모지는 기기마다 배경이 붙어 보여서 그림으로 대신함
   help() {   // 첫 화면: 사용 도움말 → 공부 시작하기 → (프로필 있으면 홈, 없으면 계정 만들기)
     Speech.stop();
     this.root.innerHTML = `<main class="home helpv"><h1>콩콩 배움 놀이</h1><div class="helpage">(만 4~5세 권장)</div>
@@ -10,7 +12,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v158</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v159</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -98,7 +100,7 @@ const App = {
     const msg0 = good === total ? '열 개 모두 맞았어요! 최고예요!' : good === 0 ? '괜찮아요, 다시 한번 해 볼까요?' : `열 개 중에 ${CNT[good]} 맞았어요!`;
     const msg = opt ? opt.say[0] : msg0, mname = opt ? opt.say[1] : '_res_' + good;
     this.root.innerHTML = `<main class="home result"><h1>${good === total ? '와! 모두 맞았어요!' : '잘했어요!'}</h1>
-      <div class="rstars">${Array.from({ length: total }, (_, i) => `<span class="rs${i < good ? ' on' : ''}" style="--i:${i}">${i < good ? '⭐' : '☆'}</span>`).join('')}</div>
+      <div class="rstars">${Array.from({ length: total }, (_, i) => `<span class="rs${i < good ? ' on' : ''}" style="--i:${i}">${i < good ? `<img class="rsimg" alt="" src="${STAR_SVG}">` : '☆'}</span>`).join('')}</div>
       <div class="rscore">${opt ? opt.label : `${total}개 중 <b>${good}</b>개 맞았어요`}</div>
       <div class="rbtns"><button class="chip big" id="again">다시 하기</button><button class="chip big" id="quit">그만하기</button></div></main>`;
     const stage = this.root.querySelector('.rstars'), delay = good * 220 + 500;

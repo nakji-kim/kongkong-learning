@@ -168,7 +168,7 @@ function hsAssist(main) {
       btn = document.createElement('button'); btn.className = 'chip big hshow'; btn.textContent = '👀 정답 보기'; main.appendChild(btn);
       try { _sfx.init(); [784, 988, 1319, 1760].forEach((f, i) => setTimeout(() => _sfx.tone(f, f * 1.03, 0.16, 'sine', 0.45), i * 80)); } catch (e) { }
       const r = btn.getBoundingClientRect();
-      for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; e.textContent = ['⭐', '✨'][i % 2]; e.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 50 - 25)}vmin;--y:${Math.round(Math.random() * 30 - 20)}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1300); }
+      for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; App.sparkFill(e, ['⭐', '✨'][i % 2]); e.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 50 - 25)}vmin;--y:${Math.round(Math.random() * 30 - 20)}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1300); }
       btn.onclick = () => { btn.disabled = true; btn.style.visibility = 'hidden'; onShow(); };
     }
   };
@@ -235,7 +235,7 @@ App.hideGameEmoji = function (level) {
     locked = false;
     setTimeout(() => { if (si < 5) Speech.play(PLAY_LINES.p_q_hide, () => setTimeout(() => { let i = 0; const nx = () => { if (i < tk.length && !locked) say(tk[i++], () => setTimeout(nx, 150)); }; nx(); }, 150), 'p_q_hide'); }, 400);
   }
-  const spark = el => { const r = el.getBoundingClientRect(); for (let i = 0; i < 6; i++) { const s = document.createElement('i'); s.className = 'spark'; s.textContent = ['⭐', '✨'][i % 2]; s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 80 - 40)}vmin;--y:${Math.round(Math.random() * 60 - 40)}vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1300); } };
+  const spark = el => { const r = el.getBoundingClientRect(); for (let i = 0; i < 6; i++) { const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, ['⭐', '✨'][i % 2]); s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.round(Math.random() * 80 - 40)}vmin;--y:${Math.round(Math.random() * 60 - 40)}vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1300); } };
   start();
 };
 
@@ -247,7 +247,7 @@ App.hideSceneGame = function (level) {
     <main class="game mg hide"><div class="hs2" id="hs2"></div><div class="hbar" id="hbar"></div></main>`;
   const assist = hsAssist(root.querySelector('main'));
   root.querySelector('#back').onclick = () => { gone = true; Speech.stop(); App.hideMenu(); };
-  const spark = (x, y) => { for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; e.textContent = ['⭐', '✨'][i % 2]; e.style.cssText = `position:fixed;left:${x}px;top:${y}px;--x:${Math.random() * 30 - 15}vmin;--y:${Math.random() * 30 - 15}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1400); } };
+  const spark = (x, y) => { for (let i = 0; i < 6; i++) { const e = document.createElement('i'); e.className = 'spark'; App.sparkFill(e, ['⭐', '✨'][i % 2]); e.style.cssText = `position:fixed;left:${x}px;top:${y}px;--x:${Math.random() * 30 - 15}vmin;--y:${Math.random() * 30 - 15}vmin`; document.body.appendChild(e); setTimeout(() => e.remove(), 1400); } };
   function start() {
     const sc = scenes[si], box = root.querySelector('#hs2'), bar = root.querySelector('#hbar');
     assist.reset(); root.querySelector('#stars').textContent = `🔎 ${si}/${ROUNDS}`; found = 0; locked = false;

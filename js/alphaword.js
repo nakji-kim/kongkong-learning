@@ -95,7 +95,7 @@ App.alphaWordGame = function (level, letters) {
   function burst() {
     const stg = root.querySelector('#stage');
     for (let i = 0; i < 14; i++) {
-      const s = document.createElement('i'); s.className = 'spark'; s.textContent = ['⭐', '✨', '💛'][i % 3];
+      const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, ['⭐', '✨', '💛'][i % 3]);
       s.style.setProperty('--x', (Math.random() * 120 - 60) + 'vmin'); s.style.setProperty('--y', (Math.random() * 90 - 45) + 'vmin');
       stg.appendChild(s); setTimeout(() => s.remove(), 1400);
     }

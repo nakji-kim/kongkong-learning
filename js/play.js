@@ -83,7 +83,7 @@ App.quiz = function (make, again, back, extraCls = '', total = 10) {
   const burst = () => {
     const stg = root.querySelector('#cstage');
     for (let i = 0; i < 14; i++) {
-      const s = document.createElement('i'); s.className = 'spark'; s.textContent = ['⭐', '✨', '💛'][i % 3];
+      const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, ['⭐', '✨', '💛'][i % 3]);
       s.style.setProperty('--x', (Math.random() * 120 - 60) + 'vmin'); s.style.setProperty('--y', (Math.random() * 60 - 30) + 'vmin');
       stg.appendChild(s); setTimeout(() => s.remove(), 1400);
     }
@@ -124,7 +124,7 @@ App.pairGame = function (pairs) {
     <main class="game mg"><div class="mgrid c${pairs === 3 ? 3 : 4}${pairs >= 8 ? ' sq' : ''}" id="grid">${cards.map((k, i) => `<button class="mc" data-i="${i}" data-k="${k}"><span class="bk">?</span><span class="fr">${pimg(PBYK[k].code)}</span></button>`).join('')}</div></main>`;
   root.querySelector('#back').onclick = () => App.matchMenu();
   setTimeout(() => Speech.play(PLAY_LINES.p_q_pair, null, 'p_q_pair'), 400);
-  const spark = el => { const r = el.getBoundingClientRect(); for (let i = 0; i < 6; i++) { const s = document.createElement('i'); s.className = 'spark'; s.textContent = ['⭐', '✨'][i % 2]; s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.random() * 30 - 15}vmin;--y:${Math.random() * 30 - 15}vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1400); } };
+  const spark = el => { const r = el.getBoundingClientRect(); for (let i = 0; i < 6; i++) { const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, ['⭐', '✨'][i % 2]); s.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;--x:${Math.random() * 30 - 15}vmin;--y:${Math.random() * 30 - 15}vmin`; document.body.appendChild(s); setTimeout(() => s.remove(), 1400); } };
   root.querySelectorAll('.mc').forEach(c => c.onclick = () => {
     if (locked || c.classList.contains('up') || c.classList.contains('done')) return;
     c.classList.add('up'); open.push(c);
