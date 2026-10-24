@@ -93,9 +93,10 @@ App.quiz = function (make, again, back, extraCls = '', total = 10) {
 
 /* ---------- 패턴 이어가기 ---------- */
 App.patGame = function (level) {
-  const rules = PAT_LEVELS[level - 1], hard = level === 3; let n = 0;
+  const rules = PAT_LEVELS[level - 1], hard = level === 3; let bag = [], lastRule = null;
   const make = () => {
-    const rule = rules[n++ % rules.length], L = rule.length;
+    if (!bag.length) { bag = _shuf(rules); if (bag.length > 1 && bag[bag.length - 1] === lastRule) bag.unshift(bag.pop()); }   // 규칙을 섞은 주머니에서 뽑음 (한 바퀴 돌 때까지 겹치지 않음)
+    const rule = lastRule = bag.pop(), L = rule.length;
     const theme = hard && Math.random() < .6 ? PAT_THEMES[0] : PAT_THEMES[Math.floor(Math.random() * PAT_THEMES.length)];
     const sh = _shuf(theme), d = Math.max(...rule) + 1, unit = sh.slice(0, d);
     // 어려움: 빈칸이 앞뒤 사이 어딘가에 있음 (두 번 반복 + 조금), 나머지는 끝의 한 칸
