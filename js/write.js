@@ -51,7 +51,7 @@ App.writeGame = function (level, kind = 'ko') {
   const layout = word => {
     if (EN) {   // 영어: 한 줄 (글자 수에 맞춰 글자 크기 조절)
       const maxW = Math.min(innerWidth - 28, 520), mc = document.createElement('canvas').getContext('2d'); mc.font = WFONT(100);
-      if (level === 1) { const s = Math.min(maxW, 250); return { W: s, H: s, fs: s * 0.78, brush: 13, kb: level === 3 ? 30 : 22, tol: level === 3 ? 28 : 22, th: s * 0.0175 }; }
+      if (level === 1) { const s = Math.min(maxW, 250); return { W: s, H: s, fs: s * 0.78, brush: 13, kb: level === 3 ? 36 : 28, tol: level === 3 ? 34 : 28, th: s * 0.0175 }; }
       const w100 = mc.measureText(word).width, fs = Math.min(150, (maxW - 24) / w100 * 100), brush = Math.max(6, Math.min(13, fs * 0.1));
       return { W: Math.min(maxW, Math.ceil(w100 * fs / 100 + 24)), H: Math.ceil(fs * 1.5), fs, brush, kb: brush * (level === 3 ? 2.3 : 1.7), tol: brush * (level === 3 ? 2.2 : 1.7), th: fs * 0.05 };
     }
@@ -120,11 +120,12 @@ App.writeGame = function (level, kind = 'ko') {
     if (tries >= 3) return finish(false);
     if (tries >= 2 && !guideOn) { guideOn = true; guide(GUIDE); }   // 어려움: 두 번 틀리면 흐린 글자를 보여줌
     msg.textContent = '다시 써 볼까요?';
-    Speech.stop(); Speech.play('다시 써 볼까요?', () => sayTarget(() => { locked = false; }), 'wr_retry');
+    locked = false;   // 안내를 듣는 동안에도 바로 다시 쓸 수 있게
+    Speech.stop(); Speech.play('다시 써 볼까요?', () => { if (!locked && !drawing && !strokes.length) sayTarget(); }, 'wr_retry');
   };
   const judge = force => {
     if (locked || !strokes.length) return;
-    const s = score(), PASS = level === 3 ? 0.5 : 0.72, SOFT = level === 3 ? 0.4 : 0.45, OVER = level === 3 ? 0.55 : 0.4;
+    const s = score(), PASS = level === 3 ? 0.5 : EN ? 0.72 : 0.66, SOFT = level === 3 ? 0.4 : EN ? 0.45 : 0.4, OVER = level === 3 ? 0.55 : EN ? 0.4 : 0.5;   // 한글 쓰기는 조금 너그럽게
     App._wlast = s;
     if (s.over > OVER) return retry();
     if (s.cov >= PASS || (force && s.cov >= SOFT)) return finish(true);
