@@ -104,7 +104,7 @@ ODD2.pig = { ko: '돼지', lv2: ['ear'], lv3: ['nostril'],
     <circle cx="36" cy="46" r="3.8" fill="#222" stroke="none"/><circle cx="64" cy="46" r="3.8" fill="#222" stroke="none"/>
     <ellipse cx="50" cy="64" rx="15" ry="11" fill="#ff8fa8"/>
     <ellipse cx="44" cy="64" rx="2.6" ry="4" fill="#8a3a50" stroke="none"/>${d === 'nostril' ? '' : '<ellipse cx="56" cy="64" rx="2.6" ry="4" fill="#8a3a50" stroke="none"/>'}`) };
-ODD2.lion = { ko: '사자', lv2: ['ear'], lv3: ['dot'],
+ODD2.lion = { ko: '사자', lv2: ['ear'], lv3: ['cheek'],
   draw: d => _s(`
     ${[...Array(12)].map((_, i) => { const a = i * Math.PI / 6; return `<circle cx="${50 + 33 * Math.cos(a)}" cy="${52 + 33 * Math.sin(a)}" r="12" fill="#d98b3a"/>`; }).join('')}
     <circle cx="26" cy="22" r="8" fill="#f2b45f"/>${d === 'ear' ? '' : '<circle cx="74" cy="22" r="8" fill="#f2b45f"/>'}
@@ -112,7 +112,8 @@ ODD2.lion = { ko: '사자', lv2: ['ear'], lv3: ['dot'],
     <circle cx="40" cy="46" r="3.6" fill="#222" stroke="none"/><circle cx="60" cy="46" r="3.6" fill="#222" stroke="none"/>
     <ellipse cx="50" cy="60" rx="12" ry="9" fill="#fbe0aa" stroke="none"/>
     <path d="M46 56h8l-4 5z" fill="#a8553a"/><path d="M50 61q-5 6-9 2M50 61q5 6 9 2" fill="none"/>
-    <circle cx="40" cy="62" r="1.2" fill="#a8553a" stroke="none"/>${d === 'dot' ? '' : '<circle cx="60" cy="62" r="1.2" fill="#a8553a" stroke="none"/>'}`) };
+    <circle cx="40" cy="62" r="1.2" fill="#a8553a" stroke="none"/><circle cx="60" cy="62" r="1.2" fill="#a8553a" stroke="none"/>
+    <circle cx="30" cy="58" r="5" fill="#ff9fae" stroke="none"/>${d === 'cheek' ? '' : '<circle cx="70" cy="58" r="5" fill="#ff9fae" stroke="none"/>'}`) };
 ODD2.duck = { ko: '오리', lv2: ['wing'], lv3: ['tuft'],
   draw: d => _s(`
     <path d="M68 56q22-2 24-14q-12 2-24 4z" fill="#ffd84a"/>
@@ -161,7 +162,7 @@ ODD2.house = { ko: '집', lv2: ['chimney'], lv3: ['knob'],
     <rect x="16" y="46" width="68" height="44" fill="#ffe4b5"/>
     <path d="M8 48L50 14L92 48z" fill="#e8584f"/>
     <rect x="42" y="62" width="18" height="28" rx="2" fill="#a0642d"/>
-    ${d === 'knob' ? '' : '<circle cx="55" cy="77" r="2.2" fill="#ffe266" stroke="none"/>'}
+    ${d === 'knob' ? '' : '<circle cx="55" cy="77" r="3.6" fill="#ffe266" stroke="none"/>'}
     <rect x="22" y="58" width="14" height="14" fill="#bfe6ff"/><rect x="66" y="58" width="12" height="14" fill="#bfe6ff"/>`) };
 
 // ---- 추가 그림 12종 ----
@@ -177,7 +178,7 @@ ODD2.chicken = { ko: '닭', lv2: ['comb'], lv3: ['dot'],
   draw: d => _s(`
     <path d="M40 86v8M60 86v8M34 95h12M54 95h12" stroke="#ff9d3d" stroke-width="4" fill="none"/>
     <ellipse cx="50" cy="62" rx="32" ry="28" fill="#fff"/>
-    <path d="M30 60q20-10 32 6q-12 18-32-6z" fill="#ffe9c4"/>${d === 'dot' ? '' : '<circle cx="46" cy="64" r="2.6" fill="#ff9d3d" stroke="none"/>'}
+    <path d="M30 60q20-10 32 6q-12 18-32-6z" fill="#ffe9c4"/>${d === 'dot' ? '' : '<circle cx="46" cy="64" r="3.8" fill="#ff9d3d" stroke="none"/>'}
     ${d === 'comb' ? '' : '<path d="M36 26Q38 10 46 18Q50 6 56 18Q64 10 64 26z" fill="#ef5b5b"/>'}
     <circle cx="50" cy="32" r="16" fill="#fff"/><circle cx="43" cy="30" r="3" fill="#222" stroke="none"/><circle cx="57" cy="30" r="3" fill="#222" stroke="none"/>
     <path d="M45 36h10l-5 7z" fill="#ff9d3d"/><path d="M48 44q2 8 4 0" fill="#ef5b5b" stroke-width="2"/>`) };
@@ -198,8 +199,8 @@ ODD2.koala = { ko: '코알라', lv2: ['ear'], lv3: ['nose'],
     <ellipse cx="50" cy="60" rx="9" ry="12" fill="${d === 'nose' ? '#8a5a45' : '#3b3b3b'}"/><path d="M50 72q-6 5-10 2M50 72q6 5 10 2" fill="none"/>`) };
 ODD2.sheep = { ko: '양', lv2: ['leg'], lv3: ['ear'],
   draw: d => _s(`
-    <path d="M36 82v10M64 82v10" stroke-width="5" fill="none"/>${d === 'leg' ? '' : '<path d="M50 84v8" stroke-width="5" fill="none"/>'}
     ${[[26,58],[40,46],[58,46],[74,58],[30,74],[50,78],[70,74],[50,58]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="15" fill="#fff"/>`).join('')}
+    <path d="M34 84v11M50 86v9" stroke-width="6" fill="none"/>${d === 'leg' ? '' : '<path d="M66 84v11" stroke-width="6" fill="none"/>'}
     <ellipse cx="26" cy="28" rx="9" ry="5" transform="rotate(-24 26 28)" fill="#4a4048"/><ellipse cx="74" cy="28" rx="9" ry="5" transform="rotate(24 74 28)" fill="${d === 'ear' ? '#ffb3c6' : '#4a4048'}"/>
     <ellipse cx="50" cy="38" rx="17" ry="19" fill="#4a4048"/><circle cx="43" cy="36" r="2.6" fill="#fff" stroke="none"/><circle cx="57" cy="36" r="2.6" fill="#fff" stroke="none"/>
     <ellipse cx="50" cy="46" rx="5" ry="3.4" fill="#ffb3c6" stroke="none"/>`) };
@@ -245,7 +246,7 @@ ODD2.ship = { ko: '배', lv2: ['flag'], lv3: ['window'],
 ODD2.icecream = { ko: '아이스크림', lv2: ['cherry'], lv3: ['line'],
   draw: d => _s(`
     <path d="M32 54L50 94L68 54z" fill="#f2c27a"/>
-    <path d="M38 60L58 76M62 60L42 76M36 52L46 74" fill="none" stroke="#c9904a" stroke-width="2"/>${d === 'line' ? '' : '<path d="M64 52L54 74" fill="none" stroke="#c9904a" stroke-width="2"/>'}
+    <path d="M38 60L58 76M62 60L42 76M36 52L46 74" fill="none" stroke="#c9904a" stroke-width="2"/>${d === 'line' ? '' : '<path d="M66 52L52 80" fill="none" stroke="#c9904a" stroke-width="3.2"/>'}
     <circle cx="50" cy="42" r="20" fill="#ffb3c6"/><circle cx="50" cy="40" r="16" fill="none" stroke="none"/>
     <path d="M30 50q4 8 10 2q4 8 10 0q4 8 10 0q4 8 10-2" fill="#fff"/>
     ${d === 'cherry' ? '' : '<circle cx="50" cy="20" r="7" fill="#ef3b4d"/><path d="M50 14Q54 6 58 6" fill="none" stroke="#4f9a45"/>'}`) };
