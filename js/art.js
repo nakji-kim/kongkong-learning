@@ -91,7 +91,7 @@ App.puzMenu = function () {
 };
 App.puzGame = function (level) {
   Speech.stop();
-  const root = this.root, { r: R, c: C } = PUZ_LV[level], TOTAL = 3, keys = _shuf(ART_KEYS).slice(0, TOTAL);
+  const root = this.root, { r: R, c: C } = PUZ_LV[level], TOTAL = 5, keys = _shuf(ART_KEYS).slice(0, TOTAL);
   let si = 0, miss = 0, gone = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🧩 0/${TOTAL}</span></header>
     <main class="game puz"><div class="pboard" id="pb"></div><div class="ptray" id="pt"></div></main>`;
