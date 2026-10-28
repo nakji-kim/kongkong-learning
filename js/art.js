@@ -1,6 +1,8 @@
 /* 놀이 · 색칠놀이(칸 눌러 칠하기 / 자유롭게 칠하기) · 퍼즐(조각 맞추기)
    그림은 다른 그림 찾기에서 쓰는 코드 그림(ODD2)을 그대로 재사용합니다. */
-const ART_KEYS = Object.keys(ODD2).filter(k => k !== 'ant');
+// 칠하기·퍼즐에 어울리는 그림만 사용 (선이 심하게 겹치는 그림은 제외)
+const ART_KEYS = ['dog', 'cat', 'bear', 'rabbit', 'pig', 'duck', 'fish', 'butterfly', 'penguin', 'koala', 'frog', 'ladybug', 'snail', 'house', 'car', 'ship', 'rocket', 'icecream', 'umbrella'];
+const _artDraw = k => ODD2[k].draw(k === 'dog' ? 'patch' : undefined);   // 강아지는 눈 위 얼룩 없는 모습
 const ART_COLORS = ['#ff5c5c', '#ff9f43', '#ffd93d', '#6bd66b', '#3fb8ff', '#7a6bff', '#ff8fc7', '#a8683a', '#ffffff'];
 const ART_BG = ['#fff4d6', '#e3f4ff', '#e9f9e3', '#ffe6ee', '#efe8ff'];
 const _artPaintable = el => /^(path|circle|ellipse|rect)$/.test(el.tagName) && el.getAttribute('fill') && el.getAttribute('fill') !== 'none'
@@ -8,14 +10,17 @@ const _artPaintable = el => /^(path|circle|ellipse|rect)$/.test(el.tagName) && e
   && !(el.getAttribute('style') || '').includes('display:none') && !el.closest('[style*="display:none"]');
 // mode: 'fill' = 칸마다 흰색(눌러서 칠함) · 'line' = 선만 남김(자유 칠하기, 썸네일)
 const _artSvg = (k, mode) => {
-  const box = document.createElement('div'); box.innerHTML = ODD2[k].draw();
+  const box = document.createElement('div'); box.innerHTML = _artDraw(k);
   const svg = box.firstElementChild;
-  svg.querySelectorAll('path,circle,ellipse,rect').forEach(el => { if (_artPaintable(el)) { el.classList.add('pt'); el.setAttribute('fill', mode === 'fill' ? '#fff' : 'none'); if (el.getAttribute('stroke') === 'none') { el.setAttribute('stroke', _O); el.setAttribute('stroke-width', '1.8'); } } });
+  svg.querySelectorAll('path,circle,ellipse,rect').forEach(el => { if (_artPaintable(el)) { el.classList.add('pt'); el.setAttribute('fill', '#fff'); if (el.getAttribute('stroke') === 'none') { el.setAttribute('stroke', _O); el.setAttribute('stroke-width', '1.8'); } } });
   svg.setAttribute('width', '100%'); svg.setAttribute('height', '100%');
   return svg.outerHTML;
 };
-const _artPuzzleUri = (k, bg) => {   // 퍼즐 그림: 연한 배경 위에 그린 그림 (조각마다 배경이 있어야 하므로)
-  const s = ODD2[k].draw().replace(/(<svg[^>]*>)/, `$1<rect width="100" height="100" fill="${bg}" stroke="none"/>`);
+const _artPuzzleUri = (k, bg) => {   // 퍼즐 그림: 그림이 판을 가득 채우도록 잘라서, 연한 배경 위에 그림 (빈 조각이 생기지 않게)
+  const host = document.createElement('div'); host.style.cssText = 'position:absolute;left:-9999px;top:0;width:100px;height:100px'; host.innerHTML = _artDraw(k); document.body.appendChild(host);
+  let bb = { x: 0, y: 0, width: 100, height: 100 }; try { bb = host.querySelector('svg').getBBox(); } catch (e) { } host.remove();
+  const side = Math.max(bb.width, bb.height) + 8, x0 = bb.x + bb.width / 2 - side / 2, y0 = bb.y + bb.height / 2 - side / 2;
+  const s = _artDraw(k).replace(/viewBox="[^"]*"/, `viewBox="${x0} ${y0} ${side} ${side}"`).replace(/(<svg[^>]*>)/, `$1<rect x="${x0}" y="${y0}" width="${side}" height="${side}" fill="${bg}" stroke="none"/>`);
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(s)}")`;
 };
 const _artBurst = (host, n = 12) => {
@@ -47,8 +52,8 @@ App.artGame = function (mode, key) {
   Speech.stop();
   const root = this.root, fill = mode === 'fill';
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="rst">🗑 지우기</button></span></header>
-    <main class="game art"><div class="artbox" id="ab" style="background:#fff">${fill ? _artSvg(key, 'fill') : '<canvas id="ac"></canvas>' + _artSvg(key, 'line')}</div>
-      <div class="palette" id="pal">${ART_COLORS.map((c, i) => `<button class="pc${i === 0 ? ' on' : ''}" data-c="${c}" style="background:${c}" aria-label="색"></button>`).join('')}${fill ? '' : '<button class="pc er" data-c="#ffffff">🧽</button>'}</div>
+    <main class="game art"><div class="artbox" id="ab" style="background:#fff">${_artSvg(key, fill ? 'fill' : 'line')}${fill ? '' : '<canvas id="ac"></canvas>'}</div>
+      <div class="palette" id="pal">${(fill ? ART_COLORS : ART_COLORS.slice(0, 8)).map((c, i) => `<button class="pc${i === 0 ? ' on' : ''}" data-c="${c}" style="background:${c}" aria-label="색"></button>`).join('')}${fill ? '' : '<button class="pc er" data-c="erase">🧽</button>'}</div>
       ${fill ? '<button class="chip big" id="done">🎉 다 칠했어요</button>' : '<button class="chip big" id="done">🎉 다 그렸어요</button>'}</main>`;
   const box = root.querySelector('#ab'); let color = ART_COLORS[0], undo = [];
   setTimeout(() => { if (root.contains(box)) Speech.play(fill ? '칸을 눌러서 예쁘게 칠해 보세요!' : '손가락으로 마음껏 색칠해 보세요!', null, fill ? 'art_fill' : 'art_free'); }, 350);
@@ -60,10 +65,10 @@ App.artGame = function (mode, key) {
     root.querySelector('#rst').onclick = () => box.querySelectorAll('.pt').forEach(el => el.setAttribute('fill', '#fff'));
   } else {
     const cv = root.querySelector('#ac'), cx = cv.getContext('2d'); let drawing = null, W = 0;
-    const size = () => { const r = box.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1); W = r.width; cv.width = r.width * dpr; cv.height = r.height * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.fillStyle = '#fff'; cx.fillRect(0, 0, r.width, r.height); };
+    const size = () => { const r = box.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1); W = r.width; cv.width = r.width * dpr; cv.height = r.height * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); };   // 투명한 판 (곱하기로 선 위에 겹쳐 보임)
     size();
     const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-    const dot = (p, q) => { cx.strokeStyle = cx.fillStyle = color; cx.lineWidth = W / 12; cx.lineCap = cx.lineJoin = 'round'; cx.beginPath(); if (q) { cx.moveTo(q[0], q[1]); cx.lineTo(p[0], p[1]); cx.stroke(); } else { cx.arc(p[0], p[1], W / 24, 0, 7); cx.fill(); } };
+    const dot = (p, q) => { cx.globalCompositeOperation = color === 'erase' ? 'destination-out' : 'source-over'; cx.strokeStyle = cx.fillStyle = color === 'erase' ? '#000' : color; cx.lineWidth = W / 12; cx.lineCap = cx.lineJoin = 'round'; cx.beginPath(); if (q) { cx.moveTo(q[0], q[1]); cx.lineTo(p[0], p[1]); cx.stroke(); } else { cx.arc(p[0], p[1], W / 24, 0, 7); cx.fill(); } };
     cv.style.touchAction = 'none';
     cv.onpointerdown = e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (x) { } drawing = pos(e); dot(drawing, null); };
     cv.onpointermove = e => { if (!drawing) return; e.preventDefault(); const p = pos(e); dot(p, drawing); drawing = p; };
@@ -98,7 +103,11 @@ App.puzGame = function (level) {
       Array.from({ length: R * C }, (_, i) => `<div class="pslot" data-i="${i}" style="left:${(i % C) * w}px;top:${Math.floor(i / C) * h}px;width:${w}px;height:${h}px"></div>`).join('');
     pb.querySelector('.pghost').style.backgroundImage = uri;
     pt.innerHTML = '';
-    let placed = 0;
+    let placed = 0; const blank = new Set();
+    // 그림이 없는 빈 조각(배경만 있는 조각)은 서로 아무 빈칸에나 놓아도 맞는 것으로 봄
+    { const im = new Image(), svgSrc = uri.slice(5, -2); im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = 120; const x = cv.getContext('2d'); x.drawImage(im, 0, 0, 120, 120);
+        for (let i = 0; i < R * C; i++) { const cw = 120 / C, ch = 120 / R, d = x.getImageData(Math.round((i % C) * cw), Math.round(Math.floor(i / C) * ch), Math.max(1, Math.round(cw)), Math.max(1, Math.round(ch))).data; let same = true; for (let j = 4; j < d.length; j += 4) if (Math.abs(d[j] - d[0]) + Math.abs(d[j + 1] - d[1]) + Math.abs(d[j + 2] - d[2]) > 24) { same = false; break; } if (same) blank.add(i); } };
+      im.src = svgSrc; }
     const setSz = (el, k, i) => { el.style.width = w * k + 'px'; el.style.height = h * k + 'px'; el.style.backgroundSize = `${S * k}px ${S * k}px`; el.style.backgroundPosition = `${-(i % C) * w * k}px ${-Math.floor(i / C) * h * k}px`; };
     _shuf([...Array(R * C).keys()]).forEach(i => {
       const cell = document.createElement('div'); cell.className = 'pcell'; cell.style.cssText = `width:${w * f}px;height:${h * f}px`;
@@ -116,8 +125,8 @@ App.puzGame = function (level) {
         const bb = pb.getBoundingClientRect(), x = e.clientX - bb.left, y = e.clientY - bb.top, inside = x >= 0 && y >= 0 && x <= S && y <= S;
         const slot = inside ? Math.min(R - 1, Math.floor(y / h)) * C + Math.min(C - 1, Math.floor(x / w)) : -1;
         p.classList.remove('drag'); p.style.left = p.style.top = '';
-        if (slot === i) {   // 제자리 → 딱 붙임
-          p.classList.add('ok'); p.style.cssText = `left:${(i % C) * w}px;top:${Math.floor(i / C) * h}px;width:${w}px;height:${h}px;background-image:${uri};background-size:${S}px ${S}px;background-position:${-(i % C) * w}px ${-Math.floor(i / C) * h}px`;
+        if (slot === i || (blank.has(i) && blank.has(slot) && !pb.querySelector(`.ppc.ok[data-slot="${slot}"]`))) {   // 제자리 → 딱 붙임
+          p.classList.add('ok'); p.dataset.slot = slot; const si2 = slot; p.style.cssText = `left:${(si2 % C) * w}px;top:${Math.floor(si2 / C) * h}px;width:${w}px;height:${h}px;background-image:${uri};background-size:${S}px ${S}px;background-position:${-(i % C) * w}px ${-Math.floor(i / C) * h}px`;
           pb.appendChild(p); cell.remove(); _sfx.ok(); placed++;
           if (placed === R * C) { _artBurst(pb, 18); si++; stars.textContent = `🧩 ${si}/${TOTAL}`; _artPraise(() => setTimeout(() => { if (gone) return; if (si >= TOTAL) { const st = miss <= 2 ? 5 : miss <= 5 ? 4 : miss <= 9 ? 3 : 2; App.finishRound(st, 5, () => App.puzGame(level), () => App.puzMenu(), { label: `별 <b>${st}</b>개를 받았어요`, say: _line('p_ms_' + st) }); } else start(); }, 600)); }
         } else { setSz(p, f, i); if (inside) { miss++; _sfx.bad(); } }
