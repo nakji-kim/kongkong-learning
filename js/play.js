@@ -22,6 +22,8 @@ App.playMenu = function () {
     { b: '🧦👟', bs: 'font-size:2.2rem', t: '어울리는 그림', bg: '#b8e8b0', go: () => this.mateMenu() },
     { b: '🔎', t: '숨은 그림 찾기', bg: '#ffb3c1', go: () => this.hideMenu() },
     { b: '🧺🍎', bs: 'font-size:2rem', t: '과일 받기', bg: '#ffe0a3', go: () => this.fruitMenu() },
+    { b: '🎨', t: '색칠놀이', bg: '#ffc2e2', go: () => this.artMenu() },
+    { b: '🖼️', t: '퍼즐', bg: '#b5e3ff', go: () => this.puzMenu() },
   ], () => this.home(), 'play', '🧩 놀이');
 };
 App.matchMenu = function () {
