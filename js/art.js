@@ -13,6 +13,9 @@ const _artSvg = (k, mode) => {
   const box = document.createElement('div'); box.innerHTML = _artDraw(k);
   const svg = box.firstElementChild;
   svg.querySelectorAll('path,circle,ellipse,rect').forEach(el => { if (_artPaintable(el)) { el.classList.add('pt'); el.setAttribute('fill', '#fff'); if (el.getAttribute('stroke') === 'none') { el.setAttribute('stroke', _O); el.setAttribute('stroke-width', '1.8'); } } });
+  svg.querySelectorAll('path[stroke="#c9904a"]').forEach(el => el.remove());   // 아이스크림 콘의 지저분한 무늬 선은 뺌
+  svg.querySelectorAll('path,line,polyline').forEach(el => { const st = el.getAttribute('stroke'); if (el.getAttribute('fill') === 'none' && st && st !== 'none' && st !== _O) el.setAttribute('stroke', _O); });   // 색 있는 선(콘 무늬, 줄기, 물결 등)은 모두 검은 윤곽선으로
+  svg.querySelectorAll('circle').forEach(el => { if (+el.getAttribute('r') <= 2.2 && el.getAttribute('fill') !== 'none') el.setAttribute('fill', '#3b2f2a'); });   // 작은 점은 어두운 색으로
   svg.setAttribute('width', '100%'); svg.setAttribute('height', '100%');
   return svg.outerHTML;
 };
