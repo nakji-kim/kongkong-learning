@@ -17,7 +17,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v170</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v171</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -43,7 +43,7 @@ const App = {
     return { label: `${total}개 중 <b>${good}</b>개 맞았어요`, say: good === total ? ['모두 맞았어요! 최고예요!', 'al_res_all'] : good === 0 ? ['괜찮아요, 다시 한번 해 볼까요?', '_res_0'] : [`${KCNT[good]} 개 맞았어요!`, 'al_res_' + good] };
   },
   // 푼 기록 범위: all=모든 공부 / 나머지는 해당 공부만
-  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], write: ['쓰기', ['wr1', 'wr2', 'wr3', 'wa1', 'wa2', 'wa3']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3', 'ra1', 'ra2', 'ra3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']] },
+  SCOPES: { hangul: ['한글', []], number: ['숫자', ['add', 'add2', 'add3', 'sub', 'sub2', 'sub3', 'mix', 'mix2', 'mix3']], alpha: ['알파벳', ['a1', 'a2', 'l1', 'l2', 'w1', 'w2']], clock: ['시계', ['ch', 'cm', 'ca']], write: ['쓰기', ['wr1', 'wr2', 'wr3', 'wa1', 'wa2', 'wa3']], read: ['읽고 말하기', ['rd1', 'rd2', 'rd3', 'ra1', 'ra2', 'ra3']], play: ['놀이', ['odd1', 'odd2', 'odd3', 'mat1', 'mat2', 'mat3']], dino: ['공룡', ['dino1', 'dino2']] },
   solvedCount(scope = 'all') {
     const p = this.prof(), d = p.done || {}; let n = 0;
     if (scope === 'all' || scope === 'hangul') n += (p.solved || []).length + (p.solved2 || []).length + (p.solved3 || []).length;
@@ -77,11 +77,12 @@ const App = {
           <button class="card c-ma" data-k="ma"><b>숫자</b><span>1 2 3</span></button>
           <button class="card c-ck" data-k="ck"><b>시계</b><span>🕒</span></button>
           <button class="card c-pl" data-k="pl"><b>놀이</b><span>🧩</span></button>
+          <button class="card c-dn" data-k="dn"><b>공룡</b><span style="width:100%;display:flex;justify-content:center;opacity:1"><img src="assets/images/dino/tri.png" alt="" style="width:66%;display:block"></span></button>
         </div></main>`;
     this.root.querySelector('#who').onclick = () => this.profiles();
     this.root.querySelector('#clr').onclick = () => this.clearSolved();
     this.root.querySelectorAll('.card').forEach(b => b.onclick = () => {
-      if (b.dataset.k === 'ko') this.hangulHome(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else this.alphaHome();
+      if (b.dataset.k === 'ko') this.hangulHome(); else if (b.dataset.k === 'ma') this.numberMenu(); else if (b.dataset.k === 'ck') this.clockMenu(); else if (b.dataset.k === 'pl') this.playMenu(); else if (b.dataset.k === 'dn') this.dinoMenu(); else this.alphaHome();
     });
   },
   numberMenu() {

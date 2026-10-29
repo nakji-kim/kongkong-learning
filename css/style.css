@@ -349,3 +349,11 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .ppc{position:relative;background-repeat:no-repeat;border-radius:10px;box-shadow:0 3px 0 rgba(0,0,0,.2),inset 0 0 0 2px rgba(59,47,74,.25);touch-action:none;cursor:grab}
 .ppc.drag{position:fixed;z-index:60;box-shadow:0 10px 18px rgba(0,0,0,.3);cursor:grabbing}
 .ppc.ok{position:absolute;box-shadow:inset 0 0 0 1px rgba(59,47,74,.18);cursor:default;border-radius:0;animation:pop .35s}
+
+.c-dn{background:#a8e0c8}
+.cb.dn{width:clamp(150px,44vw,250px);aspect-ratio:4/3;border-radius:22px;background:#fff7e0;padding:8px;display:grid;place-items:center}
+.cb.dn img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.choices:has(.dn){flex-wrap:wrap;max-width:min(98vw,540px);margin:0 auto;gap:10px}
+.dnshadow{display:grid;place-items:center;width:min(86vw,420px)}
+.dnsh{width:100%;max-height:34vh;object-fit:contain;filter:brightness(0) opacity(.78);transition:filter .6s}
+.dnsh.lit{filter:none}
