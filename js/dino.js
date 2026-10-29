@@ -3,6 +3,9 @@ const DINOS = [
   ['trex', '티라노사우루스'], ['tri', '트리케라톱스'], ['steg', '스테고사우루스'], ['brach', '브라키오사우루스'],
   ['velo', '벨로시랍토르'], ['pter', '프테라노돈'], ['anky', '안킬로사우루스'], ['spino', '스피노사우루스'],
   ['para', '파라사우롤로푸스'], ['diplo', '디플로도쿠스'], ['apato', '아파토사우루스'], ['giga', '기가노토사우루스'],
+  ['allo', '알로사우루스'], ['carno', '카르노타우루스'], ['igua', '이구아노돈'], ['pachy', '파키케팔로사우루스'],
+  ['dilo', '딜로포사우루스'], ['ther', '테리지노사우루스'], ['prot', '프로토케라톱스'], ['ovir', '오비랍토르'],
+  ['styr', '스티라코사우루스'], ['arg', '아르헨티노사우루스'], ['dein', '데이노니쿠스'], ['cory', '코리토사우루스'],
 ];
 const _dimg = (k, cls = '') => `<img class="${cls}" alt="" src="assets/images/dino/${k}.png">`;
 App.dinoMenu = function () {
