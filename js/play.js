@@ -63,7 +63,7 @@ App.quiz = function (make, again, back, extraCls = '', total = 10) {
     Promise.race([loaded, new Promise(r => setTimeout(r, 3000))]).then(() => {
       if (q !== mine || root.querySelector('#ch') !== chEl) return;
       chEl.style.visibility = ''; locked = false;
-      setTimeout(() => (q.once ? Speech.play(q.q[0], null, q.q[1]) : Speech.twice(q.q[0], null, q.q[1])), 400);   // q.once: 한 번만 읽기
+      if (!q.silent) setTimeout(() => (q.once ? Speech.play(q.q[0], null, q.q[1]) : Speech.twice(q.q[0], null, q.q[1])), 400);   // q.once: 한 번만 읽기
     });
   };
   const pick = b => {
