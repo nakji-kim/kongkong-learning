@@ -357,3 +357,17 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .dnshadow{display:grid;place-items:center;width:min(86vw,420px)}
 .dnsh{width:100%;max-height:34vh;object-fit:contain;filter:brightness(0) opacity(.78);transition:filter .6s}
 .dnsh.lit{filter:none}
+
+.malit{display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:800;font-size:clamp(1.2rem,5vw,1.8rem);color:#3b2f4a}
+.malit img,.malit .pemo{width:clamp(84px,24vw,140px);height:clamp(84px,24vw,140px);object-fit:contain}
+.malit.big img,.malit.big .pemo{width:clamp(130px,38vw,230px);height:clamp(130px,38vw,230px);font-size:clamp(5rem,20vw,8rem)}
+.malit.big{font-size:clamp(2rem,8vw,3.2rem)}
+.malhl{color:#e8590c;text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:6px}
+.malrow{display:flex;align-items:center;justify-content:center;gap:clamp(4px,2vw,16px)}
+.malrow>i{font-style:normal;font-size:clamp(1.4rem,6vw,2.4rem);opacity:.5}
+.malq{display:grid;place-items:center;width:clamp(84px,24vw,140px);height:clamp(84px,24vw,140px);border-radius:20px;background:#fff1a8;font-size:3rem;animation:hintring .9s ease-in-out infinite alternate}
+.malit .pemo{display:grid;place-items:center;line-height:1;font-size:clamp(3rem,13vw,4.6rem)}
+.malit.big .pemo{font-size:clamp(5rem,20vw,8rem)}
+.malit{min-width:clamp(84px,24vw,140px);text-align:center}
+.malit.big img{width:clamp(190px,56vw,320px);height:clamp(190px,56vw,320px);max-height:38vh}
+.malit.big .pemo{font-size:clamp(7rem,28vw,12rem)}
