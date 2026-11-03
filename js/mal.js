@@ -27,7 +27,13 @@ App.malGame = function (level) {
     const id = App.pickNew(key, ids, { random: true }), [a, b, c] = id.split('>');
     if (level === 3) {
       const wasAsked = asked; asked = true;
-      const opts = _shuf([b, ...decoys(a.at(-1), [a, b, c])]);
+      // 보기: 되도록 정답과 첫 글자가 같은 단어 (앞 단어와는 이어지지만 뒤 단어와는 이어지지 않는 것) → 뒤 단어까지 확인해야 함
+      const okA = w => _malVar(a.at(-1)).includes(w[0]), okC = w => _malVar(w.at(-1)).includes(c[0]) || _malVar(c[0]).includes(w.at(-1)) || w.at(-1) === c[0];
+      const bad = w => ![a, b, c].includes(w) && !(okA(w) && okC(w));
+      let dec = _shuf(ws.filter(w => w[0] === b[0] && bad(w))).slice(0, 3);
+      if (dec.length < 3) dec = [...dec, ..._shuf(ws.filter(w => okA(w) && bad(w) && !dec.includes(w))).slice(0, 3 - dec.length)];
+      if (dec.length < 3) dec = [...dec, ...decoys(a.at(-1), [a, b, c, ...dec], 3 - dec.length)];
+      const opts = _shuf([b, ...dec]);
       return {
         key: 'ml:' + id, done: [key, id], answer: b, q: ['빈칸에 들어갈 말을 찾아요!', 'mal_q3'], once: true, silent: wasAsked,
         a: [[a, a], [b, b], [c, c]],
