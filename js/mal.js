@@ -3,12 +3,13 @@ const MAL_LOCAL = {"Airplane": "Airplane.svg", "Bear": "Bear.svg", "Bird": "Bird
 const _malHas = w => !!(MAL_LOCAL[w] || (typeof EMOJI !== 'undefined' && EMOJI[w]));
 const _malImg = (w, cls = '') => MAL_LOCAL[w] ? `<img class="${cls}" alt="" src="assets/images/${encodeURI(MAL_LOCAL[w])}">` : pimg(EMOJI[w], cls);
 const _malJosa = ch => { const b = (ch.charCodeAt(0) - 0xAC00) % 28; return b === 0 || b === 8 ? '로' : '으로'; };
-const _malWords = () => [...new Set(Words.list.map(x => x.w))].filter(_malHas);
+const _malWords = () => [...new Set(Words.list.map(x => x.w))].filter(w => w.length > 1 && _malHas(w));   // 한 글자 단어는 뺌
 App.malMenu = function () {
   this.cardMenu('어떤 난이도로 할까요?', [
     { b: '쉬움', t: '그림 이어 고르기', bg: '#b8e6a1', go: () => this.malGame(1) },
-    { b: '보통', t: '글자 보고 고르기', bg: '#ffd166', go: () => this.malGame(2) },
+    { b: '보통', t: '그림 보고 글자 고르기', bg: '#ffd166', go: () => this.malGame(2) },
     { b: '어려움', t: '빈칸 채우기', bg: '#d9c8f5', go: () => this.malGame(3) },
+    { b: '자유', t: '컴퓨터와 이어 쓰기', bg: '#ffb3c1', go: () => this.malFree() },
   ], () => this.hangulHome(), 'mal', '📖 한글 · 끝말잇기');
 };
 App.malGame = function (level) {
@@ -18,7 +19,7 @@ App.malGame = function (level) {
   let ids = [];
   if (level < 3) ws.forEach(a => nexts(a).forEach(b => ids.push(a + '>' + b)));
   else ws.forEach(a => nexts(a).forEach(b => nexts(b, [a]).forEach(c => ids.push([a, b, c].join('>')))));
-  const key = 'mal' + level, hl = (w) => `${w.slice(0, -1)}<b class="malhl">${w.at(-1)}</b>`;
+  const key = 'mal' + level, hl = (w) => `${w.slice(0, -1)}<b class="malhl">${w.at(-1)}</b>`, hf = (w) => `<b class="malhl">${w[0]}</b>${w.slice(1)}`;
   const decoys = (need, ex, n = 3) => _shuf(ws.filter(w => w[0] !== need && !ex.includes(w))).slice(0, n);
   const make = () => {
     const id = App.pickNew(key, ids, { random: true }), [a, b, c] = id.split('>');
@@ -27,18 +28,77 @@ App.malGame = function (level) {
       return {
         key: 'ml:' + id, done: [key, id], answer: b, q: ['빈칸에 들어갈 말을 찾아요!', 'mal_q3'], once: true,
         a: [[a, a], [b, b], [c, c]],
-        stage: `<div class="malrow"><div class="malit">${_malImg(a)}<span>${a}</span></div><i>→</i><div class="malit q"><span class="malq">?</span></div><i>→</i><div class="malit">${_malImg(c)}<span>${c}</span></div></div>`,
-        reveal: root => { const q = root.querySelector('.malit.q'); if (q) q.innerHTML = `${_malImg(b)}<span>${b}</span>`; },
+        stage: `<div class="malrow"><div class="malit">${_malImg(a)}</div><i>→</i><div class="malit q"><span class="malq">?</span></div><i>→</i><div class="malit">${_malImg(c)}</div></div>`,
+        reveal: root => { const q = root.querySelector('.malit.q'); if (q) q.innerHTML = _malImg(b); },
         choices: opts.map(x => ({ id: x, cls: 'pimg', html: _malImg(x) })),
       };
     }
     const opts = _shuf([b, ...decoys(a.at(-1), [a, b])]);
     return {
-      key: 'ml:' + id, done: [key, id], answer: b, q: [`${a}, ${a.at(-1)}${_malJosa(a.at(-1))} 시작하는 말을 찾아요!`, 'mal_q_' + a], once: true,
+      key: 'ml:' + id, done: [key, id], answer: b, q: [a, a],
       a: [[a, a], [b, b]],
-      stage: `<div class="malit big">${_malImg(a)}${level === 2 ? `<span>${hl(a)}</span>` : ''}</div>`,
+      stage: `<div class="malit big">${_malImg(a)}</div>`,
       choices: opts.map(x => level === 1 ? { id: x, cls: 'pimg', html: _malImg(x) } : { id: x, cls: 'wide', html: x }),
     };
   };
   this.quiz(make, () => App.malGame(level), () => App.malMenu(), 'mal', App.roundSize(key, ids));
+};
+
+/* ---------- 자유 : 키보드로 직접 쳐서 컴퓨터와 번갈아 끝말잇기 (규칙만 확인 · 음성 없음) ---------- */
+const _malVar = ch => {   // 두음법칙 : 리↔이, 라↔나, 린→인 …
+  const c = ch.charCodeAt(0) - 0xAC00, jo = (c / 588) | 0, ju = ((c % 588) / 28) | 0, jg = c % 28, Y = [20, 2, 6, 12, 17, 7, 3].includes(ju), mk = n => String.fromCharCode(0xAC00 + n * 588 + ju * 28 + jg), v = [ch];
+  if (jo === 5) v.push(mk(Y ? 11 : 2)); else if (jo === 2) { v.push(mk(Y ? 11 : 5)); } else if (jo === 11 && Y) v.push(mk(5), mk(2));
+  return v;
+};
+App.malFree = function () {
+  const root = this.root, pool = [...new Set([...Words.list.map(x => x.w), ...MAL_EXTRA])].filter(w => /^[가-힣]{2,}$/.test(w));
+  const byFirst = {}; pool.forEach(w => (byFirst[w[0]] = byFirst[w[0]] || []).push(w));
+  const used = new Set(), chain = []; let mine = 0, gone = false, busy = true, timer = null;
+  const cand = (last) => _malVar(last).flatMap(c => byFirst[c] || []).filter(w => !used.has(w));
+  const hasNext = w => cand(w.at(-1)).some(x => x !== w);
+  const hlLast = w => `${w.slice(0, -1)}<b class="malhl">${w.at(-1)}</b>`;
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} <span id="cnt">0</span>개</span></header>
+    <main class="game mg mfree"><div class="mfcur" id="cur"></div><div class="mfmsg" id="msg"></div>
+      <div class="mfin"><input id="inp" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="여기에 써 보세요" maxlength="12"><button class="chip big" id="go">확인</button></div>
+      <button class="chip" id="giveup">🙈 모르겠어요</button><div class="mfhist" id="hist"></div></main>`;
+  const $ = s => root.querySelector(s), inp = $('#inp');
+  $('#back').onclick = () => { gone = true; clearTimeout(timer); App.malMenu(); };
+  const show = (who, w) => {
+    $('#cur').innerHTML = `<div class="mfwho ${who}">${who === 'cp' ? '🤖 컴퓨터' : '🙂 나'}</div><div class="malit big">${_malHas(w) ? _malImg(w) : ''}<span>${hlLast(w)}</span></div>`;
+    const h = document.createElement('span'); h.className = 'mfchip ' + who; h.textContent = w; $('#hist').appendChild(h); h.scrollIntoView({ block: 'nearest' });
+    const need = w.at(-1), vs = _malVar(need); $('#msg').innerHTML = who === 'cp' ? hint(need) : '🤖 생각하는 중…';
+  };
+  const hint = ch => { const alt = _malVar(ch).slice(1); return `<b class="malhl">${ch}</b> 소리로 시작하는 말을 써 보세요!${alt.length ? `<br><small>(${alt.join(' · ')} 도 돼요)</small>` : ''}`; };
+  const say = (t, bad) => { $('#msg').innerHTML = t; $('#msg').classList.toggle('bad', !!bad); };
+  const cpTurn = () => {
+    if (gone) return; busy = true; const last = chain.at(-1);
+    timer = setTimeout(() => {
+      if (gone) return;
+      const all = cand(last.at(-1)).filter(w => w !== last), good = all.filter(hasNext), pickFrom = good.length && Math.random() < .85 ? good : all;
+      if (!pickFrom.length) return end(true);
+      const w = pickFrom[Math.floor(Math.random() * pickFrom.length)]; used.add(w); chain.push(w); show('cp', w); busy = false; inp.disabled = false; inp.value = ''; inp.focus();
+    }, 900);
+  };
+  const burst = () => { const stg = $('#cur'); for (let i = 0; i < 10; i++) { const s = document.createElement('i'); s.className = 'spark'; App.sparkFill(s, ['⭐', '✨', '💛'][i % 3]); s.style.setProperty('--x', (Math.random() * 90 - 45) + 'vmin'); s.style.setProperty('--y', (Math.random() * 40 - 20) + 'vmin'); stg.appendChild(s); setTimeout(() => s.remove(), 1400); } };
+  const submit = () => {
+    if (busy || gone) return; const w = inp.value.replace(/\s+/g, ''); if (!w) return;
+    const need = chain.at(-1).at(-1), vs = _malVar(need);
+    if (!/^[가-힣]+$/.test(w)) return say('한글로만 써 주세요 ✏️', 1);
+    if (w.length < 2) return say('두 글자 이상으로 써 주세요 ✏️', 1);
+    if (!vs.includes(w[0])) return say(hint(need), 1);
+    if (used.has(w)) return say('이미 나온 말이에요. 다른 말을 써 주세요', 1);
+    $('#msg').classList.remove('bad'); used.add(w); chain.push(w); mine++; $('#cnt').textContent = mine; inp.blur(); inp.disabled = true; busy = true; show('me', w); burst(); cpTurn();
+  };
+  const end = win => {
+    gone = true; Speech.stop();
+    root.innerHTML = `<main class="home result"><h1>${win ? '와! 컴퓨터가 졌어요!' : '잘했어요!'}</h1>
+      <div class="rscore">${win ? '컴퓨터가 더 생각나지 않대요. ' : ''}${STAR_IMG} <b>${mine}</b>개를 이어 썼어요</div>
+      <div class="mfhist res">${chain.map((w, i) => `<span class="mfchip ${i % 2 ? 'me' : 'cp'}">${w}</span>`).join('')}</div>
+      <div class="rbtns"><button class="chip big" id="again">다시 하기</button><button class="chip big" id="quit">그만하기</button></div></main>`;
+    root.querySelector('#again').onclick = () => App.malFree(); root.querySelector('#quit').onclick = () => App.malMenu();
+  };
+  $('#go').onclick = submit; $('#giveup').onclick = () => { if (!gone) end(false); };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); submit(); } });
+  const starts = pool.filter(w => hasNext(w) && _malHas(w)), s0 = starts[Math.floor(Math.random() * starts.length)];
+  used.add(s0); chain.push(s0); show('cp', s0); busy = false; setTimeout(() => inp.focus(), 300);
 };

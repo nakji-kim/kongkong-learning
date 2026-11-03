@@ -17,7 +17,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v173</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v174</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -152,8 +152,8 @@ const App = {
       <main class="home"><div class="crumb">📖 한글</div><h1>어떤 난이도로 할까요?</h1>
         <div class="cards">
           <button class="card nm" data-l="1" style="background:#b8e6a1"><b>쉬움</b><span>글자 고르기</span></button>
-          <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>자음·모음 누르기</span></button>
-          <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>받침까지 누르기</span></button>
+          <button class="card nm" data-l="2" style="background:#ffd166"><b>보통</b><span>자음·모음 고르기</span></button>
+          <button class="card nm" data-l="3" style="background:#d9c8f5"><b>어려움</b><span>받침까지 고르기</span></button>
         </div></main>`;
     this.root.querySelector('#back').onclick = () => this.hangulHome();
     this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => b.dataset.l === '3' ? this.hangul('all', 3) : this.hangulMenu(+b.dataset.l));
