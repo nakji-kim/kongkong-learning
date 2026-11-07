@@ -20,7 +20,8 @@ App.malGame = function (level) {
   let ids = [];
   if (level < 3) ws.forEach(a => nexts(a).forEach(b => ids.push(a + '>' + b)));
   else ws.forEach(a => nexts(a).forEach(b => nexts(b, [a]).forEach(c => ids.push([a, b, c].join('>')))));
-  const key = 'mal' + level, hl = (w) => `${w.slice(0, -1)}<b class="malhl">${w.at(-1)}</b>`, hf = (w) => `<b class="malhl">${w[0]}</b>${w.slice(1)}`;
+  const key = 'mal' + level, hl = (w) => `${w.slice(0, -1)}<b class="malhl">${w.at(-1)}</b>`, hf = (w) => `<b class="malhl">${w[0]}</b>${w.slice(1)}`, hb = (w) => `<b class="malhl">${w[0]}</b>${w.slice(1, -1)}<b class="malhl">${w.at(-1)}</b>`,
+    item = (w, html, cls = '') => `<div class="malit ${cls}">${_malImg(w)}<span class="malw">${html}</span></div>`, arrow = '<i>→</i>';
   const decoys = (need, ex, n = 3) => _shuf(ws.filter(w => w[0] !== need && !ex.includes(w))).slice(0, n);
   let asked = false;   // 어려움 문제 음성은 처음 한 번만
   const make = () => {
@@ -38,7 +39,7 @@ App.malGame = function (level) {
         key: 'ml:' + id, done: [key, id], answer: b, q: ['빈칸에 들어갈 말을 찾아요!', 'mal_q3'], once: true, silent: wasAsked,
         a: [[a, a], [b, b], [c, c]],
         stage: `<div class="malrow"><div class="malit">${_malImg(a)}</div><i>→</i><div class="malit q"><span class="malq">?</span></div><i>→</i><div class="malit">${_malImg(c)}</div></div>`,
-        reveal: root => { const q = root.querySelector('.malit.q'); if (q) q.innerHTML = _malImg(b); },
+        reveal: (root, btn) => { root.querySelector('#cstage').innerHTML = `<div class="malrow sm">${item(a, hl(a))}${arrow}${item(b, hb(b), 'pop')}${arrow}${item(c, hf(c))}</div>`; if (btn) btn.classList.add('zoom'); },
         choices: opts.map(x => ({ id: x, cls: 'pimg', html: _malImg(x) })),
       };
     }
@@ -47,6 +48,7 @@ App.malGame = function (level) {
       key: 'ml:' + id, done: [key, id], answer: b, q: [a, a],
       a: [[a, a], [b, b]],
       stage: `<div class="malit big">${_malImg(a)}</div>`,
+      reveal: (root, btn) => { root.querySelector('#cstage').innerHTML = `<div class="malrow">${item(a, hl(a))}${arrow}${item(b, hf(b), 'pop')}</div>`; if (btn) btn.classList.add('zoom'); },
       choices: opts.map(x => level === 1 ? { id: x, cls: 'pimg', html: _malImg(x) } : { id: x, cls: 'wide', html: x }),
     };
   };

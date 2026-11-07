@@ -71,13 +71,13 @@ App.hangul = function (mode, level = 1) {
     wd.innerHTML = [...c.w].map(ch => ch === ans ? '<span class="blank">?</span>' : `<span>${ch}</span>`).join('');
     root.querySelector('#jr').innerHTML = steps.map((s, n) => `<div class="jrow${n ? ' off' : ''}" id="j${s.id}">${s.vals.map(x => `<button class="jb" data-i="${x}">${s.lab(x)}</button>`).join('')}</div>`).join('');
     const rows = steps.map(s => root.querySelector('#j' + s.id)), blanks = [...root.querySelectorAll('.blank')], s0 = st(ans);   // 토마토처럼 같은 글자가 둘 이상이면 빈칸도 모두
-    let step = 0;
-    const wrong = b => { tries++; s0.bad++; App.save(); b.classList.add('wrong'); Speech.stop(); Speech.play('다시 들어볼까요?', () => Speech.play(w.w), '_retry'); if (tries >= 2) rows[step].querySelectorAll('.jb').forEach(x => +x.dataset.i === steps[step].right && x.classList.add('hint')); };
+    let step = 0, stepMiss = 0;   // 정답 알려 주기는 자음·모음·받침 단계마다 따로 2번 틀렸을 때
+    const wrong = b => { tries++; stepMiss++; s0.bad++; App.save(); b.classList.add('wrong'); Speech.stop(); Speech.play('다시 들어볼까요?', () => Speech.play(w.w), '_retry'); if (stepMiss >= 2) rows[step].querySelectorAll('.jb').forEach(x => +x.dataset.i === steps[step].right && x.classList.add('hint')); };
     rows.forEach((row, n) => row.querySelectorAll('.jb').forEach(b => b.onclick = () => {
       if (locked || step !== n || b.classList.contains('wrong')) return;
       if (+b.dataset.i !== steps[n].right) return wrong(b);
       b.classList.add('right'); row.querySelectorAll('.jb').forEach(x => x !== b && x.classList.add('fade')); row.querySelectorAll('.hint').forEach(x => x.classList.remove('hint'));
-      if (n < steps.length - 1) { step++; rows[step].classList.remove('off'); blanks.forEach(bl => { bl.textContent = steps[n].show(); bl.classList.add('part'); }); return; }
+      if (n < steps.length - 1) { step++; stepMiss = 0; rows[step].classList.remove('off'); blanks.forEach(bl => { bl.textContent = steps[n].show(); bl.classList.add('part'); }); return; }
       step = 99; locked = true; if (tries === 0) s0.ok++; if (tries === 0) { const key = w.w + (level === 3 ? c.syl : ''); if (!solvedList().includes(key)) solvedList().push(key); } App.save();
       blanks.forEach(bl => { bl.classList.remove('part'); bl.textContent = ans; bl.classList.add('filled'); });
       if (tries === 0) good++; upd(); burst();
