@@ -102,7 +102,7 @@ App.puzGame = function (level) {
     stars.textContent = `🧩 ${si}/${TOTAL}`;
     const S = Math.floor(Math.min(innerWidth - 28, innerHeight * (level === 3 ? .4 : .42), 380)), w = S / C, h = S / R, f = level === 3 ? .72 : .85;
     pb.style.cssText = `width:${S}px;height:${S}px;position:relative`;
-    pb.innerHTML = `<div class="pghost" style="background-size:${S}px ${S}px;opacity:${level === 3 ? 0 : .22}"></div>` +
+    pb.innerHTML = `<div class="pghost" style="background-size:${S}px ${S}px;opacity:${level === 3 ? 0 : level === 2 ? .08 : .22}"></div>` +
       Array.from({ length: R * C }, (_, i) => `<div class="pslot" data-i="${i}" style="left:${(i % C) * w}px;top:${Math.floor(i / C) * h}px;width:${w}px;height:${h}px"></div>`).join('');
     pb.querySelector('.pghost').style.backgroundImage = uri;
     pt.innerHTML = '';
