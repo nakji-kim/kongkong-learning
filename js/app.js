@@ -17,7 +17,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v188</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v189</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -26,8 +26,17 @@ const App = {
   doneArr(key) { const p = this.prof(); p.done = p.done || {}; return (p.done[key] = p.done[key] || []); },
   markDone(key, id) { const a = this.doneArr(key); if (!a.includes(id)) { a.push(id); this.save(); } },
   // ids 중 아직 안 푼 것을 고름(순서대로, 또는 opt.random/opt.weight). 모두 풀었으면 그 묶음만 초기화
+  // 틀린 문제는 다른 문제를 2개 이상 푼 뒤에 다시 나옴 (기록은 이번 접속 동안만)
+  _cd: {},
+  noteMiss(key, id) { (this._cd[key] = this._cd[key] || {})[String(id)] = 3; },
+  coolSet(key) { const c = this._cd[key] || {}, s = new Set(); for (const k in c) { if (--c[k] <= 0) delete c[k]; else s.add(k); } return s; },
+  coolOrder(key, arr, idf = x => x) {   // 미리 줄 세우는 판: 지난 판에 틀린 것은 앞쪽 2개 뒤로 보냄
+    const c = this._cd[key]; if (!c) return arr.slice(); const hot = arr.filter(x => c[String(idf(x))]), rest = arr.filter(x => !c[String(idf(x))]);
+    delete this._cd[key]; hot.forEach(x => rest.splice(Math.min(rest.length, 2 + Math.floor(Math.random() * 3)), 0, x)); return rest;
+  },
   pickNew(key, ids, opt = {}) {
-    const a = this.doneArr(key), dn = new Set(a); let left = ids.filter(i => !dn.has(i));
+    const a = this.doneArr(key), dn = new Set(a), cs = this.coolSet(key); let left = ids.filter(i => !dn.has(i));
+    { const cl = left.filter(i => !cs.has(String(i))); if (cl.length) left = cl; }
     if (!left.length) { this.prof().done[key] = a.filter(i => !ids.includes(i)); this.save(); left = ids.slice(); this.toast('모두 풀었어요! 다시 시작해요 🎉'); }
     if (opt.weight) { let t = left.reduce((s, x) => s + opt.weight(x), 0), r = Math.random() * t; for (const x of left) { if ((r -= opt.weight(x)) <= 0) return x; } return left[0]; }
     return opt.random ? left[Math.floor(Math.random() * left.length)] : left[0];

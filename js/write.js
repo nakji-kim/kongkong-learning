@@ -39,6 +39,7 @@ App.writeGame = function (level, kind = 'ko') {
   const total = this.roundSize(key, ids);
   let todo = ids.filter(i => !this.doneArr(key).includes(i)); if (!todo.length) todo = ids.slice();
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
+  { const o = App.coolOrder(key, q); q.length = 0; q.push(...o); }
   let good = 0, qn = 0, cur, tries = 0, locked = true, strokes = [], drawing = null, timer = null, first = true, guideOn = false, L = null;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="wr"><div id="wmsg" class="wmsg"></div><div id="wpic" class="wpic" style="display:none"></div><div class="wst" id="wst"><canvas id="wg"></canvas><canvas id="wc"></canvas></div>
@@ -109,7 +110,7 @@ App.writeGame = function (level, kind = 'ko') {
   };
   const finish = ok => {
     locked = true; clearTimeout(timer); Speech.stop();
-    if (ok) { good++; if (tries === 0 && !App.doneArr(key).includes(cur)) App.markDone(key, cur); upd(); guide('#2f9e44'); ix.clearRect(0, 0, L.W, L.H); msg.textContent = '👏'; }
+    if (ok) { good++; if (tries === 0 && !App.doneArr(key).includes(cur)) App.markDone(key, cur); if (tries > 0) App.noteMiss(key, cur); upd(); guide('#2f9e44'); ix.clearRect(0, 0, L.W, L.H); msg.textContent = '👏'; }
     const pi = Math.floor(Math.random() * praise.length);
     if (ok && EN) Speech.play(EN_PRAISE[pi], () => sayTarget(() => setTimeout(next, 500)), 'en_praise' + pi, 'en-US');
     else if (ok) Speech.play(praise[pi], () => Speech.play(cur, () => setTimeout(next, 500)), '_praise' + pi);

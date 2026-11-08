@@ -47,6 +47,7 @@ App.alphaGame = function (level, letters, lower = false) {
   const queue = [];   // 한 판 = 최대 10문제 (안 푼 문제가 10개보다 적으면 그만큼). 같은 글자가 겹치지 않게 먼저 뽑음
   for (const x of shuffle(todo)) { if (queue.length < 10 && !queue.some(q => q.L === x.L)) queue.push(x); }
   for (const x of shuffle(todo)) { if (queue.length < 10 && !queue.includes(x)) queue.push(x); }
+  { const o = App.coolOrder(pre + level, queue, x => x.id); queue.length = 0; queue.push(...o); }
   const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
   const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
@@ -85,7 +86,7 @@ App.alphaGame = function (level, letters, lower = false) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(pre + level, cur.id); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(pre + level, cur.id); else App.noteMiss(pre + level, cur.id); upd();
       b.classList.add('right'); root.querySelectorAll('.fl').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) { const bl = root.querySelector('.blank'); bl.textContent = show(cur.L); bl.classList.add('filled'); root.querySelector('#word').insertAdjacentHTML('beforeend', `<span class="aw">${cur.word}</span>`); }
       else { const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal'); pic.innerHTML = `<span class="big">${show(cur.L)}</span>`; }

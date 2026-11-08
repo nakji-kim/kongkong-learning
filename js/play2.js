@@ -313,6 +313,7 @@ App.mateSet = function (level) {
     // 아직 안 푼 짝 3개 (모자라면 기록을 지우고 다시 시작)
     let fresh = ids.filter(i => !App.doneArr(key).includes(i));
     if (fresh.length < 3) { App.prof().done[key] = []; App.save(); fresh = ids.slice(); App.toast('모두 풀었어요! 다시 시작해요 🎉'); }
+    { const cs = App.coolSet(key), cl = fresh.filter(i => !cs.has(String(i))); if (cl.length >= 3) fresh = cl; }
     const pick = _shuf(fresh).slice(0, 3).map(Number), dir = Math.random() < .5 ? 0 : 1, side = dir ? 3 : 0, oth = dir ? 0 : 3;
     const qs = pick.map(i => ({ i, q: MATCH_PAIRS[i][side + 1], a: MATCH_PAIRS[i][oth], ac: MATCH_PAIRS[i][oth + 1] }));
     const groups = new Set(pick.map(i => MATCH_PAIRS[i][6]));
@@ -332,7 +333,7 @@ App.mateSet = function (level) {
       const x = qs[selQ], c = choices[selC], qe = cards[selQ], ce = opts[selC];
       if (c.i === x.i) {
         qe.classList.remove('sel'); ce.classList.remove('sel'); qe.classList.remove('hid'); qe.classList.add('done'); ce.classList.add('done'); matched++;
-        if (!bad[selQ]) App.markDone(key, String(x.i)); selQ = selC = null;
+        if (!bad[selQ]) App.markDone(key, String(x.i)); else App.noteMiss(key, x.i); selQ = selC = null;
         const sp = document.createElement('i'); sp.className = 'spark'; App.sparkFill(sp, '✨'); qe.appendChild(sp); setTimeout(() => sp.remove(), 1200);
         if (matched === 3) { lock = true; const pi = Math.floor(Math.random() * 4); Speech.stop(); Speech.play(['잘했어요!', '맞았어요!', '최고예요!', '대단해요!'][pi], () => later(next, 600), '_praise' + pi); }
       } else {

@@ -36,6 +36,7 @@ App.alphaWordGame = function (level, letters) {
   const queue = [];   // 안 푼 단어에서 글자가 겹치지 않게 10개
   for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.some(q => q.L === x.L)) queue.push(x); }
   for (const x of shuffle(todo)) { if (queue.length < SIZE && !queue.includes(x)) queue.push(x); }
+  { const o = App.coolOrder(key, queue, x => x.id); queue.length = 0; queue.push(...o); }
   const total = queue.length;
   let good = 0, qn = 0, cur, tries, locked = true;
   const upd = () => { root.querySelector('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${total}`; };
@@ -76,7 +77,7 @@ App.alphaWordGame = function (level, letters) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(cur.L);
     if (l === cur.L) {
-      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(key, cur.id); upd();
+      locked = true; if (tries === 0) { s.ok++; good++; } App.save(); if (tries === 0) App.markDone(key, cur.id); else App.noteMiss(key, cur.id); upd();
       b.classList.add('right'); root.querySelectorAll('#ch .cb').forEach(x => x !== b && x.classList.add('fade'));
       if (level === 1) {
         const pic = root.querySelector('#pic'); pic.classList.remove('spk'); pic.classList.add('reveal', 'cap');

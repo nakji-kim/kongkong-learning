@@ -25,7 +25,8 @@ App.hangul = function (mode, level = 1) {
   async function next() {
     locked = true; qn++; upd(); let c = null, only = null;
     while (pool.length) {   // 그림(이모지 또는 파일)이 있는 단어만 출제
-      let arr = pool.filter(x => !solvedList().includes(x.w + (level === 3 ? x.syl : '')) && (!last || x.w !== last.w));
+      const cs = App.coolSet(SK); let arr = pool.filter(x => !solvedList().includes(x.w + (level === 3 ? x.syl : '')) && (!last || x.w !== last.w));
+      { const cl = arr.filter(x => !cs.has(x.w + (level === 3 ? x.syl : ''))); if (cl.length) arr = cl; }
       if (!arr.length) {   // 이 묶음을 모두 풀었으면 처음부터 다시
         p[SK] = solvedList().filter(w => !pool.some(x => x.w + (level === 3 ? x.syl : '') === w)); App.save(); App.toast('모두 풀었어요! 다시 시작해요 🎉');
         arr = pool.filter(x => !last || x.w !== last.w);
@@ -78,7 +79,7 @@ App.hangul = function (mode, level = 1) {
       if (+b.dataset.i !== steps[n].right) return wrong(b);
       b.classList.add('right'); row.querySelectorAll('.jb').forEach(x => x !== b && x.classList.add('fade')); row.querySelectorAll('.hint').forEach(x => x.classList.remove('hint'));
       if (n < steps.length - 1) { step++; stepMiss = 0; rows[step].classList.remove('off'); blanks.forEach(bl => { bl.textContent = steps[n].show(); bl.classList.add('part'); }); return; }
-      step = 99; locked = true; if (tries === 0) s0.ok++; if (tries === 0) { const key = w.w + (level === 3 ? c.syl : ''); if (!solvedList().includes(key)) solvedList().push(key); } App.save();
+      step = 99; locked = true; if (tries === 0) s0.ok++; if (tries === 0) { const key = w.w + (level === 3 ? c.syl : ''); if (!solvedList().includes(key)) solvedList().push(key); } else App.noteMiss(SK, w.w + (level === 3 ? c.syl : '')); App.save();
       blanks.forEach(bl => { bl.classList.remove('part'); bl.textContent = ans; bl.classList.add('filled'); });
       if (tries === 0) good++; upd(); burst();
       const pi = Math.floor(Math.random() * praise.length); Speech.stop();
@@ -91,7 +92,7 @@ App.hangul = function (mode, level = 1) {
     if (locked || b.classList.contains('wrong')) return;
     const l = b.dataset.l, s = st(ans);
     if (l === ans) {
-      locked = true; if (tries === 0) s.ok++; if (tries === 0 && !solvedList().includes(w.w)) solvedList().push(w.w); App.save();
+      locked = true; if (tries === 0) s.ok++; if (tries === 0 && !solvedList().includes(w.w)) solvedList().push(w.w); if (tries > 0) App.noteMiss(SK, w.w); App.save();
       b.classList.add('right');
       root.querySelectorAll('.blank').forEach(bl => { bl.textContent = ans; bl.classList.add('filled'); });
       root.querySelectorAll('.fl').forEach(x => x !== b && x.classList.add('fade'));

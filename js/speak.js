@@ -60,6 +60,7 @@ App.speakGame = function (level, kind = 'ko') {
   const total = this.roundSize(key, ids);
   let todo = ids.filter(i => !this.doneArr(key).includes(i)); if (!todo.length) todo = ids.slice();
   const q = todo.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).slice(0, total).map(x => x[1]);
+  { const o = this.coolOrder(key, q); q.length = 0; q.push(...o); }
   let good = 0, qn = 0, cur, tries, busy = false, rec = null, heard = false, reads = 0, anyOk = false, firstOk = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">${STAR_IMG} 0 · 0/${total}</span></header>
     <main class="spk"><div class="expt">🎤 마이크 권한이 필요해요</div><div id="sw" class="sw"></div><button id="mic" class="mic" aria-label="말하기">🎤</button><div id="msg" class="smsg"></div>${level === 1 ? `<div class="sex">${EN ? '예) "에이 에이", "비 비"' : '예) "가 가", "라 라"'}</div><div class="sex sub">한 글자 읽기는 인식이 좋지 않아요</div>` : ''}<div id="dbg" class="dbg"></div></main>`;
@@ -80,7 +81,7 @@ App.speakGame = function (level, kind = 'ko') {
   };
   const pass = ok => {   // ok=true: 맞게 읽음 / false: 두 번 해도 인식 안 됨 (그냥 넘어감)
     busy = true; mic.className = 'mic'; Speech.stop();
-    if (ok) { good++; if (tries === 0 && !this.doneArr(key).includes(cur)) this.markDone(key, cur); upd(); $('#sw').className = 'sw ok'; }
+    if (ok) { good++; if (tries === 0 && !this.doneArr(key).includes(cur)) this.markDone(key, cur); if (tries > 0) this.noteMiss(key, cur); upd(); $('#sw').className = 'sw ok'; }
     const pr = EN ? EN_PRAISE : praise, pi = Math.floor(Math.random() * pr.length);   // 알파벳 읽기는 영어로 칭찬
     msg.textContent = ok ? pr[pi] : '잘했어요! 다음에 또 해 봐요';
     if (ok && EN) Speech.play(pr[pi], () => setTimeout(next, 600), 'en_praise' + pi, 'en-US');
