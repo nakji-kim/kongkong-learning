@@ -48,7 +48,7 @@ App.mathMenu = function (mode) {
 };
 
 App.mathGame = function (mode, level = 'easy') {
-  const p = this.prof(), root = this.root, hard = level === 'hard', nores = level !== 'easy';
+  const p = this.prof(), root = this.root, hard = level === 'hard', nores = true;   // 쉬움에서도 결과 그림(＝ 개수)은 보여주지 않음
   const pairs = MPOOL[mode][level], KEY = mode + (hard ? '3' : level === 'mid' ? '2' : ''), random = MRANDOM[mode][level];
   const MAXS = Math.max(6, ...pairs.map(x => x.s)) + (hard ? 1 : 0);
   const THEMES = [['1f34e', '1f34c', '1f353', '1f347', '1f34a', '1f349'], ['1f697', '2708', '1f68c', '1f682', '1f680', '1f6b2'], ['1f436', '1f431', '1f430', '1f43b', '1f986', '1f41f']];
