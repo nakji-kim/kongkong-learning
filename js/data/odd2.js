@@ -243,12 +243,12 @@ ODD2.ship = { ko: '배', lv2: ['flag'], lv3: ['window'],
     <rect x="30" y="32" width="40" height="24" rx="3" fill="#fff"/><rect x="38" y="40" width="8" height="8" fill="#7cc0ff" stroke-width="2"/>${d === 'window' ? '' : '<rect x="54" y="40" width="8" height="8" fill="#7cc0ff" stroke-width="2"/>'}
     <path d="M10 58H90L78 82H22z" fill="#4a90e2"/><path d="M14 62H86" fill="none" stroke="#fff" stroke-width="2"/>
     <path d="M6 90q8-8 16 0t16 0t16 0t16 0t16 0" fill="none" stroke="#7cc0ff" stroke-width="3"/>`) };
-ODD2.icecream = { ko: '아이스크림', lv2: ['cherry'], lv3: ['line'],
+ODD2.icecream = { ko: '아이스크림', lv2: ['cherry'], lv3: ['drip'],
   draw: d => _s(`
     <path d="M32 54L50 94L68 54z" fill="#f2c27a"/>
-    <path d="M38 60L58 76M62 60L42 76M36 52L46 74" fill="none" stroke="#c9904a" stroke-width="2"/>${d === 'line' ? '' : '<path d="M66 52L52 80" fill="none" stroke="#c9904a" stroke-width="3.2"/>'}
+    <path d="M38 60L58 76M62 60L42 76M36 52L46 74" fill="none" stroke="#c9904a" stroke-width="2"/><path d="M66 52L52 80" fill="none" stroke="#c9904a" stroke-width="3.2"/>
     <circle cx="50" cy="42" r="20" fill="#ffb3c6"/><circle cx="50" cy="40" r="16" fill="none" stroke="none"/>
-    <path d="M30 50q4 8 10 2q4 8 10 0q4 8 10 0q4 8 10-2" fill="#fff"/>
+    <path d="M30 50q4 8 10 2q4 8 10 0q4 8 10 0q4 8 10-2" fill="#fff"/>${d === 'drip' ? '' : '<path d="M34 53V66q0 6 5.5 6T45 66V56z" fill="#fff"/>'}
     ${d === 'cherry' ? '' : '<circle cx="50" cy="20" r="7" fill="#ef3b4d"/><path d="M50 14Q54 6 58 6" fill="none" stroke="#4f9a45"/>'}`) };
 ODD2.umbrella = { ko: '우산', lv2: ['handle'], lv3: ['stripe'],
   draw: d => _s(`
