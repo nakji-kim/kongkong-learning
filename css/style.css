@@ -434,3 +434,4 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .pnn{flex:none;min-width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.15rem;transition:transform .15s,opacity .2s}
 .pnn.done{opacity:.25}
 .pnn.cur{transform:scale(1.35);box-shadow:0 0 0 4px #fff,0 0 0 7px #ffb300;margin:0 8px}
+.pnn.rest{background:#e4dceb;color:#8a7a98;font-size:.9rem}
