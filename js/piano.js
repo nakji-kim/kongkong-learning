@@ -52,7 +52,7 @@ App.pianoGame = function (level) {
     <main class="game pn"><div class="pnq" id="pq"></div><div id="pb"></div></main>`;
   const $ = s => root.querySelector(s), upd = () => { $('#stars').innerHTML = `${STAR_IMG} ${good} · ${qn}/${TOTAL}`; };
   $('#back').onclick = () => { gone = true; Speech.stop(); App.pianoMenu(); };
-  const speakSeq = (i = 0) => { if (gone || i >= seq.length) return; Speech.play(PN[seq[i]].n, () => setTimeout(() => speakSeq(i + 1), 300), 'pn_' + PN[seq[i]].r); };   // seq: 건반 번호 (소리 높이도 그 건반에 맞춤)
+  const speakSeq = (i = 0) => { if (gone || i >= seq.length) return; Speech.play(PN[seq[i]].n, () => { _pn.init(); _pn.play(PN[seq[i]].f, 1.1); setTimeout(() => speakSeq(i + 1), 850); }, 'pn_' + PN[seq[i]].r); };   // 이름을 읽고 → 그 건반 소리를 들려줌   // seq: 건반 번호 (소리 높이도 그 건반에 맞춤)
   const ask = first => { Speech.stop(); if (first) Speech.play(level === 3 ? '들려주는 순서대로 건반을 눌러 보세요!' : '들려주는 계이름의 건반을 눌러 보세요!', () => setTimeout(() => speakSeq(), 250), level === 3 ? 'pn_q2' : 'pn_q1'); else speakSeq(); };
   const dots = () => { const d = $('#pd'); if (d) d.innerHTML = seq.map((_, i) => `<span class="${i < pos ? 'on' : ''}">${i < pos ? '●' : '○'}</span>`).join(''); };
   const board = _pnBoard($('#pb'), { labels: level === 1, onKey: i => press(i) });
