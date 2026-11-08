@@ -178,7 +178,7 @@ App.hideGameEmoji = function (level) {
   const scenes = _shuf(HIDE_SCENES).slice(0, 5);
   let si = 0, miss = 0, found, locked = true, gone = false;
   root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🔎 0/5</span></header>
-    <main class="game mg hide"><div class="hbar" id="hbar"></div><div class="hbox" id="hbox"></div></main>`;
+    <main class="game mg hide"><div class="hbox" id="hbox"></div><div class="hbar" id="hbar"></div></main>`;
   const assist = hsAssist(root.querySelector('main'));
   root.querySelector('#back').onclick = () => { gone = true; Speech.stop(); App.hideMenu(); };
   const say = (k, done) => Speech.play(PBYK[k].ko, done, 'p_it_' + k);
