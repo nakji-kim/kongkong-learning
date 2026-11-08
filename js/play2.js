@@ -91,9 +91,10 @@ function addDecoys(sc, items, box, hrot) {   // 배경 색을 읽어서 같은 �
 // 놀이 : 다른 그림 찾기 / 어울리는 그림 찾기 / 숨은 그림 찾기  (각 쉬움·보통·어려움)
 App.oddMenu = function () {
   this.cardMenu('어떤 난이도로 할까요?', [
-    { b: '🍎🍎🍅', bs: 'font-size:1.8rem', t: '쉬움', bg: '#8ddc9b', go: () => this.oddGame(1) },
-    { b: '🐶🐶🐶🐶', bs: 'font-size:1.4rem', t: '보통', bg: '#6ec6ff', go: () => this.oddGame(2) },
-    { b: '🐜🐜🐜🐜🐜🐜', bs: 'font-size:1.15rem', t: '어려움', bg: '#ff9aa8', go: () => this.oddGame(3) },
+    { b: '🍎🍎🍅', bs: 'font-size:1.8rem', t: '기초', bg: '#b8e6a1', go: () => this.oddGame(1) },
+    { b: '🐶🐶🐶🐶', bs: 'font-size:1.4rem', t: '쉬움', bg: '#8fd3ff', go: () => this.oddGame(2) },
+    { b: '🐜🐜🐜🐜🐜🐜', bs: 'font-size:.95rem', t: '보통', bg: '#ffd166', go: () => this.oddGame(3) },
+    { b: '🔬', bs: 'font-size:2.4rem', t: '어려움', bg: '#ff9aa8', go: () => this.oddGame(4) },
   ], () => this.playMenu(), 'play', '🧩 놀이');
 };
 App.mateMenu = function () {
@@ -113,11 +114,11 @@ App.hideMenu = function () {
 
 /* ---------- 다른 그림 찾기 ---------- */
 App.oddGame = function (level) {
-  // 쉬움: 비슷하게 생긴 그림 9장 중 다른 그림 · 보통/어려움: 같은 그림 4/6장 중 모양이 살짝 다른 1장
-  const N = [9, 4, 6][level - 1], cols = [3, 2, 3][level - 1], ids = [];
+  // 기초: 비슷하게 생긴 그림 9장 중 다른 그림 · 쉬움/보통: 같은 그림 4/6장 중 모양이 살짝 다른 1장 · 어려움: 같은 그림 9장 중 아주 작은 차이 1장
+  const N = [9, 4, 6, 9][level - 1], cols = [3, 2, 3, 3][level - 1], ids = [];
   if (level === 1) ODD_LOOK.forEach(p => p.forEach(k => { new Image().src = _tw(PBYK[k].code); }));   // 그림을 미리 받아 둠
   if (level === 1) ODD_LOOK.forEach(([a, b]) => { ids.push(a + '>' + b, b + '>' + a); });
-  else Object.entries(ODD2).forEach(([k, o]) => o['lv' + level].forEach(d => ids.push(k + ':' + d)));
+  else Object.entries(ODD2).forEach(([k, o]) => (o['lv' + level] || []).forEach(d => ids.push(k + ':' + d)));
   const make = () => {
     const pid = App.pickNew('odd' + level, ids, { random: true });
     if (level === 1) {
