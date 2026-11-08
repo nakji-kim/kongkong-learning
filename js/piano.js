@@ -1,12 +1,10 @@
 // 피아노 놀이: 쉬움(계이름 써 있음) · 보통(안 써 있음) · 어려움(2~3개 순서대로) · 악보(노래 따라 치기) · 자유
-const PN = [   // 흰 건반 12개: 왼쪽 라·시(흐림) + 도~높은 도(8개) + 오른쪽 레·미(흐림)
-  { n: '라', f: 220.0, c: '#7a6cf0', x: 1 }, { n: '시', f: 246.94, c: '#c06be0', x: 1 },
+const PN = [   // 흰 건반 8개 (도~높은 도)
   { n: '도', r: 'do', f: 261.63, c: '#ff6b6b' }, { n: '레', r: 're', f: 293.66, c: '#ff9f43' }, { n: '미', r: 'mi', f: 329.63, c: '#f2b705' },
   { n: '파', r: 'fa', f: 349.23, c: '#3dbb68' }, { n: '솔', r: 'sol', f: 392.0, c: '#3fa9f5' }, { n: '라', r: 'la', f: 440.0, c: '#7a6cf0' },
-  { n: '시', r: 'si', f: 493.88, c: '#c06be0' }, { n: '도', r: 'do', f: 523.25, c: '#ff6b6b' },
-  { n: '레', f: 587.33, c: '#ff9f43', x: 1 }, { n: '미', f: 659.25, c: '#f2b705', x: 1 }];
-const PN_BLACK = [[0, 233.08, 1], [2, 277.18], [3, 311.13], [5, 369.99], [6, 415.3], [7, 466.16], [9, 554.37, 1], [10, 622.25, 1]];   // [앞 흰 건반 번호, 주파수, 흐림]
-const PN_CORE = 2;   // 도(가운데)의 건반 번호
+  { n: '시', r: 'si', f: 493.88, c: '#c06be0' }, { n: '도', r: 'do', f: 523.25, c: '#ff6b6b' }];
+const PN_BLACK = [[0, 277.18], [1, 311.13], [3, 369.99], [4, 415.3], [5, 466.16]];   // [앞 흰 건반 번호, 주파수]
+const PN_CORE = 0;   // 도(가운데)의 건반 번호
 const PN_NAMES = ['도', '레', '미', '파', '솔', '라', '시'];
 // 노래 (c d e f g a b = 도~시, C = 높은 도). 박자는 모두 같게
 const PN_SONGS = [
@@ -28,7 +26,7 @@ const _pn = {
 };
 // 건반 그리기: o.labels 계이름 표시, o.onKey(번호), o.onBlack(번호)
 const _pnBoard = (host, o) => {
-  host.innerHTML = `<div class="pnk${o.labels ? '' : ' nolab'}"><div class="pnin">${PN.map((k, i) => `<button class="wk${k.x ? ' ex' : ''}" data-i="${i}"><span class="pl" style="background:${k.c}">${k.n}</span></button>`).join('')}${PN_BLACK.map(([a, , x], j) => `<button class="bk${x ? ' ex' : ''}" data-b="${j}" style="left:calc(${(a + 1) * 100 / 12}% - 2.4%)"></button>`).join('')}</div></div>`;
+  host.innerHTML = `<div class="pnk${o.labels ? '' : ' nolab'}"><div class="pnin">${PN.map((k, i) => `<button class="wk${k.x ? ' ex' : ''}" data-i="${i}"><span class="pl" style="background:${k.c}">${k.n}</span></button>`).join('')}${PN_BLACK.map(([a, , x], j) => `<button class="bk${x ? ' ex' : ''}" data-b="${j}" style="left:calc(${(a + 1) * 12.5}% - 3.6%)"></button>`).join('')}</div></div>`;
   const el = host.firstChild, fl = (b, cls, ms) => { b.classList.add(cls); setTimeout(() => b.classList.remove(cls), ms); };
   el.querySelectorAll('.wk').forEach(b => b.onpointerdown = e => { e.preventDefault(); _pn.init(); _pn.play(PN[+b.dataset.i].f); fl(b, 'on', 180); o.onKey && o.onKey(+b.dataset.i); });
   el.querySelectorAll('.bk').forEach(b => b.onpointerdown = e => { e.preventDefault(); e.stopPropagation(); _pn.init(); _pn.play(PN_BLACK[+b.dataset.b][1]); fl(b, 'on', 180); o.onBlack && o.onBlack(+b.dataset.b); });

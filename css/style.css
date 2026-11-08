@@ -428,11 +428,9 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .pnk .wk.hint{background:#fff1a8;animation:hintring .7s ease-in-out infinite alternate}
 .pnk .pl{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:min(78%,50px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:clamp(1rem,4.2vmin,1.7rem)}
 .pnk.nolab .pl{display:none}
-.pnk .bk{position:absolute;top:0;width:4.8%;height:60%;background:#2b2233;border:0;border-radius:0 0 8px 8px;z-index:2;box-shadow:0 4px 0 #120d16}
+.pnk .bk{position:absolute;top:0;width:7.2%;height:60%;background:#2b2233;border:0;border-radius:0 0 8px 8px;z-index:2;box-shadow:0 4px 0 #120d16}
 .pnk .bk.on{background:#6a5880;transform:translateY(3px)}
 .pnst{display:flex;gap:8px;overflow-x:auto;width:min(96vw,780px);padding:22px 10px 20px;box-sizing:border-box;-webkit-overflow-scrolling:touch}
 .pnn{flex:none;min-width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.15rem;transition:transform .15s,opacity .2s}
 .pnn.done{opacity:.25}
 .pnn.cur{transform:scale(1.35);box-shadow:0 0 0 4px #fff,0 0 0 7px #ffb300;margin:0 8px}
-.pnk .wk.ex{opacity:.78}.pnk .bk.ex{opacity:.78}
-.pnk .pl{width:min(78%,46px)}
