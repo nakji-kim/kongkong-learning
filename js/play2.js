@@ -119,8 +119,9 @@ App.oddGame = function (level) {
   if (level === 1) ODD_LOOK.forEach(p => p.forEach(k => { new Image().src = _tw(PBYK[k].code); }));   // 그림을 미리 받아 둠
   if (level === 1) ODD_LOOK.forEach(([a, b]) => { ids.push(a + '>' + b, b + '>' + a); });
   else Object.entries(ODD2).forEach(([k, o]) => (o['lv' + level] || []).forEach(d => ids.push(k + ':' + d)));
+  let lastK = null;
   const make = () => {
-    const pid = App.pickNew('odd' + level, ids, { random: true });
+    const pid = App.pickNew('odd' + level, ids, { random: true, not: i => lastK && i.split(/[:>]/)[0] === lastK }); lastK = pid.split(/[:>]/)[0];   // 같은 그림이 연달아 나오지 않게
     if (level === 1) {
       const [base, odd] = pid.split('>'), cells = _shuf([...Array(N - 1).fill(base), odd]), ans = cells.indexOf(odd);
       return {

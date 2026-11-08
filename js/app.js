@@ -17,7 +17,7 @@ const App = {
         <li>사용 후 피드백은 언제든 환영입니다.<ul><li>그림/음성 등 어색한 사항 수정 요청</li><li>난이도 조절 및 신규 기능 추가 요청 등</li></ul></li>
         <li>자유롭게 공유 가능하지만 상업적 이용은 금지됩니다.</li>
       </ol>
-      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v190</span></main>`;
+      <button class="chip big" id="go">공부 시작하기</button><span class="ver">v191</span></main>`;
     this.root.querySelector('#go').onclick = () => (this.prof() ? this.home() : this.profiles());
   },
   prof() { return this.data.profiles.find(p => p.id === this.data.active); },
@@ -37,6 +37,7 @@ const App = {
   pickNew(key, ids, opt = {}) {
     const a = this.doneArr(key), dn = new Set(a), cs = this.coolSet(key); let left = ids.filter(i => !dn.has(i));
     { const cl = left.filter(i => !cs.has(String(i))); if (cl.length) left = cl; }
+    if (opt.not) { const cl = left.filter(i => !opt.not(i)); if (cl.length) left = cl; }   // 바로 앞 문제와 겹치는 것은 피함
     if (!left.length) { this.prof().done[key] = a.filter(i => !ids.includes(i)); this.save(); left = ids.slice(); this.toast('모두 풀었어요! 다시 시작해요 🎉'); }
     if (opt.weight) { let t = left.reduce((s, x) => s + opt.weight(x), 0), r = Math.random() * t; for (const x of left) { if ((r -= opt.weight(x)) <= 0) return x; } return left[0]; }
     return opt.random ? left[Math.floor(Math.random() * left.length)] : left[0];
