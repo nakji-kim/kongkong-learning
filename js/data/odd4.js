@@ -1,25 +1,35 @@
-// 다른 그림 찾기 어려움(lv4): 같은 그림 9장 중 눈·점 같은 아주 작은 부분만 살짝 다른 1장 찾기 (보통=lv3 보다 작은 차이)
-// 각 그림의 기본 SVG 문자열에서 작은 원 하나의 크기를 바꿈: 작게(S) 또는 크게(B)
+// 다른 그림 찾기 어려움(lv4): 같은 그림 9장 중 "크기가 아닌" 작은 차이 1장 찾기 (감은 눈·위치·개수·비슷한 색·시선 …)
+// 기본 그림 SVG 문자열을 조금만 바꿔서 변형을 만듦
 (function () {
-  const circ = (s, fill, maxR, idx) => {   // 기본 그림에서 조건에 맞는 작은 원의 idx 번째 위치
-    const re = new RegExp(`<circle cx="([\\d.]+)" cy="([\\d.]+)" r="([\\d.]+)" fill="${fill}"`, 'g'), all = [];
-    let m; while ((m = re.exec(s))) if (+m[3] <= maxR) all.push({ i: m.index, len: m[0].length, r: +m[3], t: m[0] });
-    return all[idx] || all[0];
+  const EYE = /<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)" fill="#222" stroke="none"\/>/g;
+  const eyeAt = (s, i) => { const all = []; let m; EYE.lastIndex = 0; while ((m = EYE.exec(s))) if (+m[3] <= 4.2) all.push(m); return all[i]; };
+  const swapEye = (i, fn) => s => { const m = eyeAt(s, i); if (!m) return s; return s.slice(0, m.index) + fn(+m[1], +m[2], +m[3]) + s.slice(m.index + m[0].length); };
+  const blink = i => swapEye(i, (x, y, r) => `<path d="M${(x - r).toFixed(1)} ${(y + r * .3).toFixed(1)}q${r} ${(-r * 1.5).toFixed(1)} ${2 * r} 0" fill="none" stroke="#222" stroke-width="2.2"/>`);   // 감은 눈
+  const down = i => swapEye(i, (x, y, r) => `<circle cx="${x}" cy="${y + 4}" r="${r}" fill="#222" stroke="none"/>`);                                    // 눈 하나가 아래로
+  const gaze = (from, to) => s => s.replace(from, to);
+  const R = (a, b) => s => s.replace(a, b);
+  const V = {
+    dog: { blink: blink(1), down: down(0) },
+    cat: { blink: blink(0), whisker: R('M80 58H68', '') },
+    bear: { cheek: R('<circle cx="71" cy="58" r="5" fill="#ff9fae" stroke="none"/>', ''), down: down(1) },
+    rabbit: { blink: blink(1), cheek: R('<circle cx="70" cy="68" r="4.4" fill="#ffc2cf" stroke="none"/>', '') },
+    pig: { blink: blink(0), down: down(1) },
+    lion: { cheek: R('<circle cx="30" cy="58" r="5" fill="#ff9fae" stroke="none"/>', ''), mane: R(/(<circle cx="21\.42116167511352" cy="35\.5000000\d*" r="12" fill=")#d98b3a("\/>)/, '$1#c2702c$2') },
+    koala: { blink: blink(0), nose: R('<ellipse cx="50" cy="60" rx="9" ry="12" fill="#3b3b3b"/>', '<ellipse cx="50" cy="61" rx="10.6" ry="10.6" fill="#3b3b3b"/>') },
+    elephant: { wrinkle: R('M46 62h8M46 70h8', 'M46 66h8'), blink: blink(1) },
+    fox: { blink: blink(1), tip: R('<path d="M92 44Q90 56 82 62Q92 66 94 50z" fill="#fff"', '<path d="M92 44Q90 56 82 62Q92 66 94 50z" fill="#f08a3c"') },
+    duck: { blink: blink(0), foot: R('M42 90v6M58 90v6', 'M42 90v6') },
+    horse: { blink: blink(0), down: down(1) },
+    giraffe: { horn: R('<circle cx="62" cy="8" r="4.4" fill="#8a5a35"/>', '<circle cx="62" cy="8" r="4.4" fill="#c9965f"/>'), spot: R('<circle cx="70" cy="52" r="3.4" fill="#c98a3a"', '<circle cx="66" cy="55" r="3.4" fill="#c98a3a"') },
+    frog: { gaze: gaze('<circle cx="70" cy="30" r="3" fill="#222" stroke="none"/>', '<circle cx="73.2" cy="27.4" r="3" fill="#222" stroke="none"/>'), cheek: R('<circle cx="78" cy="58" r="5" fill="#ff9fae" stroke="none"/>', '') },
+    chicken: { blink: blink(0), wattle: R('<path d="M48 44q2 8 4 0" fill="#ef5b5b" stroke-width="2"/>', '') },
+    ladybug: { spot: R('<circle cx="32" cy="72" r="5" fill="#222" stroke="none"/>', '<circle cx="28" cy="70" r="5" fill="#222" stroke="none"/>'), dot: R('<circle cx="56" cy="28" r="2.4" fill="#fff" stroke="none"/>', '') },
+    butterfly: { move: R('<circle cx="72" cy="34" r="5" fill="#fff" stroke="none"/>', '<circle cx="76" cy="38" r="5" fill="#fff" stroke="none"/>'), tint: R('<path d="M50 52Q86 56 78 82Q62 90 50 56z" fill="#ff8fa3"/>', '<path d="M50 52Q86 56 78 82Q62 90 50 56z" fill="#ff6485"/>') },
   };
-  const size = (fill, maxR, idx, f) => s => {
-    const c = circ(s, fill, maxR, idx); if (!c) return s;
-    return s.slice(0, c.i) + c.t.replace(/ r="[\d.]+"/, ` r="${(c.r * f).toFixed(2)}"`) + s.slice(c.i + c.len);
-  };
-  const EYE = { dog: ['#222', 4], elephant: ['#222', 4], cat: ['#222', 4], bear: ['#222', 4], pig: ['#222', 4], lion: ['#222', 4], koala: ['#222', 4], horse: ['#222', 4], giraffe: ['#222', 4], fox: ['#222', 4], frog: ['#222', 4], chicken: ['#222', 4], duck: ['#222', 4], dino: ['#222', 4], rabbit: ['#222', 4] };
-  const OTHER = { ladybug: ['#222', 7], car: ['#ddd', 6], butterfly: ['#fff', 6], house: ['#ffe266', 4], fish: ['#222', 3] };
-  const F = { ladybug: [.8, 1.15], butterfly: [.75, 1.2], car: [.75, 1.2], frog: [.45, 1.8], fish: [.4, 1.9] };   // 그림별 크기 배율(작게, 크게)
-  const V = {};
-  Object.entries(EYE).forEach(([k, [c, r]]) => { const f = F[k] || [.64, 1.32]; V[k] = { e4s: size(c, r, 0, f[0]), e4b: size(c, r, 1, f[1]) }; });
-  Object.entries(OTHER).forEach(([k, [c, r]]) => { const f = F[k] || [.62, 1.32]; V[k] = { e4s: size(c, r, 0, f[0]), e4b: size(c, r, 1, f[1]) }; });
-  delete V.frog.e4s; delete V.fish.e4s;   // 너무 작아서 구분이 안 되는 것은 뺌
   Object.entries(V).forEach(([k, vs]) => {
     const o = ODD2[k]; if (!o) return; const base = o.draw;
-    o.lv4 = Object.keys(vs);
-    o.draw = d => (d && vs[d]) ? vs[d](base()) : base(d);
+    const names = Object.keys(vs).filter(n => vs[n](base()) !== base());   // 실제로 바뀌는 것만
+    o.lv4 = names.map(n => 'x_' + n);
+    o.draw = d => (d && d.startsWith('x_') && vs[d.slice(2)]) ? vs[d.slice(2)](base()) : base(d);
   });
 })();
