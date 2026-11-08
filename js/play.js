@@ -25,6 +25,7 @@ App.playMenu = function () {
     { b: '🎨', t: '색칠놀이', bg: '#ffc2e2', go: () => this.artMenu() },
     { b: '🖼️', t: '퍼즐', bg: '#b5e3ff', go: () => this.puzMenu() },
     { b: '🌀', t: '미로 찾기', bg: '#c8f0e0', go: () => this.mazeMenu() },
+    { b: '🎹', t: '피아노', bg: '#ffe0f0', go: () => this.pianoMenu() },
   ], () => this.home(), 'play', '🧩 놀이');
 };
 App.matchMenu = function () {
