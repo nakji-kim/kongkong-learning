@@ -1,4 +1,4 @@
-// 미로 찾기: 길을 따라 손가락으로 선을 그려 친구를 도착점까지 데려다 줌 (매번 새 미로, 5판)
+// 미로 찾기: 길을 따라 손가락으로 선을 그려 친구를 도착점까지 데려다 줌 (매번 새 미로, 한 판 · 걸린 시간 기록)
 // 쉬움 5×5 연못(아기 오리→엄마 오리) · 보통 8×8 잔디(토끼→당근) · 어려움 11×11 우주(로켓→지구)
 const MAZE_LV = {
   1: { n: 5, bg: '#7cc6f2', ring: '#5aaee0', from: '1f425', to: '1f986', line: '#ff9f1c', say: ['maze_q1', '선을 그려서 아기 오리를 엄마 오리에게 데려다 주세요!'], deco: ['1fab7', '1fab7', '1f41f'] },
@@ -6,11 +6,18 @@ const MAZE_LV = {
   3: { n: 11, bg: '#2b2f6b', ring: '#3d4290', from: '1f680', to: '1f30d', line: '#ffd23f', say: ['maze_q3', '선을 그려서 로켓을 지구로 보내 주세요!'], deco: ['2b50', '1fa90', '2728'] },
 };
 App.mazeMenu = function () {
-  this.cardMenu('어떤 난이도로 할까요?', [
-    { b: '🐥', t: '쉬움 · 연못', bg: '#8ddc9b', go: () => this.mazeGame(1) },
-    { b: '🐰', t: '보통 · 잔디밭', bg: '#6ec6ff', go: () => this.mazeGame(2) },
-    { b: '🚀', t: '어려움 · 우주', bg: '#ff9aa8', go: () => this.mazeGame(3) },
-  ], () => this.playMenu(), undefined, '🧩 놀이');
+  Speech.stop();
+  const mz = this.prof().maze || {};
+  const cards = [[1, '🐥', '쉬움 · 연못', '#8ddc9b'], [2, '🐰', '보통 · 잔디밭', '#6ec6ff'], [3, '🚀', '어려움 · 우주', '#ff9aa8']];
+  this.root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span><button class="chip" id="clr">🔄 기록 지우기</button></span></header>
+    <main class="home"><div class="crumb">🧩 놀이</div><h1>어떤 난이도로 할까요?</h1><div class="cards">${cards.map(([l, e, t, bg]) => `<button class="card nm spcard" data-l="${l}" style="background:${bg}"><b>${e}</b><span class="spr">${t}</span><small class="sps">${MAZE_LV[l].n}×${MAZE_LV[l].n} 판</small><small class="spb">${mz[l] ? '🏆 ' + _fmt(mz[l]) : '기록 없음'}</small></button>`).join('')}</div></main>`;
+  this.root.querySelector('#back').onclick = () => this.playMenu();
+  this.root.querySelector('#clr').onclick = () => {
+    const p = this.prof(); if (!p.maze || !Object.keys(p.maze).length) return this.toast('지울 기록이 없어요');
+    if (!confirm('미로 기록을 모두 지울까요?')) return;
+    p.maze = {}; this.save(); this.toast('기록을 지웠어요'); this.mazeMenu();
+  };
+  this.root.querySelectorAll('.nm').forEach(b => b.onclick = () => { _sfx.init(); this.mazeGame(+b.dataset.l); });
 };
 
 // 미로 만들기: 구불구불 긴 길이 나오도록 깊이 우선(되돌아가기) 방식. 출발은 맨 윗줄, 도착은 맨 아랫줄
@@ -41,13 +48,15 @@ const mazeRoute = (M, a, b, lim) => {
 
 App.mazeGame = function (level) {
   Speech.stop();
-  const root = this.root, L = MAZE_LV[level], TOTAL = 5;
-  let si = 0, wrong = 0, gone = false;
-  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">🌀 0/${TOTAL}</span></header>
+  const root = this.root, L = MAZE_LV[level], name = ['', '쉬움', '보통', '어려움'][level];
+  let gone = false, busy = true, t0 = 0, iv = null, timers = [];
+  const later = (fn, ms) => { const t = setTimeout(() => { if (!gone) fn(); }, ms); timers.push(t); return t; };
+  const leave = () => { gone = true; timers.forEach(clearTimeout); clearInterval(iv); Speech.stop(); };
+  root.innerHTML = `<header class="bar"><button class="chip" id="back">← 뒤로</button><span class="chip" id="stars">⏱ 0.0초</span></header>
     <main class="game maze"><div class="mzbox" id="mb"><canvas id="mc"></canvas><div class="mzch" id="mf"></div><div class="mzch mzgoal" id="mt"></div></div>
-      <div class="mzbt"><button class="chip" id="mclr">↺ 처음부터</button></div></main>`;
+      <div class="mzbt"><button class="chip" id="mclr">↺ 처음부터</button></div><div class="spcd" id="cd"></div></main>`;
   const $ = s => root.querySelector(s), mb = $('#mb'), cv = $('#mc'), cx = cv.getContext('2d'), mf = $('#mf'), mt = $('#mt'), stars = $('#stars');
-  $('#back').onclick = () => { gone = true; Speech.stop(); App.mazeMenu(); };
+  $('#back').onclick = () => { leave(); App.mazeMenu(); };
   mf.innerHTML = pimg(L.from, 'mzimg'); mt.innerHTML = pimg(L.to, 'mzimg');
   let M, S, cs, pad, way, done, onSol;
   const cen = c => [pad + (c % M.n + .5) * cs, pad + cs * .9 + (Math.floor(c / M.n) + .5) * cs];   // 위쪽에 출발 친구 자리
@@ -73,10 +82,13 @@ App.mazeGame = function (level) {
   }
   const size = () => { S = Math.floor(Math.min(innerWidth - 24, (innerHeight - 170) / (1 + 1.8 / L.n), 520)); pad = S * .02; cs = (S - pad * 2) / L.n; };
   function start() {
-    M = makeMaze(L.n); way = []; done = false; stars.textContent = `🌀 ${si}/${TOTAL}`;
+    M = makeMaze(L.n); way = []; done = false;
     // 정답 길 (틀린 길로 들어간 칸 수를 세려고)
     const sol = mazeRoute(M, M.start, M.goal, 1e4); onSol = new Set(sol);
     size(); draw();
+    const cd = $('#cd'); busy = true;   // 3·2·1 세고 나서 시작 (순발력과 같은 방식)
+    [3, 2, 1].forEach((c, k) => later(() => { cd.textContent = c; cd.classList.remove('go'); void cd.offsetWidth; cd.classList.add('go'); }, k * 800));
+    later(() => { cd.textContent = ''; busy = false; t0 = Date.now(); iv = setInterval(() => { stars.textContent = '⏱ ' + _fmt(Date.now() - t0); }, 100); }, 2400);
   }
   // 손가락 위치 → 칸 (길 밖이면 -1)
   const cellAt = (x, y) => { const k = Math.floor((x - pad) / cs), r = Math.floor((y - pad - cs * .9) / cs); return k >= 0 && r >= 0 && k < M.n && r < M.n ? r * M.n + k : -1; };
@@ -84,7 +96,7 @@ App.mazeGame = function (level) {
   const pos = e => { const b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
   const near = (x, y) => { const head = way.length ? cen(way[way.length - 1]) : cen(M.start); return Math.hypot(x - head[0], y - head[1]) < cs * (way.length ? 1.2 : 1.6); };
   mb.onpointerdown = e => {
-    if (done) return; e.preventDefault(); _sfx.init(); const [x, y] = pos(e);
+    if (done || busy) return; e.preventDefault(); _sfx.init(); const [x, y] = pos(e);
     if (!near(x, y)) { mf.classList.remove('mzhint'); void mf.offsetWidth; mf.classList.add('mzhint'); return; }   // 선 끝(친구)에서 시작해야 함
     drawing = true; try { mb.setPointerCapture(e.pointerId); } catch (x) { }
     if (!way.length) { way = [M.start]; draw(); }
@@ -93,20 +105,26 @@ App.mazeGame = function (level) {
     if (!drawing || done) return; e.preventDefault(); const [x, y] = pos(e), c = cellAt(x, y);
     if (c < 0 || c === way[way.length - 1]) return;
     const r = mazeRoute(M, way[way.length - 1], c, 3); if (!r) return;   // 벽 너머로는 선이 안 나감
-    r.slice(1).forEach(d => { const i = way.indexOf(d); if (i >= 0) way.length = i + 1; else { way.push(d); if (!onSol.has(d)) wrong++; } });   // 되돌아가면 선이 지워짐
+    r.slice(1).forEach(d => { const i = way.indexOf(d); if (i >= 0) way.length = i + 1; else { way.push(d); } });   // 되돌아가면 선이 지워짐
     draw();
     if (way[way.length - 1] === M.goal) win();
   };
   const up = () => { drawing = false; };
   mb.onpointerup = up; mb.onpointercancel = up;
-  $('#mclr').onclick = () => { if (done) return; way = []; draw(); };
+  $('#mclr').onclick = () => { if (done || busy) return; way = []; draw(); };
   function win() {
-    done = true; drawing = false; draw(); _sfx.ok(); mt.classList.add('mzwin'); _artBurst(mt, 16); si++; stars.textContent = `🌀 ${si}/${TOTAL}`;
-    _artPraise(() => setTimeout(() => {
-      if (gone) return; mt.classList.remove('mzwin');
-      if (si < TOTAL) return start();
-      const st = wrong <= TOTAL * 2 ? 5 : wrong <= TOTAL * 5 ? 4 : wrong <= TOTAL * 9 ? 3 : 2;   // 틀린 길로 간 칸이 적을수록 별 많이
-      App.finishRound(st, 5, () => App.mazeGame(level), () => App.mazeMenu(), { label: `별 <b>${st}</b>개를 받았어요`, say: _line('p_ms_' + st) });
+    done = true; busy = true; drawing = false; clearInterval(iv); const total = Date.now() - t0; stars.textContent = '⏱ ' + _fmt(total);
+    draw(); _sfx.ok(); mt.classList.add('mzwin'); _artBurst(mt, 16);
+    const p = App.prof(); p.maze = p.maze || {}; const best = p.maze[level], isNew = best != null && total < best;
+    if (best == null || total < best) { p.maze[level] = total; App.save(); }
+    _artPraise(() => later(() => {
+      root.innerHTML = `<main class="home result"><h1>${isNew ? '대단해요! 신기록이에요!' : '도착했어요!'}</h1>
+        <div class="rstars"><span class="rs on" style="--i:0">${isNew ? '🏆' : '⏱'}</span></div>
+        <div class="rscore">내 기록 <b>${_fmt(total)}</b><br><small>${name} 최고 기록 ${_fmt(p.maze[level])}${best == null ? ' · 첫 기록이에요!' : ''}</small></div>
+        <div class="rbtns"><button class="chip big" id="again">다시 하기</button><button class="chip big" id="quit">그만하기</button></div></main>`;
+      root.querySelector('#again').onclick = () => { leave(); _sfx.init(); App.mazeGame(level); };
+      root.querySelector('#quit').onclick = () => { leave(); App.mazeMenu(); };
+      if (isNew) later(() => Speech.play('대단해요! 신기록이에요!', null, 'p_speed_new'), 500);
     }, 500));
   }
   App._mz = { M: () => M, cen, box: () => mb.getBoundingClientRect(), way: () => way };   // 테스트용
