@@ -130,5 +130,4 @@ App.mazeGame = function (level) {
   App._mz = { M: () => M, cen, box: () => mb.getBoundingClientRect(), way: () => way };   // 테스트용
   start();
   addEventListener('resize', function rs() { if (gone || !root.contains(mb)) return removeEventListener('resize', rs); size(); draw(); });   // 화면 돌리면 크기만 다시
-  setTimeout(() => { if (!gone) Speech.play(L.say[1], null, L.say[0]); }, 400);
 };
