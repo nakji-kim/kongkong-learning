@@ -435,4 +435,4 @@ circle.hhint{fill:none;stroke:#ff5c8a;stroke-width:4;transform-box:fill-box;tran
 .pnn.done{opacity:.25}
 .pnn.cur{transform:scale(1.35);box-shadow:0 0 0 4px #fff,0 0 0 7px #ffb300;margin:0 8px}
 .pnn.rest{background:#e4dceb;color:#8a7a98;font-size:.9rem}
-html:has(.game.maze),body:has(.game.maze){overscroll-behavior:none}   /* 미로: 가장자리 스와이프로 뒤로 가기·새로고침 방지 (판도 화면 끝에서 36px 띄움) */
+html:has(.game.maze),body:has(.game.maze){overscroll-behavior:none}   /* 미로: 아래로 당겨 새로고침만 막음. 가장자리 뒤로 가기 제스처는 막을 수 없어서 판을 화면 끝에서 36px 띄움 */
