@@ -80,7 +80,7 @@ App.mazeGame = function (level) {
     Object.assign(mf.style, { width: F + 'px', height: F + 'px', left: head[0] - F / 2 + 'px', top: head[1] - F / 2 - (way.length ? 0 : cs * .25) + 'px' });
     Object.assign(mt.style, { width: F * 1.1 + 'px', height: F * 1.1 + 'px', left: gx - F * .55 + 'px', top: gy + cs * .55 - F * .3 + 'px' });
   }
-  const size = () => { S = Math.floor(Math.min(innerWidth - 24, (innerHeight - 170) / (1 + 1.8 / L.n), 520)); pad = S * .02; cs = (S - pad * 2) / L.n; };
+  const size = () => { S = Math.floor(Math.min(innerWidth - 72, (innerHeight - 170) / (1 + 1.8 / L.n), 520)); pad = S * .02; cs = (S - pad * 2) / L.n; };
   function start() {
     M = makeMaze(L.n); way = []; done = false;
     // 정답 길 (틀린 길로 들어간 칸 수를 세려고)
